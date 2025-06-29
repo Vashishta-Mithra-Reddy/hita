@@ -58,6 +58,35 @@
   }
 }
 
+@keyframes moveGradient {
+  0% {
+    background-position: 35% 35%;
+  }
+  25% {
+    background-position: 50% 55%;
+  }
+  50% {
+    background-position: 55% 65%;
+  }
+  75% {
+    background-position: 35% 65%;
+  }
+  100% {
+    background-position: 35% 35%;
+  }
+}
+
+
+.animate-gradient {
+  background: radial-gradient(circle at center, rgba(37, 99, 235, 0.6), transparent 8%);
+
+  background-size: 200% 200%;
+  animation: moveGradient 10s ease infinite;
+  backdrop-filter: blur(100px);
+  -webkit-backdrop-filter: blur(100px);
+}
+
+
 @layer base {
   * {
     @apply border-border;
