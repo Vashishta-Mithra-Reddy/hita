@@ -11,7 +11,7 @@ return(
       <Link href={"/"} className="text-xl font-semibold">
       <div className="flex items-center">
       {/* <Image src="/hita.png" width={80} height={80} alt="Hita Logo" className="rounded-full"/> */}
-      <p className="pl-4 text-4xl font-bold">हित</p>
+      <p className="pl-4 text-4xl font-bold font-satoshi">Hita</p>
       </div>
       </Link>
       <ThemeSwitcher />

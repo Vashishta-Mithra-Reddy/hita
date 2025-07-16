@@ -9,6 +9,12 @@ export default function Navigation() {
               <Link href={"/"} className={`text-foreground px-5 py-2 rounded-lg hover:text-foreground hover:bg-foreground/10 ${pathname==="/"?"bg-foreground/10 border-2 border-dashed border-foreground/10":""}`}>
                 Home
               </Link>
-            </div>
+              <Link href={"/products"} className={`text-foreground px-5 py-2 rounded-lg hover:text-foreground hover:bg-foreground/10 ${pathname==="/products"?"bg-foreground/10 border-2 border-dashed border-foreground/10":""}`}>
+                Products
+              </Link>
+              <Link href={"/remedies"} className={`text-foreground px-5 py-2 rounded-lg hover:text-foreground hover:bg-foreground/10 ${pathname==="/remedies"?"bg-foreground/10 border-2 border-dashed border-foreground/10":""}`}>
+                Remedies
+              </Link>
+        </div>
     );
 }
