@@ -30,7 +30,7 @@ export default function Home() {
       
       <main className="min-h-screen w-full flex flex-col p-4">
         {/* Your actual page content */}
-        <section className="relative w-screen max-w-6xl h-[500px] flex items-center justify-center overflow-hidden rounded-xl">
+        <section className="relative h-[500px] flex items-center justify-center overflow-hidden rounded-xl">
           <h1 className='text-6xl font-satoshi'>Hita</h1>
         </section>
       </main>
