@@ -1,6 +1,15 @@
 import { Button } from "./ui/button";
 
-export function RemedyCard({ remedy }: { remedy: any }) {
+interface Remedy {
+  name: string;
+  description: string;
+  issues: string[];
+  successCount: number;
+  failCount: number;
+  verifiedBy: string[];
+}
+
+export function RemedyCard({ remedy }: { remedy: Remedy }) {
   return (
     <div className="p-4 border rounded-xl shadow-sm bg-white space-y-2 hover:shadow-md transition-shadow">
       <h2 className="text-xl font-medium">{remedy.name}</h2>
@@ -8,7 +17,7 @@ export function RemedyCard({ remedy }: { remedy: any }) {
       <p className="text-sm text-gray-500">For issues: {remedy.issues.join(', ')}</p>
       <div className="text-xs flex items-center gap-2">
         <Button variant="outline" size="sm">✅ Worked ({remedy.successCount})</Button>
-        <Button variant="outline" size="sm">❌ Didn't ({remedy.failCount})</Button>
+        <Button variant="outline" size="sm">❌ Didn&apos;t ({remedy.failCount})</Button>
         <Button variant="outline" size="sm">⚠️ Report</Button>
       </div>
       {remedy.verifiedBy.includes('admin') && (

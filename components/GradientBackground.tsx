@@ -4,7 +4,7 @@ import { ShaderGradientCanvas, ShaderGradient } from '@shadergradient/react';
 
 export default function GradientBackground() {
   return (
-    <div className="absolute inset-0 pointer-events-none z-0">
+    <div className="absolute inset-0 pointer-events-none z-0 animate-in fade-in duration-200">
       <ShaderGradientCanvas style={{ width: '100%', height: '100%' }}>
         <ShaderGradient
           control="query"

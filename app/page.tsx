@@ -1,18 +1,39 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-const GradientBackground = dynamic(() => import('../components/GradientBackground'), { ssr: false });
+import { useState, useEffect } from 'react';
+import LoadingScreen from '@/components/LoadingScreen';
 
 export default function Home() {
-  return (
-    <main className="min-h-screen w-full flex flex-col p-4">
-      <section className="relative w-screen max-w-6xl h-[500px] flex items-center justify-center overflow-hidden rounded-xl">
-        <GradientBackground />
+  const [isLoading, setIsLoading] = useState(true);
 
-        <div className="z-10 relative text-center">
-          <p className="text-7xl font-satoshi font-bold text-white">हित</p>
-        </div>
-      </section>
-    </main>
+  useEffect(() => {
+    // Simulate initial loading or actual loading logic
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // This would be your actual loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLoadingComplete = () => {
+    console.log('Loading complete!');
+  };
+
+  return (
+    <>
+      <LoadingScreen 
+        isLoading={isLoading} 
+        onLoadingComplete={handleLoadingComplete}
+        minLoadingTime={1000}
+        text="हित"
+      />
+      
+      <main className="min-h-screen w-full flex flex-col p-4">
+        {/* Your actual page content */}
+        <section className="relative w-screen max-w-6xl h-[500px] flex items-center justify-center overflow-hidden rounded-xl">
+          <h1 className='text-6xl font-satoshi'>Hita</h1>
+        </section>
+      </main>
+    </>
   );
 }

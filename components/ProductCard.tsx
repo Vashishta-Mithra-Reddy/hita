@@ -1,4 +1,14 @@
-export function ProductCard({ product }: { product: any }) {
+interface Product {
+  name: string;
+  description: string;
+  availableAt: {
+    amazon: string;
+    local?: string[];
+  };
+  verified?: boolean;
+}
+
+export function ProductCard({ product }: { product: Product }) {
   return (
     <div className="p-4 border rounded-xl shadow-sm bg-white space-y-2 hover:shadow-md transition-shadow duration-200">
       <h2 className="text-xl font-medium">{product.name}</h2>
@@ -12,7 +22,7 @@ export function ProductCard({ product }: { product: any }) {
       {product.verified && (
         <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">Personally Verified</span>
       )}
-      <p className="text-xs text-muted-foreground italic">Genuine recommendation – no brand bias.</p>
+      <p className="text-xs text-muted-foreground italic">Genuine recommendation no brand bias.</p>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import localfont from "next/font/local";
 
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 import Footer from "@/components/blocks/footer";
 import Header from "@/components/blocks/header";
 import BottomNav from "@/components/blocks/bottom-nav";
@@ -46,6 +47,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
         >
+          <Toaster/>
           <Header />
           <div className="px-6 md:px-20 py-80 md:py-80 pt-16 md:pt-28 pb-16 md:pb-20">
             {children}
