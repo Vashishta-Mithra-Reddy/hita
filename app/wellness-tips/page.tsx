@@ -11,10 +11,8 @@ export default async function WellnessTipsPage({
 }: {
   searchParams?: { search?: string; category?: string };
 }) {
-  // Await the searchParams object
-  const params = await searchParams;
-  const search = params?.search || '';
-  const category = params?.category || null;
+  const search = searchParams?.search || '';
+  const category = searchParams?.category || null;
   
   const { tips } = await getWellnessTips({ 
     search, 
