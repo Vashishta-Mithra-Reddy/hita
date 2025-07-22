@@ -9,10 +9,11 @@ import { SearchFilter } from './search-filter';
 export default async function WellnessTipsPage({
   searchParams,
 }: {
-  searchParams?: { search?: string; category?: string };
+  searchParams?: Promise<{ search?: string; category?: string }>;
 }) {
-  const search = searchParams?.search || '';
-  const category = searchParams?.category || null;
+  const resolvedSearchParams = await searchParams;
+  const search = resolvedSearchParams?.search || '';
+  const category = resolvedSearchParams?.category || null;
   
   const { tips } = await getWellnessTips({ 
     search, 
@@ -44,9 +45,9 @@ export default async function WellnessTipsPage({
           {tips.map((tip) => (
             <Card key={tip.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle className='text-2xl'>{tip.title}</CardTitle>
+                <CardTitle className="text-lg">{tip.title}</CardTitle>
                 {tip.category && (
-                  <Badge variant="secondary" className="w-fit mt-40">
+                  <Badge variant="secondary" className="w-fit">
                     {tip.category}
                   </Badge>
                 )}
