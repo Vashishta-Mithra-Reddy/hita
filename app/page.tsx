@@ -7,7 +7,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate initial loading or actual loading logic
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000); // This would be your actual loading time

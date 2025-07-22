@@ -1,56 +1,88 @@
 "use client";
 
-import { RemedyCard } from "@/components/RemedyCard"
-import { useState } from 'react';
+import { RemedyCard } from "@/components/RemedyCard";
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
-// import { Button } from '@/components/ui/button';
-
-
-const dummyRemedies = [
-  {
-    id: "1",
-    name: "Turmeric Milk",
-    description: "Known for reducing inflammation and aiding sleep.",
-    issues: ["cold", "joint pain"],
-    verifiedBy: ["admin", "community"],
-    successCount: 45,
-    failCount: 2,
-  },
-  {
-    id: "2",
-    name: "Ginger Tea",
-    description: "Used for nausea, digestion, and sore throat.",
-    issues: ["nausea", "sore throat"],
-    verifiedBy: ["community"],
-    successCount: 28,
-    failCount: 3,
-  },
-]
-
+import { createClient } from '@/lib/supabase/client';
+import { Remedy } from '@/lib/supabase/remedies';
 
 export default function RemediesPage() {
+  const [remedies, setRemedies] = useState<Remedy[]>([]);
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Filter by issue (integrate Supabase later)
-  const filteredRemedies = dummyRemedies.filter(r => 
-    r.issues.some(issue => issue.toLowerCase().includes(search.toLowerCase()))
-  );
+  useEffect(() => {
+    const fetchRemedies = async () => {
+      try {
+        setLoading(true);
+        const supabase = createClient();
+        
+        let query = supabase
+          .from('remedies')
+          .select('*')
+          .eq('is_active', true);
+        
+        if (search) {
+          // Search in title, description, and symptoms_treated
+          query = query.or(
+            `title.ilike.%${search}%,description.ilike.%${search}%`
+          );
+        }
+        
+        const { data, error: fetchError } = await query.order('title');
+        
+        if (fetchError) throw fetchError;
+        
+        setRemedies(data || []);
+      } catch (err) {
+        console.error('Error fetching remedies:', err);
+        setError('Failed to load remedies');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRemedies();
+  }, [search]); // Refetch when search changes
+
+  // Transform remedies data for RemedyCard component
+  const transformedRemedies = remedies.map(remedy => ({
+    id: remedy.id,
+    name: remedy.title,
+    description: remedy.description,
+    issues: remedy.symptoms_treated || [],
+    verifiedBy: remedy.is_verified ? ['admin'] : [],
+    successCount: remedy.effectiveness_rating || 0,
+    failCount: 0, // This field doesn't exist in the new schema
+  }));
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
       <h1 className="text-3xl font-semibold mb-4">Verified Remedies</h1>
       <Input 
-        placeholder="Search by issue (e.g., sore throat)" 
+        placeholder="Search by remedy name or description" 
         value={search} 
         onChange={(e) => setSearch(e.target.value)} 
         className="mb-6 max-w-md"
       />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredRemedies.map((remedy) => (
-          <RemedyCard key={remedy.id} remedy={remedy} />
-        ))}
-      </div>
-      {filteredRemedies.length === 0 && <p className="text-muted-foreground">No remedies found for this issue. Submit one?</p>}
+      
+      {loading ? (
+        <div className="text-center py-10">Loading remedies...</div>
+      ) : error ? (
+        <div className="text-center py-10 text-red-500">{error}</div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {transformedRemedies.map((remedy) => (
+              <RemedyCard key={remedy.id} remedy={remedy} />
+            ))}
+          </div>
+          {transformedRemedies.length === 0 && (
+            <p className="text-muted-foreground">No remedies found. Try adjusting your search.</p>
+          )}
+        </>
+      )}
     </div>
   );
 }

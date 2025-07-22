@@ -37,7 +37,7 @@ export default function LoadingScreen({
   if (!shouldShow) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black animate-out fade-out duration-600">
       <div className="relative w-full h-full flex items-center justify-center">
         <GradientBackground />
         
