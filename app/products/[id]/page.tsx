@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client'; // Import the browser client instead
 import { OfflineAvailability, Product, ProductLink } from '@/lib/supabase/products';
+import Link from 'next/link';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -78,7 +79,9 @@ export default function ProductDetailPage() {
             <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
             
             {product.brand && (
-              <p className="text-gray-600 mt-1">{product.brand.name}</p>
+              <Link href={`/brands/${product.brand.id}`} className="text-blue-600 hover:underline mt-1 inline-block">
+                {product.brand.name}
+              </Link>
             )}
             
             <div className="flex flex-wrap gap-2 mt-3">

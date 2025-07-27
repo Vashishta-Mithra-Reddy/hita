@@ -9,6 +9,11 @@ export default function BottomNav() {
   
   const navigationLinks = [
     { href: "/", label: "Home", icon: <Home  className="h-5 w-5" /> },
+    { href: "/products", label: "Products", icon: <Home className="h-5 w-5" /> },
+    { href: "/brands", label: "Brands", icon: <Home className="h-5 w-5" /> },
+    { href: "/remedies", label: "Remedies", icon: <Home className="h-5 w-5" /> },
+    { href: "/wellness-tips", label: "Wellness Tips", icon: <Home className="h-5 w-5" /> }
+    
   ];
 
   return (
