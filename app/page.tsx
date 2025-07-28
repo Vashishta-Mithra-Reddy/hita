@@ -31,7 +31,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mx-auto mb-4"></div>
+                <div className="w-16 h-16 bg-gradient-to-bl from-purple-500 to-pink-500 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Products</h3>
                 <p className="text-foreground/80">
                   You will find better and healthier and trusted products.
@@ -39,7 +39,7 @@ export default function Home() {
               </div>
               
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full mx-auto mb-4"></div>
+                <div className="w-16 h-16 bg-gradient-to-bl from-blue-500 to-cyan-400 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Remedies</h3>
                 <p className="text-foreground/80">
                   Holistic approaches to physical health and emotional well-being.
@@ -47,7 +47,7 @@ export default function Home() {
               </div>
               
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full mx-auto mb-4"></div>
+                <div className="w-16 h-16 bg-gradient-to-bl from-green-500 to-emerald-200 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Wellness Tips</h3>
                 <p className="text-foreground/80">
                   Tips to change your life for the better.
