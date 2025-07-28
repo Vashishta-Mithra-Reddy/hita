@@ -5,6 +5,7 @@ import { getWellnessTips, getWellnessTipCategories } from '@/lib/supabase/wellne
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SearchFilter } from './search-filter';
+import BottomGradient from '@/components/BottomGradient';
 // import { WellnessTipCardSkeleton } from '@/components/skeletons/WellnessTipCardSkeleton';
 
 export default async function WellnessTipsPage({
@@ -25,7 +26,7 @@ export default async function WellnessTipsPage({
   const categories = await getWellnessTipCategories();
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-6xl">
+    <div className="wrapperx container mx-auto max-w-6xl">
       <h1 className="text-3xl font-bold mb-2">Hita&apos;s Wellness Tips</h1>
       <p className="text-foreground/70 mb-6">Simple, practical tips for your daily well-being journey</p>
       
@@ -71,6 +72,7 @@ export default async function WellnessTipsPage({
           ))}
         </div>
       )}
+      <BottomGradient/>
     </div>
   );
 }

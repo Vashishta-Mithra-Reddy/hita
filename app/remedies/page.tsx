@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
 import { Remedy } from '@/lib/supabase/remedies';
+import BottomGradient from "@/components/BottomGradient";
 
 export default function RemediesPage() {
   const [remedies, setRemedies] = useState<Remedy[]>([]);
@@ -59,7 +60,7 @@ export default function RemediesPage() {
   }));
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="wrapperx max-w-6xl mx-auto">
       <h1 className="text-3xl font-semibold mb-4">Verified Remedies</h1>
       <Input 
         placeholder="Search by remedy name or description" 
@@ -88,6 +89,7 @@ export default function RemediesPage() {
           )}
         </>
       )}
+      <BottomGradient/>
     </div>
   );
 }

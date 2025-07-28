@@ -5,6 +5,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { createClient } from '@/lib/supabase/client';
 import { Product, Category } from '@/lib/supabase/products';
 import { ProductCardSkeleton } from '@/components/skeletons/ProductCardSkeleton';
+import BottomGradient from '@/components/BottomGradient';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -73,7 +74,7 @@ export default function ProductsPage() {
   }));
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="wrapperx max-w-6xl mx-auto">
       <h1 className="text-3xl font-semibold mb-6">Product Discovery</h1>
       
       {/* Categories Section */}
@@ -146,6 +147,7 @@ export default function ProductsPage() {
           No products found. Try adjusting your search.
         </p>
       )}
+      <BottomGradient/>
     </div>
   );
 }

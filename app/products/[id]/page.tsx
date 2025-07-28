@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { OfflineAvailability, Product, ProductLink } from '@/lib/supabase/products';
 import Link from 'next/link';
 import { ProductDetailSkeleton } from '@/components/skeletons/ProductDetailSkeleton';
+import BottomGradient from '@/components/BottomGradient';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -54,7 +55,7 @@ export default function ProductDetailPage() {
   if (!product) return <div className="p-6 text-center">Product not found</div>;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="wrapperx max-w-5xl mx-auto">
       <Button 
         variant="outline" 
         onClick={() => router.back()}
@@ -220,6 +221,7 @@ export default function ProductDetailPage() {
           )}
         </div>
       </div>
+      <BottomGradient/>
     </div>
   );
 }

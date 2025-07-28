@@ -13,7 +13,7 @@ export default function Home() {
       />
       
       {/* Main Content */}
-      <main className="min-h-screen w-full flex flex-col">
+      <main className="min-h-screen w-[99vw] flex flex-col items-center">
         {/* Content Section 1 */}
         <section className="relative min-h-screen flex items-center justify-center p-8">
           <div className="max-w-4xl mx-auto text-center">
@@ -27,7 +27,7 @@ export default function Home() {
         </section>
 
         {/* Content Section 2 */}
-        <section className="relative rounded-xl flex items-center justify-center p-8 bg-foreground/5">
+        <section className="max-w-7xl relative rounded-xl flex items-center justify-center p-8 bg-foreground/5">
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center p-6">
@@ -58,7 +58,7 @@ export default function Home() {
         </section>
 
         {/* Content Section 3 */}
-        <section className="relative min-h-screen flex items-center justify-center p-8">
+        <section className=" max-w-7xl relative min-h-screen flex items-center justify-center p-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-6xl font-satoshi font-bold mb-4">
               Start Your Journey

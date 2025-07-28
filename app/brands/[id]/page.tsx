@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
 import { Brand, Product } from '@/lib/supabase/products';
 import { ProductCard } from '@/components/ProductCard';
+import BottomGradient from '@/components/BottomGradient';
 
 export default function BrandDetailPage() {
   const params = useParams();
@@ -75,7 +76,7 @@ export default function BrandDetailPage() {
   if (!brand) return <div className="p-6 text-center">Brand not found</div>;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="wrapperx max-w-6xl mx-auto">
       <Button 
         variant="outline" 
         onClick={() => router.back()}
@@ -152,6 +153,7 @@ export default function BrandDetailPage() {
           ))}
         </div>
       )}
+      <BottomGradient/>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Footer from "@/components/blocks/footer";
 import Header from "@/components/blocks/header";
 import BottomNav from "@/components/blocks/bottom-nav";
-import BottomGradient from "@/components/BottomGradient";
+// import BottomGradient from "@/components/BottomGradient";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -49,11 +49,11 @@ export default function RootLayout({
         >
           <Toaster/>
           <Header />
-          <div className="px-6 md:px-20 py-80 md:py-80 pt-16 md:pt-28 pb-16 md:pb-20">
+          <div>
             {children}
           </div>
           
-          <BottomGradient/>
+          {/* <BottomGradient/> */}
           <BottomNav/>
           <Footer />
         </ThemeProvider>

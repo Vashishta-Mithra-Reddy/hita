@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
 import { Brand } from '@/lib/supabase/products';
 import Link from 'next/link';
+import BottomGradient from '@/components/BottomGradient';
 
 export default function BrandsPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -39,7 +40,7 @@ export default function BrandsPage() {
   }, [search]);
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="wrapperx max-w-6xl mx-auto">
       <h1 className="text-3xl font-semibold mb-6">Brands</h1>
       
       {/* Search Section */}
@@ -100,6 +101,7 @@ export default function BrandsPage() {
           )}
         </>
       )}
+      <BottomGradient/>
     </div>
   );
 }

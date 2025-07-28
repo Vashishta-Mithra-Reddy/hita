@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
 import { Remedy } from '@/lib/supabase/remedies';
 import { RemedyDetailSkeleton } from '@/components/skeletons/RemedyDetailSkeleton';
+import BottomGradient from '@/components/BottomGradient';
 
 export default function RemedyDetailPage() {
   const params = useParams();
@@ -50,7 +51,7 @@ export default function RemedyDetailPage() {
   if (!remedy) return <div className="p-6 text-center">Remedy not found</div>;
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="wrapperx max-w-5xl mx-auto">
       <Button 
         variant="outline" 
         onClick={() => router.back()}
@@ -235,6 +236,7 @@ export default function RemedyDetailPage() {
           </div>
         </div>
       </div>
+      <BottomGradient/>
     </div>
   );
 }
