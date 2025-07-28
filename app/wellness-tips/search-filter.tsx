@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useDebounce } from '@/hooks/use-debounce';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface SearchFilterProps {
   categories: string[];
@@ -73,7 +74,7 @@ export function SearchFilter({
           placeholder="Search wellness tips..."
           value={search}
           onChange={handleSearchChange}
-          className="flex-1"
+          className="flex-1 shadow-none border-2 border-foreground/25 border-dashed h-12 rounded-lg"
           disabled={isPending}
         />
         {(search || selectedCategory) && (
@@ -103,7 +104,10 @@ export function SearchFilter({
       </div>
       
       {isPending && (
-        <div className="text-sm text-gray-500">Updating results...</div>
+        <div className="flex items-center space-x-2">
+          <Skeleton className="h-4 w-4 rounded-full" />
+          <span className="text-sm text-gray-500">Updating results...</span>
+        </div>
       )}
     </div>
   );

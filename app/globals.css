@@ -95,3 +95,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Add this to your global CSS file (globals.css) */
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-fadeOut {
+  animation: fadeOut 2s ease-out forwards;
+}
+
+/* Smooth scrolling for better experience */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar during initial animation if desired */
+body.no-scroll {
+  overflow: hidden;
+}

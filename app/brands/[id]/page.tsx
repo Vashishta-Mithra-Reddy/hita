@@ -85,24 +85,24 @@ export default function BrandDetailPage() {
       </Button>
 
       {/* Brand Header */}
-      <div className="bg-white rounded-2xl p-6 md:p-8 mb-8">
+      <div className="bg-foreground/5 rounded-2xl p-6 md:p-8 mb-8">
         <div className="flex flex-col md:flex-row md:items-center gap-6">
           {/* Brand Logo */}
           {brand.logo_url ? (
             <img 
               src={brand.logo_url} 
               alt={brand.name} 
-              className="w-24 h-24 object-contain"
+              className="w-24 h-24 object-contain bg-white px-2 rounded-xl"
             />
           ) : (
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center text-foreground">
               <span className="text-3xl font-semibold">{brand.name.charAt(0)}</span>
             </div>
           )}
           
           {/* Brand Info */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{brand.name}</h1>
+            <h1 className="text-3xl font-bold text-foreground">{brand.name}</h1>
             
             <div className="flex flex-wrap gap-2 mt-2">
               {brand.is_certified_organic && (

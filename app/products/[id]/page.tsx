@@ -4,21 +4,24 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client'; // Import the browser client instead
+import { createClient } from '@/lib/supabase/client';
 import { OfflineAvailability, Product, ProductLink } from '@/lib/supabase/products';
 import Link from 'next/link';
+import { ProductDetailSkeleton } from '@/components/skeletons/ProductDetailSkeleton';
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         if (!params.id) return;
         
+        setLoading(true);
         // Use the browser client directly instead of getProductById
         const supabase = createClient();
         const { data, error: fetchError } = await supabase
@@ -38,12 +41,15 @@ export default function ProductDetailPage() {
       } catch (err) {
         console.error('Error fetching product:', err);
         setError('Failed to load product details');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProduct();
   }, [params.id]);
 
+  if (loading) return <ProductDetailSkeleton />;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
   if (!product) return <div className="p-6 text-center">Product not found</div>;
 
@@ -57,7 +63,7 @@ export default function ProductDetailPage() {
         ← Back to Products
       </Button>
 
-      <div className="bg-white rounded-2xl p-6 md:p-8">
+      <div className="rounded-2xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
           <div className="flex items-center justify-center bg-gray-100 rounded-xl p-4">
@@ -76,7 +82,7 @@ export default function ProductDetailPage() {
 
           {/* Product Info */}
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+            <h1 className="text-3xl font-bold">{product.name}</h1>
             
             {product.brand && (
               <Link href={`/brands/${product.brand.id}`} className="text-blue-600 hover:underline mt-1 inline-block">
@@ -97,8 +103,8 @@ export default function ProductDetailPage() {
             )}
 
             {product.affordability_rating && (
-              <div className="mt-2">
-                <span className="font-medium">Affordability: </span>
+              <div className="mt-2 text-xl">
+                <span className="font-medium text-lg">Affordability: </span>
                 {'★'.repeat(product.affordability_rating)}
                 {'☆'.repeat(5 - product.affordability_rating)}
               </div>
@@ -109,7 +115,7 @@ export default function ProductDetailPage() {
             )}
 
             {product.short_description && (
-              <p className="mt-3 text-gray-700">{product.short_description}</p>
+              <p className="mt-3 text-foreground/80">{product.short_description}</p>
             )}
 
             {/* Buy Links */}
@@ -135,7 +141,7 @@ export default function ProductDetailPage() {
             {product.offline_availability && product.offline_availability.length > 0 && (
               <div className="mt-4">
                 <h3 className="font-medium mb-2">Available at:</h3>
-                <ul className="list-disc list-inside text-gray-700">
+                <ul className="list-disc list-inside text-foreground/80">
                   {product.offline_availability.map((store: OfflineAvailability) => (
                     <li key={store.id}>
                       {store.store_chain} 
@@ -157,7 +163,7 @@ export default function ProductDetailPage() {
           {product.description && (
             <div className="mb-6">
               <h3 className="font-medium mb-2">Description</h3>
-              <p className="text-gray-700">{product.description}</p>
+              <p className="text-foreground/80">{product.description}</p>
             </div>
           )}
 
@@ -165,7 +171,7 @@ export default function ProductDetailPage() {
           {product.key_features && product.key_features.length > 0 && (
             <div className="mb-6">
               <h3 className="font-medium mb-2">Key Features</h3>
-              <ul className="list-disc list-inside text-gray-700">
+              <ul className="list-disc list-inside text-foreground/80">
                 {product.key_features.map((feature: string, index: number) => (
                   <li key={index}>{feature}</li>
                 ))}
@@ -177,7 +183,7 @@ export default function ProductDetailPage() {
           {product.health_benefits && product.health_benefits.length > 0 && (
             <div className="mb-6">
               <h3 className="font-medium mb-2">Health Benefits</h3>
-              <ul className="list-disc list-inside text-gray-700">
+              <ul className="list-disc list-inside text-foreground/80">
                 {product.health_benefits.map((benefit: string, index: number) => (
                   <li key={index}>{benefit}</li>
                 ))}
@@ -189,7 +195,7 @@ export default function ProductDetailPage() {
           {product.ingredients && product.ingredients.length > 0 && (
             <div className="mb-6">
               <h3 className="font-medium mb-2">Ingredients</h3>
-              <p className="text-gray-700">{product.ingredients.join(', ')}</p>
+              <p className="text-foreground/80">{product.ingredients.join(', ')}</p>
             </div>
           )}
 
@@ -197,16 +203,16 @@ export default function ProductDetailPage() {
           {product.allergen_info && product.allergen_info.length > 0 && (
             <div className="mb-6">
               <h3 className="font-medium mb-2">Allergen Information</h3>
-              <p className="text-gray-700">{product.allergen_info.join(', ')}</p>
+              <p className="text-foreground/80">{product.allergen_info.join(', ')}</p>
             </div>
           )}
 
           {/* Tags */}
           {product.tags && product.tags.length > 0 && (
-            <div className="mt-6">
+            <div className="mb-6">
               <h3 className="font-medium mb-2">Tags</h3>
               <div className="flex flex-wrap gap-2">
-                {product.tags.map((tag: string, index: number) => (
+                {product.tags.map((tag, index) => (
                   <Badge key={index} variant="secondary">{tag}</Badge>
                 ))}
               </div>

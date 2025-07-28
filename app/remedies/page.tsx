@@ -1,6 +1,7 @@
 "use client";
 
 import { RemedyCard } from "@/components/RemedyCard";
+import { RemedyCardSkeleton } from "@/components/skeletons/RemedyCardSkeleton";
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
@@ -64,11 +65,15 @@ export default function RemediesPage() {
         placeholder="Search by remedy name or description" 
         value={search} 
         onChange={(e) => setSearch(e.target.value)} 
-        className="mb-6 max-w-md"
+        className="mb-6 max-w-md shadow-none border-2 border-foreground/15 border-dashed h-12 rounded-lg"
       />
       
       {loading ? (
-        <div className="text-center py-10">Loading remedies...</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array(6).fill(0).map((_, index) => (
+            <RemedyCardSkeleton key={index} />
+          ))}
+        </div>
       ) : error ? (
         <div className="text-center py-10 text-red-500">{error}</div>
       ) : (

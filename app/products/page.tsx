@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ProductCard } from '@/components/ProductCard';
 import { createClient } from '@/lib/supabase/client';
 import { Product, Category } from '@/lib/supabase/products';
-// import Link from 'next/link';
+import { ProductCardSkeleton } from '@/components/skeletons/ProductCardSkeleton';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -84,7 +84,7 @@ export default function ProductsPage() {
             onClick={() => setSelectedCategory(null)}
             className={`p-4 rounded-lg text-center transition-all ${!selectedCategory 
               ? 'bg-blue-100 text-blue-800 shadow-md' 
-              : 'bg-gray-100 hover:bg-gray-200'}`}
+              : 'bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200'}`}
           >
             All Products
           </button>
@@ -95,7 +95,7 @@ export default function ProductsPage() {
               onClick={() => setSelectedCategory(category.id)}
               className={`p-4 rounded-lg text-center transition-all ${selectedCategory === category.id 
                 ? 'bg-blue-100 text-blue-800 shadow-md' 
-                : 'bg-gray-100 hover:bg-gray-200'}`}
+                : 'bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200'}`}
             >
               {category.icon_url && (
                 <img 
@@ -116,7 +116,7 @@ export default function ProductsPage() {
           placeholder="Search products..." 
           value={search} 
           onChange={(e) => setSearch(e.target.value)} 
-          className="max-w-md"
+          className="max-w-md shadow-none border-2 border-foreground/25 border-dashed h-12 rounded-lg"
         />
       </div>
       
@@ -128,22 +128,23 @@ export default function ProductsPage() {
       )}
       
       {/* Products Grid */}
-      {loading ? (
-        <div className="text-center py-10">Loading products...</div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {transformedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          
-          {transformedProducts.length === 0 && (
-            <p className="text-muted-foreground text-center py-10">
-              No products found. Try adjusting your search.
-            </p>
-          )}
-        </>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+          // Show skeleton loaders while loading
+          Array(6).fill(0).map((_, index) => (
+            <ProductCardSkeleton key={index} />
+          ))
+        ) : (
+          transformedProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        )}
+      </div>
+      
+      {!loading && transformedProducts.length === 0 && (
+        <p className="text-muted-foreground text-center py-10">
+          No products found. Try adjusting your search.
+        </p>
       )}
     </div>
   );
