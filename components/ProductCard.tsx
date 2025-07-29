@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Product {
   id: string;
   name: string;
   description: string;
+  main_image: string;
   availableAt: {
     amazon: string;
     local?: string[];
@@ -15,6 +17,15 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/products/${product.id}`} className="block">
       <div className="rounded-2xl  transition-all duration-300 p-6 w-full max-w-md border-2 border-foreground/20 border-dashed">
+        {/* <div className='flex items-center justify-center'>
+        <Image
+            src={product.main_image}
+            alt={product.name}
+            width={100}
+            height={100}
+            className="w-100 h-100 object-cover rounded-md"
+          />
+        </div> */}
         <div className="flex items-start justify-between">
           <h2 className="text-2xl font-semibold text-foreground/80">{product.name}</h2>
           {/* {product.verified && (

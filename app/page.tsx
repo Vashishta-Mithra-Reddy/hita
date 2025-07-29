@@ -34,7 +34,7 @@ export default function Home() {
                 <div className="w-16 h-16 bg-gradient-to-bl from-purple-500 to-pink-500 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Products</h3>
                 <p className="text-foreground/80">
-                  You will find better and healthier and trusted products.
+                  You will find better, healthier and trusted products.
                 </p>
               </div>
               

@@ -67,12 +67,12 @@ export default function ProductDetailPage() {
       <div className="rounded-2xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
-          <div className="flex items-center justify-center bg-gray-100 rounded-xl p-4">
+          <div className="flex items-center justify-center bg-foreground/5 rounded-xl p-4">
             {product.main_image_url ? (
               <img 
                 src={product.main_image_url} 
                 alt={product.name} 
-                className="max-h-80 object-contain"
+                className="max-h-80 object-contain rounded-lg"
               />
             ) : (
               <div className="h-64 w-full flex items-center justify-center text-gray-400">
