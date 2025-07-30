@@ -20,7 +20,7 @@ export default function BrandDetailPage() {
   useEffect(() => {
     const fetchBrandAndProducts = async () => {
       try {
-        if (!params.id) return;
+        if (!params.slug) return;
         
         setLoading(true);
         const supabase = createClient();
@@ -29,7 +29,7 @@ export default function BrandDetailPage() {
         const { data: brandData, error: brandError } = await supabase
           .from('brands')
           .select('*')
-          .eq('id', params.id as string)
+          .eq('slug', params.slug as string)
           .single();
           
         if (brandError) throw brandError;
@@ -43,7 +43,7 @@ export default function BrandDetailPage() {
             category:categories(*),
             product_links(*)
           `)
-          .eq('brand_id', params.id as string)
+          .eq('brand_id', brandData.id)
           .eq('is_active', true);
           
         if (productsError) throw productsError;
@@ -57,12 +57,14 @@ export default function BrandDetailPage() {
     };
 
     fetchBrandAndProducts();
-  }, [params.id]);
+  }, [params.slug]);
 
   // Transform product data for ProductCard component
   const transformedProducts = products.map(product => ({
     id: product.id,
     name: product.name,
+    slug: product.slug,
+    main_image: product.main_image_url || 'https://cnbronoezgwgolbyywqr.supabase.co/storage/v1/object/public/photos//placeholder_hita.png',
     description: product.short_description || product.description || '',
     availableAt: {
       amazon: product.product_links?.find(link => link.platform_name.toLowerCase() === 'amazon')?.product_url || '#',

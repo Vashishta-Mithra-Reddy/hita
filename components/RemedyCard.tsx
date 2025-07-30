@@ -4,6 +4,7 @@ import Link from "next/link";
 interface Remedy {
   id: string;
   name: string;
+  slug: string;
   description: string;
   issues: string[];
   successCount: number;
@@ -23,7 +24,7 @@ export function RemedyCard({ remedy }: { remedy: Remedy }) {
       
       <div className="text-xs flex items-center gap-2">
         <Button variant="outline" size="sm">✅ Effectiveness ({remedy.successCount}/5)</Button>
-        <Link href={`/remedies/${remedy.id}`}>
+        <Link href={`/remedies/${remedy.slug}`}>
           <Button variant="outline" size="sm">View Details</Button>
         </Link>
       </div>

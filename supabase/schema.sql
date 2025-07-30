@@ -23,6 +23,7 @@ CREATE TABLE categories (
 CREATE TABLE brands (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(150) NOT NULL UNIQUE,
+    slug text NOT NULL UNIQUE,
     description TEXT,
     logo_url VARCHAR(500),
     website_url VARCHAR(500),
@@ -40,6 +41,7 @@ CREATE TABLE brands (
 CREATE TABLE products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(200) NOT NULL,
+    slug text NOT NULL UNIQUE,
     brand_id UUID REFERENCES brands(id),
     category_id UUID NOT NULL REFERENCES categories(id),
     description TEXT,
@@ -136,6 +138,7 @@ CREATE TABLE remedy_categories (
 CREATE TABLE remedies (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     title VARCHAR(250) NOT NULL,
+    slug text NOT NULL UNIQUE,
     category_id UUID NOT NULL REFERENCES remedy_categories(id),
     
     -- Content
@@ -276,6 +279,7 @@ CREATE TABLE reviews (
 create table if not exists wellness_tips (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title text not null,
+  slug text NOT NULL UNIQUE,
   content text not null,
   category text, -- e.g., 'gut health', 'sleep', etc.
   created_at timestamp with time zone default now()

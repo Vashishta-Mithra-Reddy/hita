@@ -16,6 +16,7 @@ export interface RemedyCategory {
 export interface Remedy {
   id: string;
   title: string;
+  slug: string;
   category_id: string;
   description: string;
   ingredients: string[];

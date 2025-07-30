@@ -16,6 +16,7 @@ export interface Category {
 export interface Brand {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   logo_url: string | null;
   website_url: string | null;
@@ -30,6 +31,7 @@ export interface Brand {
 export interface Product {
   id: string;
   name: string;
+  slug: string;
   brand_id: string | null;
   category_id: string;
   description: string | null;
@@ -188,6 +190,27 @@ export async function getProductById(id: string) {
       offline_availability(*)
     `)
     .eq('id', id)
+    .single();
+
+  if (error) throw error;
+  return data as Product;
+}
+
+/**
+ * Get a single product by Slug
+ */
+export async function getProductBySlug(slug: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from('products')
+    .select(`
+      *,
+      brand:brands(*),
+      category:categories(*),
+      product_links(*),
+      offline_availability(*)
+    `)
+    .eq('slug', slug)
     .single();
 
   if (error) throw error;

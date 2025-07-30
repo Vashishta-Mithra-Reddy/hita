@@ -64,6 +64,7 @@ export default function ProductsPage() {
   // Transform product data for ProductCard component
   const transformedProducts = products.map(product => ({
     id: product.id,
+    slug: product.slug,
     name: product.name,
     description: product.short_description || product.description || '',
     main_image: product.main_image_url || 'https://cnbronoezgwgolbyywqr.supabase.co/storage/v1/object/public/photos//placeholder_hita.png',

@@ -19,7 +19,7 @@ export default function RemedyDetailPage() {
   useEffect(() => {
     const fetchRemedy = async () => {
       try {
-        if (!params.id) return;
+        if (!params.slug) return;
         
         setLoading(true);
         // Use the browser client directly
@@ -30,7 +30,7 @@ export default function RemedyDetailPage() {
             *,
             category:remedy_categories(*)
           `)
-          .eq('id', params.id as string)
+          .eq('slug', params.slug as string)
           .single();
           
         if (fetchError) throw fetchError;
@@ -44,7 +44,7 @@ export default function RemedyDetailPage() {
     };
 
     fetchRemedy();
-  }, [params.id]);
+  }, [params.slug]);
 
   if (loading) return <RemedyDetailSkeleton />;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;

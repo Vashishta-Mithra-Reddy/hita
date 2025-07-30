@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import Image from 'next/image';
+// import Image from 'next/image';
 
 interface Product {
   id: string;
   name: string;
+  slug: string;
   description: string;
   main_image: string;
   availableAt: {
@@ -15,7 +16,7 @@ interface Product {
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <Link href={`/products/${product.id}`} className="block">
+    <Link href={`/products/${product.slug}`} className="block">
       <div className="rounded-2xl  transition-all duration-300 p-6 w-full max-w-md border-2 border-foreground/20 border-dashed">
         {/* <div className='flex items-center justify-center'>
         <Image

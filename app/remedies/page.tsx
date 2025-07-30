@@ -52,6 +52,7 @@ export default function RemediesPage() {
   const transformedRemedies = remedies.map(remedy => ({
     id: remedy.id,
     name: remedy.title,
+    slug: remedy.slug,
     description: remedy.description,
     issues: remedy.symptoms_treated || [],
     verifiedBy: remedy.is_verified ? ['admin'] : [],
@@ -81,7 +82,7 @@ export default function RemediesPage() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {transformedRemedies.map((remedy) => (
-              <RemedyCard key={remedy.id} remedy={remedy} />
+              <RemedyCard key={remedy.slug} remedy={remedy} />
             ))}
           </div>
           {transformedRemedies.length === 0 && (
