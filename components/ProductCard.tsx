@@ -21,7 +21,7 @@ export function ProductCard({ product }: { product: Product }) {
     <Link href={`/products/${product.slug}`} className="block group">
       <div className="rounded-2xl transition-all duration-300 p-6 w-full max-w-md border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1">
         {/* Image Container */}
-        <div className="flex items-start justify-start mb-6">
+        {/* <div className="flex items-start justify-start mb-6">
           <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 w-full aspect-square max-w-[200px]">
             <Image
               src={product.main_image || "/placeholder.svg"}
@@ -30,7 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
               className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Content */}
         <div className="space-y-3">
