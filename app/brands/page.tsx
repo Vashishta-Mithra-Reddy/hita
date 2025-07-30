@@ -61,7 +61,7 @@ export default function BrandsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {brands.map((brand) => (
               <Link key={brand.id} href={`/brands/${brand.slug}`} className="block">
-                <div className="rounded-2xl border-dashed duration-300 p-6 h-full border-2 hover:scale-105 border-foreground/20">
+                <div className="rounded-2xl border-dashed duration-300 p-6 h-full border-2 hover:scale-105 border-foreground/20 hover:border-foreground/40">
                   <div className="flex items-center gap-4 mb-4">
                     {brand.logo_url ? (
                       <img 
