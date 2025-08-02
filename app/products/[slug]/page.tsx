@@ -55,7 +55,7 @@ export default function ProductDetailPage() {
   if (!product) return <div className="p-6 text-center">Product not found</div>;
 
   return (
-    <div className="wrapperx max-w-5xl mx-auto">
+    <div className="wrapperx max-w-6xl mx-auto">
       <Button 
         variant="outline" 
         onClick={() => router.back()}

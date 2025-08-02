@@ -47,9 +47,9 @@ export default function HeroSection({
       {/* Hero Container */}
       <div 
         className={`
-          relative overflow-hidden bg-black
+          relative overflow-hidden bg-black rounded-sm
           transition-all duration-700 ease-out
-          ${isAnimating ? 'fixed inset-0' : 'sticky top-28'}
+          ${isAnimating ? 'fixed inset-0' : 'sticky top-32'}
         `}
         style={{
           transform: `scale(${scale})`,

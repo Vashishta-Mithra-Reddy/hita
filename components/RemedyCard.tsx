@@ -1,4 +1,4 @@
-import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 import Link from "next/link";
 
 interface Remedy {
@@ -14,7 +14,8 @@ interface Remedy {
 
 export function RemedyCard({ remedy }: { remedy: Remedy }) {
   return (
-    <div className="p-6 border-2 border-dashed rounded-xl space-y-2 transition-shadow">
+    <Link href={`/remedies/${remedy.slug}`}>
+    <div className="p-6 border-2 border-dashed rounded-xl space-y-2 transition-all hover:scale-105 duration-300 hover:border-foreground/20">
       <h2 className="text-xl font-bold">{remedy.name}</h2>
       <p className="text-foreground/60 text-sm">{remedy.description}</p>
       
@@ -23,10 +24,10 @@ export function RemedyCard({ remedy }: { remedy: Remedy }) {
       )}
       
       <div className="text-xs flex items-center gap-2">
-        <Button variant="outline" size="sm">✅ Effectiveness ({remedy.successCount}/5)</Button>
-        <Link href={`/remedies/${remedy.slug}`}>
+        <Badge variant="outline" className="px-2 py-2 bg-green-500/10 border-green-500/30">✅ Effectiveness ({remedy.successCount}/5)</Badge>
+        {/* <Link href={`/remedies/${remedy.slug}`}>
           <Button variant="outline" size="sm">View Details</Button>
-        </Link>
+        </Link> */}
       </div>
       
       {remedy.verifiedBy && remedy.verifiedBy.includes('admin') && (
@@ -36,5 +37,6 @@ export function RemedyCard({ remedy }: { remedy: Remedy }) {
       {/* <p className="text-xs text-yellow-600">Warning: Consult a doctor for serious issues.</p> */}
       <p className="text-xs text-muted-foreground italic">Based on genuine user experiences.</p>
     </div>
+    </Link>
   );
 }

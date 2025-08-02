@@ -34,8 +34,8 @@ export function ProductCard({ product }: { product: Product }) {
 
         {/* Content */}
         <div className="space-y-3">
-          <div className="flex items-start justify-between">
-            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-wrap">{product.name}</h2>
+          <div className="flex items-center md:items-start justify-center md:justify-between">
+            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start">{product.name}</h2>
             {/* {product.verified && (
               <span className="ml-2 inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shrink-0">
                 ✅ Verified
@@ -43,7 +43,7 @@ export function ProductCard({ product }: { product: Product }) {
             )} */}
           </div>
 
-          <p className="text-foreground/60 text-sm leading-relaxed line-clamp-3">{product.description}</p>
+          <p className="text-foreground/60 text-sm leading-relaxed line-clamp-3 md:text-start text-center">{product.description}</p>
 
           {/* Action Buttons */}
           {/* <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm">

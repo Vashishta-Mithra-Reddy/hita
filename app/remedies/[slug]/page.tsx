@@ -51,7 +51,7 @@ export default function RemedyDetailPage() {
   if (!remedy) return <div className="p-6 text-center">Remedy not found</div>;
 
   return (
-    <div className="wrapperx max-w-5xl mx-auto">
+    <div className="wrapperx max-w-6xl mx-auto">
       <Button 
         variant="outline" 
         onClick={() => router.back()}
@@ -61,9 +61,9 @@ export default function RemedyDetailPage() {
       </Button>
 
       <div className="rounded-2xl p-6 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
           {/* Remedy Image */}
-          <div className="flex items-center justify-center bg-gray-100 rounded-xl p-4">
+          {/* <div className="flex items-center justify-center bg-gray-100 rounded-xl p-4">
             {remedy.main_image_url ? (
               <img 
                 src={remedy.main_image_url} 
@@ -75,14 +75,14 @@ export default function RemedyDetailPage() {
                 No image available
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Remedy Info */}
-          <div>
-            <h1 className="text-3xl font-bold">{remedy.title}</h1>
+          <div className='bg-foreground/5 w-full px-8 py-12 rounded-lg'>
+            <h1 className="text-3xl font-bold font-satoshi text-balance">{remedy.title}</h1>
             
             {remedy.category && (
-              <div className="mt-1">
+              <div className="mt-4">
                 <Badge variant="secondary">{remedy.category.name}</Badge>
               </div>
             )}
@@ -114,14 +114,20 @@ export default function RemedyDetailPage() {
         </div>
 
         {/* Remedy Details */}
-        <div className="mt-8">
+        <div className="mt-8 px-4">
           <h2 className="text-2xl font-semibold mb-4">Remedy Details</h2>
           
           {/* Preparation Method */}
           <div className="mb-6">
             <h3 className="font-medium mb-2">Preparation Method</h3>
-            <p className="text-foreground/80 whitespace-pre-line">{remedy.preparation_method}</p>
+            <div className="text-foreground/80">
+              {remedy.preparation_method.replace(/\\n/g, '\n').split('\n').map((line, index) => (
+                <p key={index} className="mb-1">{line}</p>
+              ))}
+            </div>
           </div>
+
+
 
           {/* Usage Instructions */}
           <div className="mb-6">
@@ -226,12 +232,11 @@ export default function RemedyDetailPage() {
           )}
 
           {/* Warning Notice */}
-          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-yellow-800 font-medium">Important Notice</p>
-            <p className="text-yellow-700 text-sm mt-1">
+          <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+            <p className="font-bold">Important Notice</p>
+            <p className="text-yellow-50 text-sm mt-1">
               This remedy is based on traditional practices and user experiences. 
-              Always consult with a healthcare professional before trying any new remedy, 
-              especially if you have existing health conditions or are taking medications.
+              Procced with caution especially if you have existing health conditions or are taking medications.
             </p>
           </div>
         </div>
