@@ -15,12 +15,12 @@ export default function Home() {
       {/* Main Content */}
       <main className="min-h-screen w-[99vw] flex flex-col items-center">
         {/* Content Section 1 */}
-        <section className="relative min-h-screen flex items-center justify-center p-8">
+        <section className="relative py-40 md:py-60 flex items-center justify-center px-12">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-6xl font-satoshi font-bold text-foreground mb-6">
               Welcome to Hita
             </h2>
-            <p className="text-xl text-foreground/80 leading-relaxed">
+            <p className="text-xl text-foreground/80 leading-relaxed text-balance">
               Here you can find healthier alternatives to your daily goods or such and also you&apos;ll find remedies, wellness tips and so much more.
             </p>
           </div>
@@ -58,7 +58,7 @@ export default function Home() {
         </section>
 
         {/* Content Section 3 */}
-        <section className=" max-w-7xl relative min-h-screen flex items-center justify-center p-8">
+        <section className="max-w-7xl relative py-40 md:py-60 flex items-center justify-center p-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-6xl font-satoshi font-bold mb-4">
               Start Your Journey
@@ -66,7 +66,7 @@ export default function Home() {
             <p className="text-xl text-foreground/80 mb-10">
               Ready to transform your well-being? 
             </p>
-            <Link href="/products" className="px-12 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-semibold hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <Link href="/products" className="px-12 py-4 bg-radial dark:from-blue-300/80 from-blue-300 dark:via-blue-300/80 via-blue-300 dark:to-blue-400/80 to-blue-400/80 border-blue-500/50 border-2 text-white rounded-full font-semibold font-satoshi tracking-wide hover:shadow-xl transition-all duration-300 hover:scale-105">
               Browse Through Products
             </Link>
           </div>

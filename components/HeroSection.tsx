@@ -13,7 +13,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ 
   text = "हित",
-  animationDuration = 2000 
+  animationDuration = 4000 
 }: HeroSectionProps) {
   const [scrollY, setScrollY] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
@@ -36,14 +36,14 @@ export default function HeroSection({
 
   // Calculate scroll-based transformations
   const scrollProgress = Math.min(scrollY / 400, 1); // Normalize scroll to 0-1
-  const scale = 1 - scrollProgress * 0.05; // Slight scale down
-  const borderRadius = scrollProgress * 24; // Increase border radius
+  const scale = 1 - scrollProgress * 0.1; // Slight scale down
+  const borderRadius = scrollProgress * 28; // Increase border radius
   const marginTop = scrollProgress * 32; // Add top margin
   const marginHorizontal = scrollProgress * 32; // Add horizontal margins
   const router = useRouter();
 
   return (
-    <section className="relative min-h-screen w-full">
+    <section className="relative min-h-screen">
       {/* Hero Container */}
       <div 
         className={`

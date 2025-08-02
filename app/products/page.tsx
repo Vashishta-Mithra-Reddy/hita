@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { ProductCard } from '@/components/ProductCard';
 import { createClient } from '@/lib/supabase/client';
@@ -13,6 +13,8 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const productsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -43,7 +45,6 @@ export default function ProductsPage() {
         `)
         .eq('is_active', true);
 
-      // Apply filters
       if (selectedCategory) query = query.eq('category_id', selectedCategory);
       if (search) query = query.ilike('name', `%${search}%`);
 
@@ -61,7 +62,6 @@ export default function ProductsPage() {
     fetchProducts();
   }, [search, selectedCategory]);
 
-  // Transform product data for ProductCard component
   const transformedProducts = products.map(product => ({
     id: product.id,
     slug: product.slug,
@@ -72,7 +72,7 @@ export default function ProductsPage() {
       amazon: product.product_links?.find(link => link.platform_name.toLowerCase() === 'amazon')?.product_url || '#',
       local: product.offline_availability?.map(store => store.store_chain) || [],
     },
-    verified: product.is_featured, // Using is_featured as a proxy for verified
+    verified: product.is_featured,
   }));
 
   return (
@@ -84,7 +84,10 @@ export default function ProductsPage() {
         <h2 className="text-xl font-medium mb-4">Browse by Category</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           <button
-            onClick={() => setSelectedCategory(null)}
+            onClick={() => {
+              setSelectedCategory(null);
+              productsRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }}
             className={`p-4 rounded-lg text-center transition-all ${!selectedCategory 
               ? 'bg-blue-100 text-blue-800 shadow-md' 
               : 'bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200'}`}
@@ -95,7 +98,10 @@ export default function ProductsPage() {
           {categories.map(category => (
             <button
               key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
+              onClick={() => {
+                setSelectedCategory(category.id);
+                productsRef.current?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className={`p-4 rounded-lg text-center transition-all ${selectedCategory === category.id 
                 ? 'bg-blue-100 text-blue-800 shadow-md' 
                 : 'bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200'}`}
@@ -131,9 +137,8 @@ export default function ProductsPage() {
       )}
       
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div ref={productsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          // Show skeleton loaders while loading
           Array(6).fill(0).map((_, index) => (
             <ProductCardSkeleton key={index} />
           ))
