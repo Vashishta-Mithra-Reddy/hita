@@ -47,9 +47,9 @@ export default function HeroSection({
       {/* Hero Container */}
       <div 
         className={`
-          relative overflow-hidden bg-black rounded-sm
+            relative overflow-hidden bg-black
           transition-all duration-700 ease-out
-          ${isAnimating ? 'fixed inset-0' : 'sticky top-32'}
+          ${isAnimating ? 'fixed inset-0' : 'sticky top-8 md:top-32'}
         `}
         style={{
           transform: `scale(${scale})`,
@@ -57,7 +57,7 @@ export default function HeroSection({
           marginTop: `${marginTop}px`,
           marginLeft: `${marginHorizontal}px`,
           marginRight: `${marginHorizontal}px`,
-          height: isAnimating ? '100vh' : `${100 - scrollProgress * 20}vh`,
+          height: isAnimating ? '100vh' : `${80 - scrollProgress * 20}vh`,
           minHeight: '80vh'
         }}
       >
