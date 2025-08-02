@@ -49,7 +49,7 @@ export default function HeroSection({
         className={`
             relative overflow-hidden bg-black
           transition-all duration-700 ease-out
-          ${isAnimating ? 'fixed inset-0' : 'sticky top-8 md:top-32'}
+          ${isAnimating ? 'fixed inset-0' : 'sticky top-8 md:top-36'}
         `}
         style={{
           transform: `scale(${scale})`,
