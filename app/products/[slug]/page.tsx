@@ -100,7 +100,7 @@ export default function ProductDetailPage() {
             </div>
 
             {product.price_range && (
-              <p className="mt-4 text-lg font-medium">Price Range: {product.price_range}</p>
+              <p className="mt-4 text-lg font-medium">Pricing: {product.price_range}</p>
             )}
 
             {product.affordability_rating && (

@@ -77,11 +77,12 @@ export default function ProductsPage() {
 
   return (
     <div className="wrapperx max-w-6xl mx-auto">
-      <h1 className="text-3xl font-semibold mb-6">Product Discovery</h1>
+      <h1 className="text-3xl font-bold mb-2">Products</h1>
+      <p className="text-base text-muted-foreground italic mb-4">Products which you can trust.</p>
       
       {/* Categories Section */}
       <div className="mb-8">
-        <h2 className="text-xl font-medium mb-4">Browse by Category</h2>
+        {/* <h2 className="text-xl font-medium mb-4">Browse by Category</h2> */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           <button
             onClick={() => {

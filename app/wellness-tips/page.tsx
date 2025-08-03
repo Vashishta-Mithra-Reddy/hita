@@ -28,7 +28,7 @@ export default async function WellnessTipsPage({
   return (
     <div className="wrapperx container mx-auto max-w-6xl">
       <h1 className="text-3xl font-bold mb-2">Hita&apos;s Wellness Tips</h1>
-      <p className="text-foreground/70 mb-6">Simple, practical tips for your daily well-being journey</p>
+      <p className="text-base text-foreground/70 mb-6 italic">Simple, practical tips for your daily well-being</p>
       
       <Suspense fallback={
         <div className="mb-8 space-y-4">

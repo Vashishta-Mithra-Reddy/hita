@@ -41,7 +41,8 @@ export default function BrandsPage() {
 
   return (
     <div className="wrapperx max-w-6xl mx-auto">
-      <h1 className="text-3xl font-semibold mb-6">Brands</h1> 
+      <h1 className="text-3xl font-bold mb-2">Brands</h1> 
+      <p className="text-base text-muted-foreground italic mb-4">Brands which you can trust.</p>
       
       {/* Search Section */}
       <div className="mb-6">

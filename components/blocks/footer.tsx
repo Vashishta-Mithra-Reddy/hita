@@ -20,7 +20,7 @@ return(
                           target="_blank"
                           className="underline text-foreground inline-flex items-center gap-1 group transition-all duration-500 pl-1 hover:text-primary"
                         >
-                          Vashishta
+                          Vashishta Mithra
                           <ArrowUpRight className="w-5 h-5 transition-all duration-500" />
                         </Link>
                       </p>

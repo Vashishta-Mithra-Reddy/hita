@@ -62,7 +62,8 @@ export default function RemediesPage() {
 
   return (
     <div className="wrapperx max-w-6xl mx-auto">
-      <h1 className="text-3xl font-semibold mb-4">Verified Remedies</h1>
+      <h1 className="text-3xl font-bold mb-2">Verified Remedies</h1>
+      <p className="text-base text-muted-foreground italic mb-4">Stuff that works.</p>
       <Input 
         placeholder="Search by remedy name or description" 
         value={search} 

@@ -79,7 +79,7 @@ export default function RemedyDetailPage() {
 
           {/* Remedy Info */}
           <div className='bg-foreground/5 w-full px-8 py-12 rounded-lg'>
-            <h1 className="text-3xl font-bold font-satoshi text-balance">{remedy.title}</h1>
+            <h1 className="text-4xl font-bold text-balance">{remedy.title}</h1>
             
             {remedy.category && (
               <div className="mt-4">
@@ -88,7 +88,7 @@ export default function RemedyDetailPage() {
             )}
             
             <div className="flex flex-wrap gap-2 mt-3">
-              {remedy.is_verified && <Badge className="bg-green-100 text-green-800">Expert Verified</Badge>}
+              {remedy.is_verified && <Badge className="bg-green-100 text-green-800">Verified</Badge>}
               {remedy.is_featured && <Badge variant="outline">Featured</Badge>}
               {remedy.difficulty_level && (
                 <Badge variant="outline">Difficulty: {remedy.difficulty_level}</Badge>
@@ -234,7 +234,7 @@ export default function RemedyDetailPage() {
           {/* Warning Notice */}
           <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
             <p className="font-bold">Important Notice</p>
-            <p className="text-yellow-50 text-sm mt-1">
+            <p className="text-yellow-900 dark:text-yellow-50 text-base mt-1">
               This remedy is based on traditional practices and user experiences. 
               Procced with caution especially if you have existing health conditions or are taking medications.
             </p>

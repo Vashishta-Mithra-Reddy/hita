@@ -30,12 +30,8 @@ export function RemedyCard({ remedy }: { remedy: Remedy }) {
         </Link> */}
       </div>
       
-      {remedy.verifiedBy && remedy.verifiedBy.includes('admin') && (
-        <span className="inline-block bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">Expert Verified</span>
-      )}
-      
       {/* <p className="text-xs text-yellow-600">Warning: Consult a doctor for serious issues.</p> */}
-      <p className="text-xs text-muted-foreground italic">Based on genuine user experiences.</p>
+      
     </div>
     </Link>
   );
