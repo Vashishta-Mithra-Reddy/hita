@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { Citrus, Fingerprint, Heart, Home, Package } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function BottomNav() {
@@ -9,10 +9,10 @@ export default function BottomNav() {
   
   const navigationLinks = [
     { href: "/", label: "Home", icon: <Home  className="h-5 w-5" /> },
-    { href: "/products", label: "Products", icon: <Home className="h-5 w-5" /> },
-    { href: "/brands", label: "Brands", icon: <Home className="h-5 w-5" /> },
-    { href: "/remedies", label: "Remedies", icon: <Home className="h-5 w-5" /> },
-    { href: "/wellness-tips", label: "Wellness Tips", icon: <Home className="h-5 w-5" /> }
+    { href: "/products", label: "Products", icon: <Package className="h-5 w-5" /> },
+    { href: "/brands", label: "Brands", icon: <Fingerprint className="h-5 w-5" /> },
+    { href: "/remedies", label: "Remedies", icon: <Citrus className="h-5 w-5" /> },
+    { href: "/wellness-tips", label: "Wellness", icon: <Heart className="h-5 w-5" /> }
     
   ];
 

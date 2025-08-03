@@ -126,7 +126,7 @@ export default function ProductsPage() {
           placeholder="Search products..." 
           value={search} 
           onChange={(e) => setSearch(e.target.value)} 
-          className="max-w-md shadow-none border-2 border-foreground/25 border-dashed h-12 rounded-lg"
+          className="max-w-md shadow-none border-2 border-foreground/25 border-dashed h-12 rounded-lg focus:ring-0 focus:outline-none active:ring-0 active:outline-none focus:border-foreground/30"
         />
       </div>
       

@@ -13,7 +13,7 @@ export default function Home() {
       />
       
       {/* Main Content */}
-      <main className="min-h-screen w-[99vw] flex flex-col items-center">
+      <main className="min-h-screen w-lvw flex flex-col items-center">
         {/* Content Section 1 */}
         <section className="relative py-40 md:py-60 flex items-center justify-center px-12">
           <div className="max-w-4xl mx-auto text-center">
