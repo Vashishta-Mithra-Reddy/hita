@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Brand, Product } from '@/lib/supabase/products';
 import { ProductCard } from '@/components/ProductCard';
 import BottomGradient from '@/components/BottomGradient';
+import { BrandDetailSkeleton } from '@/components/skeletons/BrandDetailSkeleton';
 
 export default function BrandDetailPage() {
   const params = useParams();
@@ -73,7 +74,16 @@ export default function BrandDetailPage() {
     verified: product.is_featured,
   }));
 
-  if (loading) return <div className="p-6 text-center">Loading brand details...</div>;
+  if (loading) {
+    return (
+      <div className="wrapperx max-w-6xl mx-auto">
+        <Suspense fallback={<BrandDetailSkeleton />}>
+          <BrandDetailSkeleton />
+        </Suspense>
+      </div>
+    );
+  }
+  
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
   if (!brand) return <div className="p-6 text-center">Brand not found</div>;
 
@@ -111,9 +121,6 @@ export default function BrandDetailPage() {
               {brand.is_certified_organic && (
                 <Badge variant="outline" className="bg-green-50 dark:bg-green-600/50">Certified Organic</Badge>
               )}
-              {/* {brand.country_of_origin && (
-                <Badge variant="outline">Origin: {brand.country_of_origin}</Badge>
-              )} */}
               {brand.certifications && brand.certifications.length > 0 && (
                 brand.certifications.map((cert, index) => (
                   <Badge key={index} variant="secondary">{cert}</Badge>

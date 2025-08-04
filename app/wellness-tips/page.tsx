@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SearchFilter } from './search-filter';
 import BottomGradient from '@/components/BottomGradient';
-// import { WellnessTipCardSkeleton } from '@/components/skeletons/WellnessTipCardSkeleton';
+import { WellnessTipCardSkeleton } from '@/components/skeletons/WellnessTipCardSkeleton';
 
 export default async function WellnessTipsPage({
   searchParams,
@@ -49,29 +49,37 @@ export default async function WellnessTipsPage({
         />
       </Suspense>
 
-      {tips.length === 0 ? (
-        <div className="text-center py-10">
-          <p className="text-gray-500">No wellness tips found. Try adjusting your search.</p>
-        </div>
-      ) : (
+      <Suspense fallback={
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tips.map((tip) => (
-            <Card key={tip.id} className="overflow-hidden shadow-none border-2 border-dashed">
-              <CardHeader>
-                <CardTitle className="text-lg">{tip.title}</CardTitle>
-                {tip.category && (
-                  <Badge variant="secondary" className="w-fit">
-                    {tip.category}
-                  </Badge>
-                )}
-              </CardHeader>
-              <CardContent>
-                <p className="whitespace-pre-line">{tip.content}</p>
-              </CardContent>
-            </Card>
+          {Array(9).fill(0).map((_, i) => (
+            <WellnessTipCardSkeleton key={i} />
           ))}
         </div>
-      )}
+      }>
+        {tips.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-500">No wellness tips found. Try adjusting your search.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tips.map((tip) => (
+              <Card key={tip.id} className="overflow-hidden shadow-none border-2 border-dashed">
+                <CardHeader>
+                  <CardTitle className="text-lg">{tip.title}</CardTitle>
+                  {tip.category && (
+                    <Badge variant="secondary" className="w-fit">
+                      {tip.category}
+                    </Badge>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <p className="whitespace-pre-line">{tip.content}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </Suspense>
       <BottomGradient/>
     </div>
   );
