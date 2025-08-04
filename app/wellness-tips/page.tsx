@@ -73,7 +73,7 @@ export default async function WellnessTipsPage({
                   )}
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-line">{tip.content}</p>
+                  <p className="whitespace-pre-line text-balance">{tip.content}</p>
                 </CardContent>
               </Card>
             ))}

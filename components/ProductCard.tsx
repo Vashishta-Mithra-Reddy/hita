@@ -34,8 +34,8 @@ export function ProductCard({ product }: { product: Product }) {
 
         {/* Content */}
         <div className="space-y-3">
-          <div className="flex items-center md:items-start justify-center md:justify-between">
-            <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 w-full aspect-square max-w-[100px] mr-6">
+          <div className="flex flex-col md:flex-row items-center md:items-start justify-center">
+            <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 w-full aspect-square max-w-[100px] mr-0 md:mr-6 mb-6 md:mb-0">
                 <Image
                   src={product.main_image || "/placeholder.svg"}
                   alt={product.name}
@@ -44,7 +44,7 @@ export function ProductCard({ product }: { product: Product }) {
                 />
               </div>
             <div>
-            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start line-clamp-3 text-balance">{product.name}</h2>
+            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start line-clamp-3 text-pretty">{product.name}</h2>
             <p className="text-foreground/60 text-sm leading-relaxed md:text-start text-center line-clamp-1">{product.description}</p>
             </div>
             {/* {product.verified && (

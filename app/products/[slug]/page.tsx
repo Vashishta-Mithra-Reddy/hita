@@ -86,7 +86,7 @@ export default function ProductDetailPage() {
             <h1 className="text-3xl font-bold">{product.name}</h1>
             
             {product.brand && (
-              <Link href={`/brands/${product.brand.id}`} className="text-foreground/70 hover:text-foreground/90 mt-1 inline-block">
+              <Link href={`/brands/${product.brand.slug}`} className="text-foreground/70 hover:text-foreground/90 mt-1 inline-block">
                 {product.brand.name}
               </Link>
             )}
