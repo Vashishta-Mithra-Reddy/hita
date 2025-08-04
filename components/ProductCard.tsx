@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-// import Image from "next/image"
+import Image from "next/image"
 
 interface Product {
   id: string
@@ -35,7 +35,18 @@ export function ProductCard({ product }: { product: Product }) {
         {/* Content */}
         <div className="space-y-3">
           <div className="flex items-center md:items-start justify-center md:justify-between">
-            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start">{product.name}</h2>
+            <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 w-full aspect-square max-w-[100px] mr-6">
+                <Image
+                  src={product.main_image || "/placeholder.svg"}
+                  alt={product.name}
+                  fill
+                  className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            <div>
+            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start line-clamp-3 text-balance">{product.name}</h2>
+            <p className="text-foreground/60 text-sm leading-relaxed md:text-start text-center line-clamp-1">{product.description}</p>
+            </div>
             {/* {product.verified && (
               <span className="ml-2 inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full shrink-0">
                 ✅ Verified
@@ -43,8 +54,7 @@ export function ProductCard({ product }: { product: Product }) {
             )} */}
           </div>
 
-          <p className="text-foreground/60 text-sm leading-relaxed line-clamp-3 md:text-start text-center">{product.description}</p>
-
+          
           {/* Action Buttons */}
           {/* <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm">
             <button
