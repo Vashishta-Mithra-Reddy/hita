@@ -40,7 +40,7 @@ export function ProductCard({ product }: { product: Product }) {
                   src={product.main_image || "/placeholder.svg"}
                   alt={product.name}
                   fill
-                  className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
+                  className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10"
                 />
               </div>
             <div>
