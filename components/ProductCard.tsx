@@ -43,8 +43,8 @@ export function ProductCard({ product }: { product: Product }) {
                   className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white"
                 />
               </div>
-            <div>
-            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start line-clamp-3 text-pretty">{product.name}</h2>
+            <div className="flex flex-col items-center md:items-start justify-center">
+            <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start line-clamp-2 text-pretty mb-2">{product.name}</h2>
             <p className="text-foreground/60 text-sm leading-relaxed md:text-start text-center line-clamp-1">{product.description}</p>
             </div>
             {/* {product.verified && (
