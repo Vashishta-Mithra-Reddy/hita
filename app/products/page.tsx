@@ -77,8 +77,8 @@ export default function ProductsPage() {
 
   return (
     <div className="wrapperx max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Products</h1>
-      <p className="text-base text-muted-foreground italic mb-4">Products which you can trust.</p>
+      <h1 className="text-3xl font-bold mb-2 text-center md:text-left">Products</h1>
+      <p className="text-base text-muted-foreground italic mb-6 md:mb-4 text-center md:text-left">Products which you can trust.</p>
       
       {/* Categories Section */}
       <div className="mb-8">
