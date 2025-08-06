@@ -83,7 +83,7 @@ export default function Home() {
               <Link href="/products" className="px-12 py-4 bg-radial dark:from-blue-300/80 from-blue-300 dark:via-blue-300/80 via-blue-300 dark:to-blue-400/80 to-blue-400/80 text-white rounded-full font-semibold font-satoshi tracking-wide hover:shadow-xl transition-all duration-300 hover:scale-105">
                 Browse Through Products
               </Link>
-              <Link href="/foods" className="px-12 py-4 bg-radial dark:from-amber-300/80 from-amber-300 dark:via-amber-300/80 via-amber-300 dark:to-amber-400/80 to-amber-400/80 text-white rounded-full font-semibold font-satoshi tracking-wide hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <Link href="/foods" className="px-12 py-4 bg-radial dark:from-green-300/80 from-green-300 dark:via-green-300/80 via-green-300 dark:to-green-400/80 to-green-400/80 text-white rounded-full font-semibold font-satoshi tracking-wide hover:shadow-xl transition-all duration-300 hover:scale-105">
                 Explore Foods
               </Link>
             </div>
