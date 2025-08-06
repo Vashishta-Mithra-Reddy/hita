@@ -67,8 +67,8 @@ export default function HeroSection() {
             <p 
               className="
                 mt-6 text-xl md:text-2xl text-white/80 font-light
-                animate-in zoom-in-90 slide-in-from-top-8
-                opacity-100 translate-y-0 transition-all duration-700
+                animate-in zoom-in-90 slide-in-from-bottom-12
+                opacity-100 translate-y-0 transition-all duration-1000
               "
             >
               Where wellness meets wisdom
@@ -82,7 +82,7 @@ export default function HeroSection() {
             >
               <button 
                 onClick={() => router.push('/products')} 
-                className="px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-1000 hover:scale-105 animate-in zoom-in-75"
+                className="px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-1000 hover:scale-105 animate-in zoom-in-50 slide-in-from-bottom-4"
               >
                 Explore
               </button>
