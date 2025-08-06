@@ -6,59 +6,42 @@ import { useRouter } from 'next/navigation';
 
 const GradientBackground = dynamic(() => import('./GradientBackground'), { ssr: false });
 
-interface HeroSectionProps {
-  text?: string;
-  animationDuration?: number;
-}
-
-export default function HeroSection({ 
-  text = "हित",
-  animationDuration = 4000 
-}: HeroSectionProps) {
+export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    // Initial animation timer
-    const animationTimer = setTimeout(() => {
-      setIsAnimating(false);
-    }, animationDuration);
-
-    // Scroll handler
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
 
     return () => {
-      clearTimeout(animationTimer);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [animationDuration]);
+  }, []);
 
-  // Calculate scroll-based transformations
-  const scrollProgress = Math.min(scrollY / 400, 1); // Normalize scroll to 0-1
-  const scale = 1 - scrollProgress * 0.1; // Slight scale down
-  const borderRadius = scrollProgress * 28; // Increase border radius
-  const marginTop = scrollProgress * 32; // Add top margin
-  const marginHorizontal = scrollProgress * 32; // Add horizontal margins
-  const router = useRouter();
+  const scrollProgress = Math.min(scrollY / 100, 1);
+  const scale = 1 - scrollProgress * 0.1;
+  const borderRadius = scrollProgress * 28;
+  const marginTop = scrollProgress * 32;
+  const marginHorizontal = scrollProgress * 32;
 
   return (
     <section className="relative min-h-screen">
       {/* Hero Container */}
       <div 
-        className={`
-            relative overflow-hidden bg-black
+        className="
+          overflow-hidden bg-black
           transition-all duration-700 ease-out
-          ${isAnimating ? 'fixed inset-0' : 'sticky top-8 md:top-36'}
-        `}
+          sticky top-8 md:top-36
+        "
         style={{
           transform: `scale(${scale})`,
           borderRadius: `${borderRadius}px`,
           marginTop: `${marginTop}px`,
           marginLeft: `${marginHorizontal}px`,
           marginRight: `${marginHorizontal}px`,
-          height: isAnimating ? '100vh' : `${80 - scrollProgress * 20}vh`,
-          minHeight: '80vh'
+          height: `${76 - scrollProgress * 20}vh`,
+          minHeight: '76vh'
         }}
       >
         {/* Gradient Background */}
@@ -67,69 +50,53 @@ export default function HeroSection({
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 h-full flex items-center justify-center">
+        <div className="relative z-10 h-full flex items-center justify-center cursor-default">
           <div className="text-center">
             <h1 
-              className={`
+              className="
                 font-satoshi font-bold text-white
+                animate-in zoom-in-75 slide-in-from-top-14
+                text-8xl md:text-9xl hover:scale-105
                 transition-all duration-1000 ease-out
-                ${isAnimating 
-                  ? 'text-7xl animate-pulse' 
-                  : 'text-8xl md:text-9xl hover:scale-105'
-                }
-              `}
+              "
             >
-              {text}
+              {"हित"}
             </h1>
-            
-            {/* Subtitle that appears after animation */}
+
+            {/* Subtitle */}
             <p 
-              className={`
+              className="
                 mt-6 text-xl md:text-2xl text-white/80 font-light
-                transition-all duration-1000 delay-500
-                ${isAnimating 
-                  ? 'opacity-0 translate-y-4' 
-                  : 'opacity-100 translate-y-0'
-                }
-              `}
+                animate-in zoom-in-90 slide-in-from-top-8
+                opacity-100 translate-y-0 transition-all duration-700
+              "
             >
               Where wellness meets wisdom
             </p>
 
-            {/* Loading indicator that fades out */}
-            {isAnimating && (
-              <div className="mt-8 flex justify-center animate-fadeOut">
-                <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
-
-            {/* CTA that appears after animation */}
+            {/* CTA Button */}
             <div 
-              className={`
-                mt-12 transition-all duration-1000 delay-1000
-                ${isAnimating 
-                  ? 'opacity-0 translate-y-8' 
-                  : 'opacity-100 translate-y-0'
-                }
-              `}
+              className="
+                mt-12 opacity-100 translate-y-0 transition-all duration-700
+              "
             >
-              <button onClick={() => router.push('/products')} className="px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-300 hover:scale-105">
+              <button 
+                onClick={() => router.push('/products')} 
+                className="px-8 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all duration-1000 hover:scale-105 animate-in zoom-in-75"
+              >
                 Explore
               </button>
             </div>
           </div>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Scroll Indicator */}
         <div 
-          className={`
+          className="
             absolute bottom-8 left-1/2 transform -translate-x-1/2
-            transition-all duration-1000 delay-1500
-            ${isAnimating 
-              ? 'opacity-0 translate-y-4' 
-              : 'opacity-100 translate-y-0'
-            }
-          `}
+
+            opacity-100 translate-y-0 transition-all duration-1000
+          "
         >
           <div className="flex flex-col items-center text-white/60">
             <span className="text-sm mb-2">Scroll</span>
@@ -138,8 +105,8 @@ export default function HeroSection({
         </div>
       </div>
 
-      {/* Spacer to push content down */}
-      <div className="h-screen" />
+      {/* Spacer */}
+      <div className="h-3/4" />
     </section>
   );
 }

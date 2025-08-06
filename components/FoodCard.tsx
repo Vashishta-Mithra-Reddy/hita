@@ -18,7 +18,7 @@ interface Food {
 export function FoodCard({ food }: { food: Food }) {
   return (
     <Link href={`/foods/${food.slug}`} className="block group">
-      <div className="rounded-2xl transition-all duration-300 p-6 w-full max-w-md border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1">
+      <div className="rounded-2xl transition-all duration-300 p-6 w-full border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1">
         {/* Content */}
         <div className="space-y-3">
           <div className="flex flex-col md:flex-row items-center md:items-start justify-center">
