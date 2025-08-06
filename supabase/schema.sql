@@ -284,3 +284,176 @@ create table if not exists wellness_tips (
   category text, -- e.g., 'gut health', 'sleep', etc.
   created_at timestamp with time zone default now()
 );
+
+-- ======================================
+-- Trigger function to auto-update `updated_at`
+-- ======================================
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ======================================
+-- Table: food_categories
+-- ======================================
+CREATE TABLE food_categories (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  description TEXT,
+  icon_url TEXT,
+  parent_category_id UUID REFERENCES food_categories(id),
+  is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TRIGGER trg_update_food_categories
+BEFORE UPDATE ON food_categories
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+-- ======================================
+-- Table: foods
+-- ======================================
+CREATE TABLE foods (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  slug TEXT NOT NULL UNIQUE,
+  category_id UUID REFERENCES food_categories(id) NOT NULL,
+  description TEXT,
+  short_description TEXT,
+  nutritional_info JSONB,
+  is_vegetarian BOOLEAN DEFAULT true,
+  is_vegan BOOLEAN DEFAULT false,
+  is_gluten_free BOOLEAN DEFAULT false,
+  is_dairy_free BOOLEAN DEFAULT false,
+  main_image_url TEXT,
+  additional_images TEXT[],
+  tags TEXT[],
+  preparation_tips TEXT[],
+  storage_tips TEXT[],
+  is_common BOOLEAN DEFAULT true,
+  is_active BOOLEAN DEFAULT true,
+  is_featured BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TRIGGER trg_update_foods
+BEFORE UPDATE ON foods
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+-- ======================================
+-- Table: vitamins (master list)
+-- ======================================
+CREATE TABLE vitamins (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL UNIQUE
+);
+
+-- ======================================
+-- Table: minerals (master list)
+-- ======================================
+CREATE TABLE minerals (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL UNIQUE
+);
+
+-- ======================================
+-- Table: vitamin_rda
+-- ======================================
+CREATE TABLE vitamin_rda (
+  vitamin_id UUID PRIMARY KEY REFERENCES vitamins(id),
+  recommended_daily_amount NUMERIC NOT NULL,
+  unit TEXT NOT NULL
+);
+
+-- ======================================
+-- Table: mineral_rda
+-- ======================================
+CREATE TABLE mineral_rda (
+  mineral_id UUID PRIMARY KEY REFERENCES minerals(id),
+  recommended_daily_amount NUMERIC NOT NULL,
+  unit TEXT NOT NULL
+);
+
+-- ======================================
+-- Many-to-many: food_vitamins (quantified)
+-- ======================================
+CREATE TABLE food_vitamins (
+  food_id UUID REFERENCES foods(id) ON DELETE CASCADE,
+  vitamin_id UUID REFERENCES vitamins(id) ON DELETE CASCADE,
+  amount_per_100g NUMERIC,
+  unit TEXT,
+  PRIMARY KEY (food_id, vitamin_id)
+);
+
+-- ======================================
+-- Many-to-many: food_minerals (quantified)
+-- ======================================
+CREATE TABLE food_minerals (
+  food_id UUID REFERENCES foods(id) ON DELETE CASCADE,
+  mineral_id UUID REFERENCES minerals(id) ON DELETE CASCADE,
+  amount_per_100g NUMERIC,
+  unit TEXT,
+  PRIMARY KEY (food_id, mineral_id)
+);
+
+-- ======================================
+-- Table: seasons (master list)
+-- ======================================
+CREATE TABLE seasons (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL UNIQUE
+);
+
+-- ======================================
+-- Table: regions (master list)
+-- ======================================
+CREATE TABLE regions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL UNIQUE
+);
+
+-- ======================================
+-- Many-to-many: food_seasons
+-- ======================================
+CREATE TABLE food_seasons (
+  food_id UUID REFERENCES foods(id) ON DELETE CASCADE,
+  season_id UUID REFERENCES seasons(id) ON DELETE CASCADE,
+  PRIMARY KEY (food_id, season_id)
+);
+
+-- ======================================
+-- Many-to-many: food_regions
+-- ======================================
+CREATE TABLE food_regions (
+  food_id UUID REFERENCES foods(id) ON DELETE CASCADE,
+  region_id UUID REFERENCES regions(id) ON DELETE CASCADE,
+  PRIMARY KEY (food_id, region_id)
+);
+
+-- ======================================
+-- Table: food_health_benefits
+-- ======================================
+CREATE TABLE food_health_benefits (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  food_id UUID REFERENCES foods(id) ON DELETE CASCADE,
+  benefit TEXT NOT NULL
+);
+
+-- ======================================
+-- Indexes for search optimization
+-- ======================================
+CREATE INDEX idx_foods_name ON foods USING gin (name gin_trgm_ops);
+CREATE INDEX idx_foods_description ON foods USING gin (description gin_trgm_ops);
+CREATE INDEX idx_foods_tags ON foods USING gin (tags);
+CREATE INDEX idx_foods_prep_tips ON foods USING gin (preparation_tips);
+CREATE INDEX idx_foods_storage_tips ON foods USING gin (storage_tips);
+CREATE INDEX idx_health_benefits_text ON food_health_benefits USING gin (benefit gin_trgm_ops);
+

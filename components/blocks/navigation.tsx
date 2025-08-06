@@ -9,6 +9,7 @@ export default function Navigation() {
     const navItems = [
         { href: "/products", label: "Products" },
         { href: "/brands", label: "Brands" },
+        { href: "/foods", label: "Foods" },
         { href: "/remedies", label: "Remedies" },
         { href: "/wellness-tips", label: "Wellness Tips" }
     ];

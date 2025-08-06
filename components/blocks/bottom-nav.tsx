@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Citrus, Fingerprint, Heart, Home, Package } from "lucide-react";
+import { Apple, Citrus, Fingerprint, Heart, Package } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export default function BottomNav() {
   const pathname = usePathname();
   
   const navigationLinks = [
-    { href: "/", label: "Home", icon: <Home  className="h-5 w-5" /> },
+    // { href: "/", label: "Home", icon: <Home  className="h-5 w-5" /> },
     { href: "/products", label: "Products", icon: <Package className="h-5 w-5" /> },
+    { href: "/foods", label: "Foods", icon: <Apple className="h-5 w-5" /> },
     { href: "/brands", label: "Brands", icon: <Fingerprint className="h-5 w-5" /> },
     { href: "/remedies", label: "Remedies", icon: <Citrus className="h-5 w-5" /> },
     { href: "/wellness-tips", label: "Wellness", icon: <Heart className="h-5 w-5" /> }
