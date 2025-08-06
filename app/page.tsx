@@ -29,38 +29,44 @@ export default function Home() {
         {/* Content Section 2 */}
         <section className="max-w-7xl relative rounded-xl flex items-center justify-center p-8 bg-foreground/5">
           <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <Link href="/products" className='hover:bg-foreground/5 rounded-lg transition-all duration-300'>
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-bl from-purple-500 to-pink-500 rounded-full mx-auto mb-4"></div>
+                <div className="w-16 h-16 bg-gradient-to-bl from-blue-500 to-cyan-400 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Products</h3>
                 <p className="text-foreground/80">
-                  You will find better, healthier and trusted products.
+                  Better, healthier and trusted products.
                 </p>
               </div>
+              </Link>
               
+              <Link href="/foods" className='hover:bg-foreground/5 rounded-lg transition-all duration-300'>
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-bl from-amber-500 to-yellow-300 rounded-full mx-auto mb-4"></div>
+                <div className="w-16 h-16 bg-gradient-to-bl from-green-500 to-emerald-200 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Foods</h3>
                 <p className="text-foreground/80">
                   Nutritious foods to boost your health and well-being.
                 </p>
               </div>
+              </Link>
               
+              <Link href="/remedies" className='hover:bg-foreground/5 rounded-lg transition-all duration-300'>
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-bl from-blue-500 to-cyan-400 rounded-full mx-auto mb-4"></div>
+                <div className="w-16 h-16 bg-gradient-to-bl from-purple-500 to-pink-500 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Remedies</h3>
                 <p className="text-foreground/80">
                   Holistic approaches to physical health and emotional well-being.
                 </p>
               </div>
+              </Link>
               
-              <div className="text-center p-6">
+              {/* <div className="text-center p-6">
                 <div className="w-16 h-16 bg-gradient-to-bl from-green-500 to-emerald-200 rounded-full mx-auto mb-4"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Wellness Tips</h3>
                 <p className="text-foreground/80">
                   Tips to change your life for the better.
                 </p>
-              </div>
+              </div> */}
             </div>
           </div>
         </section>
