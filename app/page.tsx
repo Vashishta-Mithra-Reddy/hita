@@ -13,7 +13,7 @@ export default function Home() {
         {/* Content Section 1 */}
         <section className="relative py-40 md:py-60 flex items-center justify-center px-12">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-satoshi font-bold text-foreground mb-6">
+            <h2 className="text-4xl md:text-6xl font-satoshi font-bold text-foreground mb-6 text-balance">
               Welcome to हित <span className='text-foreground/40 font-sans'>| Hita</span>
             </h2>
             <p className="text-xl text-foreground/80 leading-relaxed text-balance">
