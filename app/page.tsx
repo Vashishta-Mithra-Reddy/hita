@@ -14,8 +14,12 @@ export default function Home() {
         <section className="relative py-40 md:py-60 flex items-center justify-center px-12">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-6xl font-satoshi font-bold text-foreground mb-6 text-balance">
-              Welcome to हित <span className='text-foreground/40 font-sans'>| Hita</span>
+              Welcome to<br />
+              <span className="inline-block pt-3">
+                हित <span className="text-foreground/40 font-sans">| Hita</span>
+              </span>
             </h2>
+
             <p className="text-xl text-foreground/80 leading-relaxed text-balance">
               Here you can find healthy and trustable products, remedies, wellness tips, food data and so much more.
             </p>
