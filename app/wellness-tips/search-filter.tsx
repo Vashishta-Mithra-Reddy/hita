@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition, useCallback, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -13,50 +13,69 @@ interface SearchFilterProps {
   initialCategory?: string | null;
 }
 
-export function SearchFilter({ 
-  categories, 
+export function SearchFilter({
+  categories,
   initialSearch = '',
-  initialCategory = null
+  initialCategory = null,
 }: SearchFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
-  
+
+  // local UI state (kept in sync with incoming initial props)
   const [search, setSearch] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
-  
-  // Debounce search to avoid excessive API calls
+
+  // keep state synced when server sends new props (e.g., navigation)
+  useEffect(() => {
+    setSearch(initialSearch);
+    setSelectedCategory(initialCategory);
+  }, [initialSearch, initialCategory]);
+
+  // Debounce the search input
   const debouncedSearch = useDebounce(search, 300);
 
-  const updateSearchParams = useCallback((newSearch: string, newCategory: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
-    
-    if (newSearch.trim()) params.set('search', newSearch.trim());
-    else params.delete('search');
-    
-    if (newCategory) params.set('category', newCategory);
-    else params.delete('category');
-    
-    startTransition(() => {
-      router.push(`?${params.toString()}`, { scroll: false });
-    });
-  }, [searchParams, router]);
+  const updateSearchParams = useCallback(
+    (newSearch: string, newCategory: string | null) => {
+      // start from current params to preserve any other query keys
+      const params = new URLSearchParams(searchParams?.toString() ?? '');
 
-  // Update URL when debounced search changes
+      if (newSearch.trim()) params.set('search', newSearch.trim());
+      else params.delete('search');
+
+      if (newCategory) params.set('category', newCategory);
+      else params.delete('category');
+
+      const query = params.toString();
+      const target = `${pathname}${query ? `?${query}` : ''}`;
+
+      startTransition(() => {
+        // replace avoids cluttering history while typing
+        router.replace(target, { scroll: false });
+      });
+    },
+    [router, searchParams, pathname, startTransition]
+  );
+
+  // Only update URL if the debounced values differ from current URL params
   useEffect(() => {
-    if (debouncedSearch !== initialSearch) {
-      updateSearchParams(debouncedSearch, selectedCategory);
-    }
-  }, [debouncedSearch, selectedCategory, updateSearchParams, initialSearch]);
+    const currentSearch = searchParams?.get('search') ?? '';
+    const currentCategory = searchParams?.get('category') ?? null;
+
+    if (debouncedSearch === currentSearch && selectedCategory === currentCategory) return;
+
+    updateSearchParams(debouncedSearch, selectedCategory);
+  }, [debouncedSearch, selectedCategory, updateSearchParams, searchParams]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearch(value);
+    setSearch(e.target.value);
   };
 
   const handleCategoryClick = (category: string) => {
     const newCategory = selectedCategory === category ? null : category;
     setSelectedCategory(newCategory);
+    // immediate update on category click (not debounced)
     updateSearchParams(search.trim(), newCategory);
   };
 
@@ -87,12 +106,12 @@ export function SearchFilter({
           </button>
         )}
       </div>
-      
+
       <div className="flex flex-wrap gap-2">
         {categories.map((category) => (
-          <Badge 
-            key={category} 
-            variant={selectedCategory === category ? "default" : "outline"}
+          <Badge
+            key={category}
+            variant={selectedCategory === category ? 'default' : 'outline'}
             className={`cursor-pointer transition-opacity ${
               isPending ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-80'
             }`}
@@ -102,7 +121,7 @@ export function SearchFilter({
           </Badge>
         ))}
       </div>
-      
+
       {isPending && (
         <div className="flex items-center space-x-2">
           <Skeleton className="h-4 w-4 rounded-full" />
