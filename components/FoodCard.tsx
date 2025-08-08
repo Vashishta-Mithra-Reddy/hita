@@ -18,11 +18,11 @@ interface Food {
 export function FoodCard({ food }: { food: Food }) {
   return (
     <Link href={`/foods/${food.slug}`} className="block group">
-      <div className="rounded-2xl transition-all duration-300 p-6 w-full border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1">
+      <div className="rounded-2xl transition-all duration-300 p-6 w-full border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1 hover:shadow-lg">
         {/* Content */}
         <div className="space-y-3">
-          <div className="flex flex-col md:flex-row items-center md:items-start justify-center">
-            <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 w-full aspect-square max-w-[100px] mr-0 md:mr-6 mb-6 md:mb-0">
+          <div className="flex flex-row items-center md:items-start justify-start gap-4">
+            <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 aspect-square w-[100px] h-[100px] flex-shrink-0">
               <Image
                 src={food.main_image || "/placeholder.svg"}
                 alt={food.name}
@@ -30,13 +30,18 @@ export function FoodCard({ food }: { food: Food }) {
                 className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white"
               />
             </div>
-            <div className="flex flex-col items-center md:items-start justify-center">
-              <h2 className="text-2xl font-semibold text-foreground/80 leading-tight text-center md:text-start line-clamp-2 text-pretty mb-2">{food.name}</h2>
-              <p className="text-foreground/60 text-sm leading-relaxed md:text-start text-center line-clamp-1">{food.description}</p>
+            
+            <div className="flex flex-col items-start justify-start text-left flex-1 min-w-0">
+              <h2 className="text-xl md:text-2xl font-semibold text-foreground/80 leading-tight line-clamp-2 text-pretty mb-2 w-full">
+                {food.name}
+              </h2>
+              <p className="text-foreground/60 text-sm leading-relaxed line-clamp-2 w-full mb-2">
+                {food.description}
+              </p>
               
               {/* Nutrient Tags */}
               {(food.vitamins || food.minerals) && (
-                <div className="flex flex-wrap gap-1 mt-2 justify-center md:justify-start">
+                <div className="flex flex-wrap gap-1">
                   {food.vitamins?.slice(0, 2).map((vitamin, index) => (
                     <Badge key={`v-${index}`} variant="outline" className="text-xs bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300">
                       {vitamin}

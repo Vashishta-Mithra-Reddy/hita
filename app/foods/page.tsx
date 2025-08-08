@@ -96,7 +96,7 @@ export default function FoodsPage() {
   return (
     <div className="wrapperx max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-2 text-center md:text-left">Foods</h1>
-      <p className="text-base text-muted-foreground italic mb-6 md:mb-4 text-center md:text-left">Feeling Low? Fix it with Food</p>
+      <p className="text-base text-muted-foreground italic mb-6 md:mb-4 text-center md:text-left">Feeling Low? Fix it with Food.</p>
       
       {/* Categories Section */}
       <div className="mb-8">
