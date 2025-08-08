@@ -20,8 +20,8 @@ export default function Home() {
               </span>
             </h2>
 
-            <p className="text-xl text-foreground/80 leading-relaxed text-balance">
-              Here you can find healthy and trustable products, remedies, wellness tips, food data and so much more.
+            <p className="text-xl text-foreground/80 leading-relaxed text-balance max-w-xl">
+              Here you can find healthy and verified products, trusted brands, remedies that actually work, wellness tips to make your life better and fooood data.
             </p>
             {/* <p className="text-xl text-foreground/80 leading-relaxed text-balance">
               Think of hita as you well wisher we only show what&apos;s good for your health.
