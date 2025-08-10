@@ -457,3 +457,14 @@ CREATE INDEX idx_foods_prep_tips ON foods USING gin (preparation_tips);
 CREATE INDEX idx_foods_storage_tips ON foods USING gin (storage_tips);
 CREATE INDEX idx_health_benefits_text ON food_health_benefits USING gin (benefit gin_trgm_ops);
 
+CREATE TABLE embeddings (
+  id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+  content text NOT NULL,
+  embedding vector(1536), -- OpenAI ada-002 size
+  metadata jsonb,
+  content_type text, -- 'food', 'product', 'remedy', 'supplement'
+  source_id uuid, -- references the actual item
+  created_at timestamptz DEFAULT now()
+);
+
+CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops);
