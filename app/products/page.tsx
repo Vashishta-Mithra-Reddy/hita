@@ -5,12 +5,15 @@ import { ProductCard } from '@/components/ProductCard';
 import { createClient } from '@/lib/supabase/client';
 import { Product, Category } from '@/lib/supabase/products';
 import { ProductCardSkeleton } from '@/components/skeletons/ProductCardSkeleton';
+import { CategoryGridSkeleton } from '@/components/skeletons/CategorySkeleton';
+
 import BottomGradient from '@/components/BottomGradient';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categoryLoading, setCategoryLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -24,7 +27,10 @@ export default function ProductsPage() {
         .select('*')
         .order('sort_order');
       
-      if (data) setCategories(data);
+      if (data) {
+        setCategories(data);
+        setCategoryLoading(false);
+      }
     };
 
     fetchCategories();
@@ -83,13 +89,16 @@ export default function ProductsPage() {
       {/* Categories Section */}
       <div className="mb-8">
         {/* <h2 className="text-xl font-medium mb-4">Browse by Category</h2> */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          <button
-            onClick={() => {
-              setSelectedCategory(null);
-              productsRef.current?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={`p-4 rounded-lg text-center transition-all ${!selectedCategory 
+        {categoryLoading ? (
+          <CategoryGridSkeleton count={13} />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <button
+              onClick={() => {
+                setSelectedCategory(null);
+                productsRef.current?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className={`p-4 rounded-lg text-center transition-all ${!selectedCategory 
               ? 'bg-blue-100 text-blue-800 shadow-md' 
               : 'bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200'}`}
           >
@@ -118,6 +127,7 @@ export default function ProductsPage() {
             </button>
           ))}
         </div>
+        )}
       </div>
       
       {/* Search Section */}

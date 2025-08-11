@@ -6,12 +6,14 @@ import { createClient } from '@/lib/supabase/client';
 import { Food, FoodCategory } from '@/lib/supabase/foods';
 import { FoodCardSkeleton } from '@/components/skeletons/FoodCardSkeleton';
 import BottomGradient from '@/components/BottomGradient';
+import { CategoryGridSkeleton } from '@/components/skeletons/CategorySkeleton';
 // import { Badge } from '@/components/ui/badge';
 
 export default function FoodsPage() {
   const [foods, setFoods] = useState<Food[]>([]);
   const [categories, setCategories] = useState<FoodCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categoryLoading, setCategoryLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedNutrient, setSelectedNutrient] = useState<string | null>(null);
@@ -37,6 +39,7 @@ export default function FoodsPage() {
         .order('sort_order');
       
       if (data) setCategories(data);
+      setCategoryLoading(false);
     };
 
     fetchCategories();
@@ -100,7 +103,10 @@ export default function FoodsPage() {
       
       {/* Categories Section */}
       <div className="mb-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {categoryLoading ? (
+          <CategoryGridSkeleton />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           <button
             onClick={() => {
               setSelectedCategory(null);
@@ -135,6 +141,7 @@ export default function FoodsPage() {
             </button>
           ))}
         </div>
+        )}
       </div>
       
       {/* Nutrients Filter Section */}
