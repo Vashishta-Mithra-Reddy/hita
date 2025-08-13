@@ -261,7 +261,7 @@ export default function FoodDetailPage() {
       <Button 
         variant="outline" 
         onClick={() => router.back()}
-        className="mb-6"
+        className="mb-6 hidden md:block"
       >
         ← Back to Foods
       </Button>
@@ -318,7 +318,8 @@ export default function FoodDetailPage() {
           {/* Nutritional Info Section */}
           {food.nutritional_info && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
-              <h3 className="font-medium mb-3 text-lg">Nutritional Information</h3>
+              <h3 className="font-medium text-lg">Nutritional Information</h3>
+              <p className="text-xs text-foreground/60 mb-4">Values per 100g</p>
               <ul className="space-y-2">
                 {food.nutritional_info.calories !== undefined && (
                   <li className="flex justify-between">
@@ -357,7 +358,8 @@ export default function FoodDetailPage() {
           {/* Vitamins Section */}
           {(food.vitamins?.length || detailedVitamins.length) ? (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
-              <h3 className="font-medium mb-3 text-lg">Vitamins</h3>
+              <h3 className="font-medium text-lg">Vitamins</h3>
+              <p className="text-xs text-foreground/60 mb-4">Amounts per 100g</p>
               {food.vitamins?.length ? (
                 <div className="flex flex-wrap gap-2 mb-3">
                   {food.vitamins.map((vitamin, index) => (
@@ -374,7 +376,8 @@ export default function FoodDetailPage() {
 
               {detailedVitamins.length > 0 && (
                 <ul className="space-y-2">
-                  {(showAllVitamins ? detailedVitamins
+                  {(showAllVitamins
+                    ? [...detailedVitamins].sort((a, b) => (b.rda_percent ?? 0) - (a.rda_percent ?? 0))
                     : [...detailedVitamins].sort((a, b) => (b.rda_percent ?? 0) - (a.rda_percent ?? 0)).slice(0, 5)
                   ).map((v, i) => (
                     <li key={`vit-row-${i}`} className="space-y-1">
@@ -408,7 +411,8 @@ export default function FoodDetailPage() {
           {/* Minerals Section */}
           {(food.minerals?.length || detailedMinerals.length) ? (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
-              <h3 className="font-medium mb-3 text-lg">Minerals</h3>
+              <h3 className="font-medium text-lg">Minerals</h3>
+              <p className="text-xs text-foreground/60 mb-4">Amounts per 100g</p>
               {food.minerals?.length ? (
                 <div className="flex flex-wrap gap-2 mb-3">
                   {food.minerals.map((mineral, index) => (
@@ -425,7 +429,8 @@ export default function FoodDetailPage() {
 
               {detailedMinerals.length > 0 && (
                 <ul className="space-y-2">
-                  {(showAllMinerals ? detailedMinerals
+                  {(showAllMinerals
+                    ? [...detailedMinerals].sort((a, b) => (b.rda_percent ?? 0) - (a.rda_percent ?? 0))
                     : [...detailedMinerals].sort((a, b) => (b.rda_percent ?? 0) - (a.rda_percent ?? 0)).slice(0, 5)
                   ).map((m, i) => (
                     <li key={`min-row-${i}`} className="space-y-1">
