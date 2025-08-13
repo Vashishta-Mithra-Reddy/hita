@@ -32,7 +32,7 @@ export function FoodCard({ food }: { food: Food }) {
             </div>
             
             <div className="flex flex-col items-start justify-start text-left flex-1 min-w-0">
-              <h2 className="text-xl md:text-2xl font-semibold text-foreground/80 leading-tight line-clamp-2 text-pretty mb-2 w-full">
+              <h2 className="text-xl md:text-2xl font-semibold text-foreground/80 leading-tight line-clamp-1 text-pretty mb-1 w-full">
                 {food.name}
               </h2>
               <p className="text-foreground/60 text-sm leading-relaxed line-clamp-2 w-full mb-2">
