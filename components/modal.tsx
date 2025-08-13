@@ -117,7 +117,7 @@ const Modal = ({ triggerText = "Explore Hita" }) => {
                       <Sun className="h-5 w-5 text-foreground animate-pulse" />
                     </div>
                     <div>
-                      <h3 className="text-start font-semibold text-foreground">Hita's Agent</h3>
+                      <h3 className="text-start font-semibold text-foreground">Hita&apos;s Agent</h3>
                       <p className="hidden md:flex text-sm text-foreground/50">Under construction, but you can check it out!</p>
                     </div>
                   </div>
