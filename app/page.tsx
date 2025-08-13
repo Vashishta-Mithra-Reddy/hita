@@ -1,6 +1,7 @@
 'use client';
 
 import HeroSection from '@/components/HeroSection';
+import Modal from '@/components/modal';
 import Link from 'next/link';
 
 export default function Home() {
@@ -80,16 +81,17 @@ export default function Home() {
             <h2 className="text-4xl md:text-6xl font-satoshi font-bold mb-4">
               Start Your Journey
             </h2>
-            <p className="text-xl text-foreground/80 mb-10">
+            <p className="text-xl text-foreground/80 mb-6">
               Ready to transform your well-being? 
             </p>
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-              <Link href="/products" className="px-12 py-4 bg-radial dark:from-blue-300/80 from-blue-300 dark:via-blue-300/80 via-blue-300 dark:to-blue-400/80 to-blue-400/80 text-white rounded-full font-semibold font-satoshi tracking-wide hover:shadow-xl transition-all duration-300 hover:scale-105">
+              {/* <Link href="/products" className="px-12 py-4 bg-radial dark:from-blue-300/80 from-blue-300 dark:via-blue-300/80 via-blue-300 dark:to-blue-400/80 to-blue-400/80 text-white rounded-full font-semibold font-satoshi tracking-wide hover:shadow-xl transition-all duration-300 hover:scale-105">
                 Browse Through Products
               </Link>
               <Link href="/foods" className="px-12 py-4 bg-radial dark:from-green-300/80 from-green-300 dark:via-green-300/80 via-green-300 dark:to-green-400/80 to-green-400/80 text-white rounded-full font-semibold font-satoshi tracking-wide hover:shadow-xl transition-all duration-300 hover:scale-105">
                 Explore Foods
-              </Link>
+              </Link> */}
+              <Modal/>
             </div>
           </div>
         </section>

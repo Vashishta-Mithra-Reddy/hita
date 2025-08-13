@@ -1,4 +1,4 @@
-"use client"
+// "use client"
 
 import Link from "next/link"
 import Image from "next/image"
@@ -20,18 +20,6 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/products/${product.slug}`} className="block group">
       <div className="rounded-2xl transition-all duration-300 p-6 w-full max-w-md border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1">
-        {/* Image Container */}
-        {/* <div className="flex items-start justify-start mb-6">
-          <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 w-full aspect-square max-w-[200px]">
-            <Image
-              src={product.main_image || "/placeholder.svg"}
-              alt={product.name}
-              fill
-              className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-        </div> */}
-
         {/* Content */}
         <div className="space-y-3">
           {/* <div className="flex flex-row items-start justify-start gap-6"> */}
