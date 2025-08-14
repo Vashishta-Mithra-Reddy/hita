@@ -103,14 +103,20 @@ export async function getCategories() {
 }
 
 /**
- * Get all brands
+ * Get all brands with optional search
  */
-export async function getBrands() {
+export async function getBrands(search?: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from('brands')
     .select('*')
-    .order('name');
+    .eq('is_active', true);
+
+  if (search) {
+    query = query.ilike('name', `%${search}%`);
+  }
+
+  const { data, error } = await query.order('name');
 
   if (error) throw error;
   return data as Brand[];

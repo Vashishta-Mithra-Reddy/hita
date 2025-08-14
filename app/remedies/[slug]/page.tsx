@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Remedy } from '@/lib/supabase/remedies';
 import { RemedyDetailSkeleton } from '@/components/skeletons/RemedyDetailSkeleton';
 import BottomGradient from '@/components/BottomGradient';
+import { FlaskConical, ScrollText, TriangleAlert, ShieldAlert, Info, ListChecks, Beaker } from 'lucide-react';
 
 export default function RemedyDetailPage() {
   const params = useParams();
@@ -15,6 +16,28 @@ export default function RemedyDetailPage() {
   const [remedy, setRemedy] = useState<Remedy | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Expand/collapse UI state
+  const [showFullPreparation, setShowFullPreparation] = useState(false);
+  const [showFullUsage, setShowFullUsage] = useState(false);
+  const [showFullScientific, setShowFullScientific] = useState(false);
+  const [showFullTraditional, setShowFullTraditional] = useState(false);
+  const [showAllIngredients, setShowAllIngredients] = useState(false);
+  const [showAllSymptoms, setShowAllSymptoms] = useState(false);
+  const [showAllTags, setShowAllTags] = useState(false);
+
+  // Helpers
+  const truncateText = (text: string, limit = 320) => {
+    if (!text) return { display: '', truncated: false };
+    const clean = text.replace(/\\n/g, '\n');
+    if (clean.length <= limit) return { display: clean, truncated: false };
+    return { display: clean.slice(0, limit) + '…', truncated: true };
+  };
+
+  const effectivenessPercent = (rating?: number | null) => {
+    if (!rating || rating < 0) return 0;
+    return Math.min(100, Math.max(0, Math.round((rating / 5) * 100)));
+  };
 
   useEffect(() => {
     const fetchRemedy = async () => {
@@ -62,21 +85,6 @@ export default function RemedyDetailPage() {
 
       <div className="rounded-2xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
-          {/* Remedy Image */}
-          {/* <div className="flex items-center justify-center bg-gray-100 rounded-xl p-4">
-            {remedy.main_image_url ? (
-              <img 
-                src={remedy.main_image_url} 
-                alt={remedy.title} 
-                className="max-h-80 object-contain"
-              />
-            ) : (
-              <div className="h-64 w-full flex items-center justify-center text-gray-400">
-                No image available
-              </div>
-            )}
-          </div> */}
-
           {/* Remedy Info */}
           <div className='bg-foreground/5 w-full px-8 py-12 rounded-lg'>
             <h1 className="text-4xl font-bold text-balance">{remedy.title}</h1>
@@ -99,11 +107,19 @@ export default function RemedyDetailPage() {
               <p className="mt-4 text-lg">Preparation Time: {remedy.preparation_time_minutes} minutes</p>
             )}
 
-            {remedy.effectiveness_rating && (
-              <div className="mt-2 text-xl">
-                <span className="font-medium text-lg">Effectiveness: </span>
-                {'★'.repeat(remedy.effectiveness_rating)}
-                {'☆'.repeat(5 - (remedy.effectiveness_rating || 0))}
+            {remedy.effectiveness_rating != null && (
+              <div className="mt-2">
+                <div className="text-xl">
+                  <span className="font-medium text-lg">Effectiveness: </span>
+                  {'★'.repeat(remedy.effectiveness_rating)}
+                  {'☆'.repeat(5 - (remedy.effectiveness_rating || 0))}
+                </div>
+                <div className="mt-2 h-2 w-full rounded-full bg-foreground/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-green-500/80"
+                    style={{ width: `${effectivenessPercent(remedy.effectiveness_rating)}%` }}
+                  />
+                </div>
               </div>
             )}
 
@@ -113,45 +129,78 @@ export default function RemedyDetailPage() {
           </div>
         </div>
 
-        {/* Remedy Details */}
-        <div className="mt-8 px-4">
-          <h2 className="text-2xl font-semibold mb-4">Remedy Details</h2>
-          
-          {/* Preparation Method */}
-          <div className="mb-6">
-            <h3 className="font-medium mb-2">Preparation Method</h3>
-            <div className="text-foreground/80">
-              {remedy.preparation_method.replace(/\\n/g, '\n').split('\n').map((line, index) => (
-                <p key={index} className="mb-1">{line}</p>
-              ))}
-            </div>
-          </div>
-
-
-
-          {/* Usage Instructions */}
-          <div className="mb-6">
-            <h3 className="font-medium mb-2">Usage Instructions</h3>
-            <p className="text-foreground/80 whitespace-pre-line">{remedy.usage_instructions}</p>
-          </div>
-
+        {/* Remedy Details - Bento layout */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Ingredients */}
-          {remedy.ingredients && remedy.ingredients.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Ingredients</h3>
-              <ul className="list-disc list-inside text-foreground/80">
-                {remedy.ingredients.map((ingredient, index) => (
+          {(remedy.ingredients && remedy.ingredients.length > 0) && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <ListChecks className="w-5 h-5 text-emerald-500" />
+                <h3 className="font-medium text-lg">Ingredients</h3>
+              </div>
+              <ul className="list-disc list-inside text-foreground/80 space-y-1">
+                {(showAllIngredients ? remedy.ingredients : remedy.ingredients.slice(0, 8)).map((ingredient, index) => (
                   <li key={index}>{ingredient}</li>
                 ))}
               </ul>
+              {remedy.ingredients.length > 8 && (
+                <div className="mt-3">
+                  <Button size="sm" variant="outline" onClick={() => setShowAllIngredients(s => !s)}>
+                    {showAllIngredients ? 'Show less' : 'Show all'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Preparation Method */}
+          {remedy.preparation_method && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <Beaker className="w-5 h-5 text-blue-500" />
+                <h3 className="font-medium text-lg">Preparation Method</h3>
+              </div>
+              <p className="text-foreground/80 whitespace-pre-line">
+                {showFullPreparation ? remedy.preparation_method.replace(/\\n/g, '\n') : truncateText(remedy.preparation_method).display}
+              </p>
+              {(truncateText(remedy.preparation_method).truncated || showFullPreparation) && (
+                <div className="mt-3">
+                  <Button size="sm" variant="outline" onClick={() => setShowFullPreparation(s => !s)}>
+                    {showFullPreparation ? 'Show less' : 'Show more'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Usage Instructions */}
+          {remedy.usage_instructions && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <Info className="w-5 h-5 text-indigo-500" />
+                <h3 className="font-medium text-lg">Usage Instructions</h3>
+              </div>
+              <p className="text-foreground/80 whitespace-pre-line">
+                {showFullUsage ? remedy.usage_instructions : truncateText(remedy.usage_instructions).display}
+              </p>
+              {(truncateText(remedy.usage_instructions).truncated || showFullUsage) && (
+                <div className="mt-3">
+                  <Button size="sm" variant="outline" onClick={() => setShowFullUsage(s => !s)}>
+                    {showFullUsage ? 'Show less' : 'Show more'}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
           {/* Precautions */}
-          {remedy.precautions && remedy.precautions.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2 text-yellow-600">Precautions</h3>
-              <ul className="list-disc list-inside text-foreground/80">
+          {(remedy.precautions && remedy.precautions.length > 0) && (
+            <div className="border-2 border-dashed border-yellow-500/30 rounded-xl p-5 hover:border-yellow-500/50 transition-colors bg-yellow-500/5">
+              <div className="flex items-center gap-2 mb-3">
+                <TriangleAlert className="w-5 h-5 text-yellow-600" />
+                <h3 className="font-medium text-lg text-yellow-700 dark:text-yellow-300">Precautions</h3>
+              </div>
+              <ul className="list-disc list-inside text-yellow-900 dark:text-yellow-50 space-y-1">
                 {remedy.precautions.map((precaution, index) => (
                   <li key={index}>{precaution}</li>
                 ))}
@@ -160,80 +209,131 @@ export default function RemedyDetailPage() {
           )}
 
           {/* Contraindications */}
-          {remedy.contraindications && remedy.contraindications.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2 text-red-600">When Not To Use</h3>
-              <ul className="list-disc list-inside text-foreground/80">
-                {remedy.contraindications.map((contraindication, index) => (
-                  <li key={index}>{contraindication}</li>
+          {(remedy.contraindications && remedy.contraindications.length > 0) && (
+            <div className="border-2 border-dashed border-red-500/30 rounded-xl p-5 hover:border-red-500/50 transition-colors bg-red-500/5">
+              <div className="flex items-center gap-2 mb-3">
+                <ShieldAlert className="w-5 h-5 text-red-600" />
+                <h3 className="font-medium text-lg text-red-700 dark:text-red-300">When Not To Use</h3>
+              </div>
+              <ul className="list-disc list-inside text-red-900 dark:text-red-50 space-y-1">
+                {remedy.contraindications.map((c, index) => (
+                  <li key={index}>{c}</li>
                 ))}
               </ul>
             </div>
           )}
 
           {/* Side Effects */}
-          {remedy.side_effects && remedy.side_effects.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2 text-orange-600">Possible Side Effects</h3>
-              <ul className="list-disc list-inside text-foreground/80">
-                {remedy.side_effects.map((sideEffect, index) => (
-                  <li key={index}>{sideEffect}</li>
+          {(remedy.side_effects && remedy.side_effects.length > 0) && (
+            <div className="border-2 border-dashed border-orange-500/30 rounded-xl p-5 hover:border-orange-500/50 transition-colors bg-orange-500/5">
+              <div className="flex items-center gap-2 mb-3">
+                <TriangleAlert className="w-5 h-5 text-orange-600" />
+                <h3 className="font-medium text-lg text-orange-700 dark:text-orange-300">Possible Side Effects</h3>
+              </div>
+              <ul className="list-disc list-inside text-orange-900 dark:text-orange-50 space-y-1">
+                {remedy.side_effects.map((s, index) => (
+                  <li key={index}>{s}</li>
                 ))}
               </ul>
             </div>
           )}
 
-          {/* Scientific Backing */}
+          {/* Scientific Evidence */}
           {remedy.scientific_backing && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Scientific Evidence</h3>
-              <p className="text-foreground/80 whitespace-pre-line">{remedy.scientific_backing}</p>
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <FlaskConical className="w-5 h-5 text-sky-500" />
+                <h3 className="font-medium text-lg">Scientific Evidence</h3>
+              </div>
+              <p className="text-foreground/80 whitespace-pre-line">
+                {showFullScientific ? remedy.scientific_backing : truncateText(remedy.scientific_backing).display}
+              </p>
+              {(truncateText(remedy.scientific_backing).truncated || showFullScientific) && (
+                <div className="mt-3">
+                  <Button size="sm" variant="outline" onClick={() => setShowFullScientific(s => !s)}>
+                    {showFullScientific ? 'Show less' : 'Show more'}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
           {/* Traditional Use */}
           {remedy.traditional_use && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Traditional Use</h3>
-              <p className="text-foreground/80 whitespace-pre-line">{remedy.traditional_use}</p>
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <div className="flex items-center gap-2 mb-3">
+                <ScrollText className="w-5 h-5 text-emerald-600" />
+                <h3 className="font-medium text-lg">Traditional Use</h3>
+              </div>
+              <p className="text-foreground/80 whitespace-pre-line">
+                {showFullTraditional ? remedy.traditional_use : truncateText(remedy.traditional_use).display}
+              </p>
+              {(truncateText(remedy.traditional_use).truncated || showFullTraditional) && (
+                <div className="mt-3">
+                  <Button size="sm" variant="outline" onClick={() => setShowFullTraditional(s => !s)}>
+                    {showFullTraditional ? 'Show less' : 'Show more'}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
           {/* Symptoms Treated */}
-          {remedy.symptoms_treated && remedy.symptoms_treated.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Helps With</h3>
+          {(remedy.symptoms_treated && remedy.symptoms_treated.length > 0) && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <h3 className="font-medium mb-3 text-lg">Helps With</h3>
               <div className="flex flex-wrap gap-2">
-                {remedy.symptoms_treated.map((symptom, index) => (
+                {(showAllSymptoms ? remedy.symptoms_treated : remedy.symptoms_treated.slice(0, 12)).map((symptom, index) => (
                   <Badge key={index} variant="secondary">{symptom}</Badge>
                 ))}
               </div>
+              {remedy.symptoms_treated.length > 12 && (
+                <div className="mt-3">
+                  <Button size="sm" variant="outline" onClick={() => setShowAllSymptoms(s => !s)}>
+                    {showAllSymptoms ? 'Show less' : 'Show all'}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
           {/* Tags */}
-          {remedy.tags && remedy.tags.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Tags</h3>
+          {(remedy.tags && remedy.tags.length > 0) && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <h3 className="font-medium mb-3 text-lg">Tags</h3>
               <div className="flex flex-wrap gap-2">
-                {remedy.tags.map((tag, index) => (
+                {(showAllTags ? remedy.tags : remedy.tags.slice(0, 16)).map((tag, index) => (
                   <Badge key={index} variant="outline">{tag}</Badge>
+                ))}
+              </div>
+              {remedy.tags.length > 16 && (
+                <div className="mt-3">
+                  <Button size="sm" variant="outline" onClick={() => setShowAllTags(s => !s)}>
+                    {showAllTags ? 'Show less' : 'Show all'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Alternative Remedies */}
+          {(remedy.alternative_remedies && remedy.alternative_remedies.length > 0) && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors md:col-span-2">
+              <h3 className="font-medium mb-3 text-lg">Alternative Remedies</h3>
+              <div className="flex flex-wrap gap-2">
+                {remedy.alternative_remedies.map((alt, index) => (
+                  <Badge key={index} variant="outline">{alt}</Badge>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Alternative Remedies */}
-          {remedy.alternative_remedies && remedy.alternative_remedies.length > 0 && (
-            <div className="mb-6">
-              <h3 className="font-medium mb-2">Alternative Remedies</h3>
-              <p className="text-foreground/80">{remedy.alternative_remedies.join(', ')}</p>
-            </div>
-          )}
-
           {/* Warning Notice */}
-          <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <p className="font-bold">Important Notice</p>
+          <div className="border-2 border-dashed border-yellow-500/30 rounded-xl p-5 hover:border-yellow-500/50 transition-colors bg-yellow-500/10 md:col-span-2">
+            <p className="font-bold flex items-center gap-2">
+              <TriangleAlert className="w-5 h-5 text-yellow-600" />
+              Important Notice
+            </p>
             <p className="text-yellow-900 dark:text-yellow-50 text-base mt-1">
               This remedy is based on traditional practices and user experiences. 
               Procced with caution especially if you have existing health conditions or are taking medications.

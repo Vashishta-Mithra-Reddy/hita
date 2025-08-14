@@ -1,54 +1,26 @@
-"use client";
+import { Suspense } from 'react';
+import { getRemedies } from '@/lib/supabase/remedies';
+import { RemedyCard } from '@/components/RemedyCard';
+import { RemedyCardSkeleton } from '@/components/skeletons/RemedyCardSkeleton';
+import { RemedySearch } from './remedy-search';
+import BottomGradient from '@/components/BottomGradient';
 
-import { RemedyCard } from "@/components/RemedyCard";
-import { RemedyCardSkeleton } from "@/components/skeletons/RemedyCardSkeleton";
-import { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
-import { createClient } from '@/lib/supabase/client';
-import { Remedy } from '@/lib/supabase/remedies';
-import BottomGradient from "@/components/BottomGradient";
+/**
+ * Server component that fetches the search input and renders client RemedySearch.
+ */
+async function RemedySearchServer({ search }: { search: string }) {
+  return <RemedySearch initialSearch={search} />;
+}
 
-export default function RemediesPage() {
-  const [remedies, setRemedies] = useState<Remedy[]>([]);
-  const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+/**
+ * Server component that fetches remedies and renders the grid.
+ */
+async function RemediesList({ search }: { search: string }) {
+  const { remedies } = await getRemedies({
+    search,
+    pageSize: 50,
+  });
 
-  useEffect(() => {
-    const fetchRemedies = async () => {
-      try {
-        setLoading(true);
-        const supabase = createClient();
-        
-        let query = supabase
-          .from('remedies')
-          .select('*')
-          .eq('is_active', true);
-        
-        if (search) {
-          // Search in title, description, and symptoms_treated
-          query = query.or(
-            `title.ilike.%${search}%,description.ilike.%${search}%`
-          );
-        }
-        
-        const { data, error: fetchError } = await query.order('title');
-        
-        if (fetchError) throw fetchError;
-        
-        setRemedies(data || []);
-      } catch (err) {
-        console.error('Error fetching remedies:', err);
-        setError('Failed to load remedies');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRemedies();
-  }, [search]); // Refetch when search changes
-
-  // Transform remedies data for RemedyCard component
   const transformedRemedies = remedies.map(remedy => ({
     id: remedy.id,
     name: remedy.title,
@@ -57,41 +29,69 @@ export default function RemediesPage() {
     issues: remedy.symptoms_treated || [],
     verifiedBy: remedy.is_verified ? ['admin'] : [],
     successCount: remedy.effectiveness_rating || 0,
-    failCount: 0, // This field doesn't exist in the new schema
+    failCount: 0,
   }));
+
+  if (transformedRemedies.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <p className="text-muted-foreground">No remedies found. Try adjusting your search.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[400px]">
+      {transformedRemedies.map((remedy) => (
+        <RemedyCard key={remedy.slug} remedy={remedy} />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Main Remedies page - Server Component
+ */
+export default async function RemediesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ [key: string]: string | undefined }>;
+}) {
+  const resolved = await searchParams;
+  const search = typeof resolved?.search === 'string' ? resolved.search : '';
 
   return (
     <div className="wrapperx max-w-6xl mx-auto">
       <h1 className="text-3xl font-bold mb-2 text-center md:text-left">Remedies</h1>
-      <p className="text-base text-muted-foreground italic mb-6 md:mb-4 text-center md:text-left">Stuff that works.</p>
-      <Input 
-        placeholder="Search by remedy name or description" 
-        value={search} 
-        onChange={(e) => setSearch(e.target.value)} 
-        className="mb-6 max-w-md shadow-none border-2 border-foreground/15 border-dashed h-12 rounded-lg"
-      />
+      <p className="text-base text-muted-foreground italic mb-6 md:mb-4 text-center md:text-left">
+        Stuff that works.
+      </p>
       
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array(6).fill(0).map((_, index) => (
-            <RemedyCardSkeleton key={index} />
-          ))}
-        </div>
-      ) : error ? (
-        <div className="text-center py-10 text-red-500">{error}</div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {transformedRemedies.map((remedy) => (
-              <RemedyCard key={remedy.slug} remedy={remedy} />
+      {/* Search - streamed */}
+      <Suspense
+        fallback={
+          <div className="mb-6 max-w-md">
+            <div className="h-12 w-full bg-foreground/10 animate-pulse rounded-lg" />
+          </div>
+        }
+      >
+        <RemedySearchServer search={search} />
+      </Suspense>
+      
+      {/* Remedies Grid - streamed */}
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[400px]">
+            {Array(6).fill(0).map((_, i) => (
+              <RemedyCardSkeleton key={i} />
             ))}
           </div>
-          {transformedRemedies.length === 0 && (
-            <p className="text-muted-foreground">No remedies found. Try adjusting your search.</p>
-          )}
-        </>
-      )}
-      <BottomGradient/>
+        }
+      >
+        <RemediesList search={search} />
+      </Suspense>
+      
+      <BottomGradient />
     </div>
   );
 }
