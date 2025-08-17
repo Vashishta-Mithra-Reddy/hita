@@ -45,7 +45,6 @@ export default function RemedyDetailPage() {
         if (!params.slug) return;
         
         setLoading(true);
-        // Use the browser client directly
         const supabase = createClient();
         const { data, error: fetchError } = await supabase
           .from('remedies')
@@ -84,8 +83,8 @@ export default function RemedyDetailPage() {
       </Button>
 
       <div className="rounded-2xl p-6 md:p-8">
+        {/* Header Section */}
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
-          {/* Remedy Info */}
           <div className='bg-foreground/5 w-full px-8 py-12 rounded-lg'>
             <h1 className="text-4xl font-bold text-balance">{remedy.title}</h1>
             
@@ -129,9 +128,8 @@ export default function RemedyDetailPage() {
           </div>
         </div>
 
-        {/* Remedy Details - Bento layout */}
+        {/* Group 1: Ingredients + Preparation Method */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Ingredients */}
           {(remedy.ingredients && remedy.ingredients.length > 0) && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <div className="flex items-center gap-2 mb-3">
@@ -153,7 +151,6 @@ export default function RemedyDetailPage() {
             </div>
           )}
 
-          {/* Preparation Method */}
           {remedy.preparation_method && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <div className="flex items-center gap-2 mb-3">
@@ -172,8 +169,10 @@ export default function RemedyDetailPage() {
               )}
             </div>
           )}
+        </div>
 
-          {/* Usage Instructions */}
+        {/* Group 2: Usage + Precautions + Contraindications + Side Effects */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-5">
           {remedy.usage_instructions && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <div className="flex items-center gap-2 mb-3">
@@ -193,7 +192,6 @@ export default function RemedyDetailPage() {
             </div>
           )}
 
-          {/* Precautions */}
           {(remedy.precautions && remedy.precautions.length > 0) && (
             <div className="border-2 border-dashed border-yellow-500/30 rounded-xl p-5 hover:border-yellow-500/50 transition-colors bg-yellow-500/5">
               <div className="flex items-center gap-2 mb-3">
@@ -208,7 +206,6 @@ export default function RemedyDetailPage() {
             </div>
           )}
 
-          {/* Contraindications */}
           {(remedy.contraindications && remedy.contraindications.length > 0) && (
             <div className="border-2 border-dashed border-red-500/30 rounded-xl p-5 hover:border-red-500/50 transition-colors bg-red-500/5">
               <div className="flex items-center gap-2 mb-3">
@@ -223,7 +220,6 @@ export default function RemedyDetailPage() {
             </div>
           )}
 
-          {/* Side Effects */}
           {(remedy.side_effects && remedy.side_effects.length > 0) && (
             <div className="border-2 border-dashed border-orange-500/30 rounded-xl p-5 hover:border-orange-500/50 transition-colors bg-orange-500/5">
               <div className="flex items-center gap-2 mb-3">
@@ -237,8 +233,10 @@ export default function RemedyDetailPage() {
               </ul>
             </div>
           )}
+        </div>
 
-          {/* Scientific Evidence */}
+        {/* Group 3: Scientific + Traditional */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-5">
           {remedy.scientific_backing && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <div className="flex items-center gap-2 mb-3">
@@ -258,7 +256,6 @@ export default function RemedyDetailPage() {
             </div>
           )}
 
-          {/* Traditional Use */}
           {remedy.traditional_use && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <div className="flex items-center gap-2 mb-3">
@@ -277,8 +274,10 @@ export default function RemedyDetailPage() {
               )}
             </div>
           )}
+        </div>
 
-          {/* Symptoms Treated */}
+        {/* Group 4: Symptoms + Tags */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-5">
           {(remedy.symptoms_treated && remedy.symptoms_treated.length > 0) && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <h3 className="font-medium mb-3 text-lg">Helps With</h3>
@@ -297,7 +296,6 @@ export default function RemedyDetailPage() {
             </div>
           )}
 
-          {/* Tags */}
           {(remedy.tags && remedy.tags.length > 0) && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <h3 className="font-medium mb-3 text-lg">Tags</h3>
@@ -315,30 +313,30 @@ export default function RemedyDetailPage() {
               )}
             </div>
           )}
+        </div>
 
-          {/* Alternative Remedies */}
-          {(remedy.alternative_remedies && remedy.alternative_remedies.length > 0) && (
-            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors md:col-span-2">
-              <h3 className="font-medium mb-3 text-lg">Alternative Remedies</h3>
-              <div className="flex flex-wrap gap-2">
-                {remedy.alternative_remedies.map((alt, index) => (
-                  <Badge key={index} variant="outline">{alt}</Badge>
-                ))}
-              </div>
+        {/* Alternative Remedies */}
+        {(remedy.alternative_remedies && remedy.alternative_remedies.length > 0) && (
+          <div className="mt-8 border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors md:col-span-2">
+            <h3 className="font-medium mb-3 text-lg">Alternative Remedies</h3>
+            <div className="flex flex-wrap gap-2">
+              {remedy.alternative_remedies.map((alt, index) => (
+                <Badge key={index} variant="outline">{alt}</Badge>
+              ))}
             </div>
-          )}
-
-          {/* Warning Notice */}
-          <div className="border-2 border-dashed border-yellow-500/30 rounded-xl p-5 hover:border-yellow-500/50 transition-colors bg-yellow-500/10 md:col-span-2">
-            <p className="font-bold flex items-center gap-2">
-              <TriangleAlert className="w-5 h-5 text-yellow-600" />
-              Important Notice
-            </p>
-            <p className="text-yellow-900 dark:text-yellow-50 text-base mt-1">
-              This remedy is based on traditional practices and user experiences. 
-              Procced with caution especially if you have existing health conditions or are taking medications.
-            </p>
           </div>
+        )}
+
+        {/* Warning Notice */}
+        <div className="mt-8 border-2 border-dashed border-yellow-500/30 rounded-xl p-5 hover:border-yellow-500/50 transition-colors bg-yellow-500/10 md:col-span-2">
+          <p className="font-bold flex items-center gap-2">
+            <TriangleAlert className="w-5 h-5 text-yellow-600" />
+            Important Notice
+          </p>
+          <p className="text-yellow-900 dark:text-yellow-50 text-base mt-1">
+            This remedy is based on traditional practices and user experiences. 
+            Proceed with caution especially if you have existing health conditions or are taking medications.
+          </p>
         </div>
       </div>
       <BottomGradient/>

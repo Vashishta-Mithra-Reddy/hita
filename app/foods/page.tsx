@@ -104,7 +104,7 @@ export default function FoodsPage() {
       {/* Categories Section */}
       <div className="mb-8">
         {categoryLoading ? (
-          <CategoryGridSkeleton />
+          <CategoryGridSkeleton count={12} />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           <button
