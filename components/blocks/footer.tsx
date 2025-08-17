@@ -13,7 +13,7 @@ return(
       <p className="pl-4 text-2xl text-muted-foreground">हित</p>
       </div>
       </Link>
-      <p className="flex items-center justify-center md:justify-start mb-2 md:mb-0 text-sm text-muted-foreground">
+      <p className="flex items-center justify-center md:justify-start text-sm text-muted-foreground">
                         Built by&nbsp;
                         <Link
                           href="https://www.vashishtamithra.com/"
@@ -23,7 +23,7 @@ return(
                           Vashishta Mithra
                           <ArrowUpRight className="w-5 h-5 transition-all duration-500" />
                         </Link>
-                      </p>
+      </p>
       </div>
     </footer>
 );
