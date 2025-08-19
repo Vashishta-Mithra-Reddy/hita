@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
+// import Image from "next/image"
 import { Badge } from "./ui/badge"
 
 interface Food {
@@ -22,11 +22,11 @@ export function FoodCard({ food }: { food: Food }) {
         {/* Content */}
         <div className="space-y-3">
           <div className="flex flex-row items-center md:items-start justify-start gap-4">
-            <div className="relative overflow-hidden rounded-2xl bg-foreground/5 p-4 aspect-square w-[100px] h-[100px] flex-shrink-0">
-              <Image
+            <div className="relative overflow-hidden rounded-2xl bg-foreground/5 aspect-square w-[100px] h-[100px] flex-shrink-0">
+              <img
                 src={food.main_image || "/placeholder.svg"}
                 alt={food.name}
-                fill
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white"
               />
             </div>
