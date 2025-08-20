@@ -46,15 +46,15 @@ async function BrandsList({ search }: { search: string }) {
                   className="w-16 h-16 px-2 object-contain bg-white rounded-xl"
                 />
               ) : (
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400">
-                  <span className="text-xl font-semibold">{brand.name.charAt(0)}</span>
+                <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400">
+                  <span className="text-3xl font-semibold">{brand.name.charAt(0)}</span>
                 </div>
               )}
               <h2 className="text-2xl font-semibold text-foreground/85">{brand.name}</h2>
             </div>
             
             {brand.description && (
-              <p className="text-foreground/70 font-medium text-md mb-4">{brand.description}</p>
+              <p className="text-foreground/70 font-medium text-md mb-4 line-clamp-1">{brand.description}</p>
             )}
             
             <div className="flex flex-wrap gap-2">
