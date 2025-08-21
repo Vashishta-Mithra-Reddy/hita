@@ -1,5 +1,6 @@
 'use client';
 
+// import { ApodDisplay } from '@/components/ApodDisplay';
 import HeroSection from '@/components/HeroSection';
 import Modal from '@/components/modal';
 import Link from 'next/link';
@@ -96,6 +97,8 @@ export default function Home() {
           </div>
         </section>
       </main>
+      
+        {/* <ApodDisplay/> */}
     </>
   );
 }
