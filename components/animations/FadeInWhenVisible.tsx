@@ -4,9 +4,14 @@ import { motion, useAnimation } from 'framer-motion';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-export default function FadeInWhenVisible({ children }: { children: React.ReactNode }) {
+interface FadeInWhenVisibleProps {
+  children: React.ReactNode;
+  className?: string;  // Add className prop here
+}
+
+export default function FadeInWhenVisible({ children, className = '' }: FadeInWhenVisibleProps) {
   const controls = useAnimation();
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.5, }); // Detect both enter and exit
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.5 }); // Detect both enter and exit
 
   useEffect(() => {
     if (inView) {
@@ -31,6 +36,7 @@ export default function FadeInWhenVisible({ children }: { children: React.ReactN
       ref={ref}
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={controls}
+      className={className}  // Apply the className here
     >
       {children}
     </motion.div>

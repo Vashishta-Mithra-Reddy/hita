@@ -34,7 +34,7 @@ async function BrandsList({ search }: { search: string }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredBrands.map((brand) => (
         <Link key={brand.id} href={`/brands/${brand.slug}`} className="block">
           <div className="rounded-2xl border-dashed duration-300 p-6 h-full border-2 hover:scale-105 border-foreground/20 hover:border-foreground/40">
@@ -83,7 +83,7 @@ export default async function BrandsPage({
   const search = typeof resolved?.search === 'string' ? resolved.search : '';
 
   return (
-    <div className="wrapperx max-w-6xl mx-auto">
+    <div className="wrapperx max-w-6xl mx-auto animate-in fade-in-50 duration-1000">
       <h1 className="text-3xl font-bold mb-2 text-center md:text-left">Brands</h1> 
       <p className="text-base text-muted-foreground italic mb-6 md:mb-4 text-center md:text-left">
         Brands which you can trust.

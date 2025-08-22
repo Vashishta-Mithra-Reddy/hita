@@ -5,7 +5,7 @@ import { ProductCardSkeleton } from '@/components/skeletons/ProductCardSkeleton'
 import { CategoryGridSkeleton } from '@/components/skeletons/CategorySkeleton';
 import { ProductFilter } from './product-filter';
 import BottomGradient from '@/components/BottomGradient';
-
+import { Skeleton } from '@/components/ui/skeleton';
 /**
  * Server component that fetches categories and renders the client ProductFilter.
  */
@@ -64,7 +64,7 @@ async function ProductsList({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[400px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {transformedProducts.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}
@@ -92,7 +92,14 @@ export default async function ProductsPage({
       </p>
       
       {/* Filter - streamed */}
-      <Suspense fallback={<CategoryGridSkeleton count={13} />}>
+      <Suspense fallback={
+        <div>
+          <CategoryGridSkeleton count={13} />
+          <div className="my-8 flex items-center gap-2 max-w-md">
+          <Skeleton className="h-12 w-full rounded-lg" />
+          </div>
+        </div>
+      }>
         <ProductFilterServer search={search} category={category} />
       </Suspense>
       
