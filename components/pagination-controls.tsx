@@ -96,7 +96,7 @@ export function PaginationControls({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className="flex flex-col items-center gap-4 py-20">
+    <div className="flex flex-col items-center gap-4 pt-12">
       {/* Results info */}
       <div className="text-sm text-muted-foreground">
         Showing {Math.min((currentPage - 1) * pageSize + 1, totalItems)} to{" "}
@@ -105,7 +105,8 @@ export function PaginationControls({
 
       {/* Pagination */}
       <Pagination>
-        <PaginationContent>
+        <PaginationContent className="flex-wrap justify-center">
+
           {/* Previous button */}
           <PaginationItem>
             <PaginationPrevious

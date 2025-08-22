@@ -3,6 +3,7 @@
 import Link from "next/link"
 // import Image from "next/image"
 import { Badge } from "./ui/badge"
+import FadeInWhenVisible from "./animations/FadeInWhenVisible"
 
 interface Food {
   id: string
@@ -17,6 +18,7 @@ interface Food {
 
 export function FoodCard({ food }: { food: Food }) {
   return (
+    <FadeInWhenVisible>
     <Link href={`/foods/${food.slug}`} className="block group">
       <div className="rounded-2xl transition-all duration-300 p-6 w-full border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1">
         {/* Content */}
@@ -62,5 +64,6 @@ export function FoodCard({ food }: { food: Food }) {
         </div>
       </div>
     </Link>
+    </FadeInWhenVisible>
   )
 }
