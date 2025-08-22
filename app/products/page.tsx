@@ -95,7 +95,7 @@ export default async function ProductsPage({
       <Suspense fallback={
         <div>
           <CategoryGridSkeleton count={13} />
-          <div className="my-8 flex items-center gap-2 max-w-md">
+          <div className="mt-8 mb-6 flex items-center gap-2 max-w-md">
           <Skeleton className="h-12 w-full rounded-lg" />
           </div>
         </div>
