@@ -42,7 +42,7 @@ export default function Home() {
         <section className='flex flex-col md:flex-row gap-20 justify-center items-center pb-64 max-w-6xl wrapperx'>
           <InViewWrapper>
           <div>
-            <h3 className='text-4xl md:text-4xl font-satoshi md:text-start text-center tracking-tight text-foreground/80'>Why Hita?</h3>
+            <h3 className='text-4xl md:text-5xl font-satoshi md:text-start text-center tracking-tight text-foreground/80'>Why Hita?</h3>
             <p className='mt-6 text-base md:text-base md:text-start text-center'>I have spent countless hours on researching the right product, that perfect remedy that could work, a clean brand that I could trust (You can think of it more like a directory of sorts for the products I trust.)</p>
           </div>
           </InViewWrapper>

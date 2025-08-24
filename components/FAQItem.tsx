@@ -14,11 +14,11 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
 
   return (
     <div
-      className="border-b border-foreground/10 py-4 cursor-pointer select-none"
+      className="border-b border-foreground/10 pt-4 pb-2 cursor-pointer select-none"
       onClick={() => setOpen(!open)}
     >
       <div className="flex justify-between items-center">
-        <h3 className="text-base text-foreground/80">
+        <h3 className="text-base text-foreground/80 mb-2">
           {question}
         </h3>
         <motion.div
@@ -34,8 +34,8 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="mt-3 text-foreground/60 leading-relaxed text-base text-pretty max-w-xl"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="text-foreground/60 leading-relaxed text-base text-pretty max-w-xl"
           >
             {answer}
           </motion.p>
