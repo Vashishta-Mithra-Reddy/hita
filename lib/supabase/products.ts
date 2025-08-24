@@ -135,7 +135,7 @@ export async function getProducts({
   isSugarFree,
   isFeatured,
   page = 1,
-  pageSize = 10,
+  pageSize = 12,
 }: {
   categoryId?: string;
   brandId?: string;
@@ -151,13 +151,17 @@ export async function getProducts({
   const supabase = await createClient();
   let query = supabase
     .from('products')
-    .select(`
+    .select(
+    `
       *,
       brand:brands(*),
       category:categories(*),
       product_links(*),
       offline_availability(*)
-    `)
+    `, 
+    { count: 'exact' }
+    )
+
     .eq('is_active', true);
 
   // Apply filters

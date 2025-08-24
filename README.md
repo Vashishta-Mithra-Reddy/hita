@@ -1,6 +1,7 @@
 # Hita
 
 Hita is a knowledge platform focused on well-being and healthy living. It curates and presents information across:
+
 - Foods (nutritional info, benefits, dietary badges, seasonal/region availability)
 - Products (brands, categories, links, offline availability, features, tags)
 - Brands (overview and associated products)
@@ -74,6 +75,7 @@ OPENAI_API_KEY=your_openai_api_key
 ```
 
 Notes:
+
 - `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are used for the app’s Supabase client on both server and browser contexts via <mcfile name="client.ts" path="c:\Vashishta\hita\lib\supabase\client.ts"></mcfile> and <mcfile name="server.ts" path="c:\Vashishta\hita\lib\supabase\server.ts"></mcfile>.
 - `SUPABASE_SERVICE_ROLE_KEY` is required by the embeddings script to perform admin operations.
 - `OPENAI_API_KEY` is required by the embeddings script to create vector embeddings.
@@ -109,6 +111,7 @@ npm start
 The app uses Supabase Postgres tables for content such as categories, brands, products, foods, remedies, supplementation guides, wellness tips, and embeddings. See <mcfile name="schema.sql" path="c:\Vashishta\hita\supabase\schema.sql"></mcfile> for the canonical database structure.
 
 Typed query helpers:
+
 - Products: <mcfile name="products.ts" path="c:\Vashishta\hita\lib\supabase\products.ts"></mcfile>
   - Includes nested joins with `brand:brands(*)`, `category:categories(*)`, `product_links(*)`, and `offline_availability(*)`.
 - Foods: <mcfile name="foods.ts" path="c:\Vashishta\hita\lib\supabase\foods.ts"></mcfile>
@@ -129,14 +132,16 @@ Skeleton components under <mcfile name="skeletons" path="c:\Vashishta\hita\compo
 ## Embeddings Population
 
 The script at <mcfile name="populate.ts" path="c:\Vashishta\hita\scripts\populate.ts"></mcfile> generates aggregated content for:
+
 - Products, Foods, Remedies, Supplementation Guides, Wellness Tips
 
 It creates OpenAI embeddings (text-embedding-3-small) and inserts them into an `embeddings` table with a `vector(1536)` column.
 
 Before running:
-1) Ensure your `.env.local` has `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `OPENAI_API_KEY`.
 
-2) The script attempts to ensure the `embeddings` table exists via a Postgres RPC called `exec_sql`. If that RPC isn’t available in your project, the script will print the SQL for you to run manually. You can create the table by running this SQL in the Supabase SQL editor:
+1. Ensure your `.env.local` has `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `OPENAI_API_KEY`.
+
+2. The script attempts to ensure the `embeddings` table exists via a Postgres RPC called `exec_sql`. If that RPC isn’t available in your project, the script will print the SQL for you to run manually. You can create the table by running this SQL in the Supabase SQL editor:
 
 ```plaintext
 CREATE EXTENSION IF NOT EXISTS vector;
@@ -165,6 +170,7 @@ npx ts-node scripts\populate.ts
 Alternatively, you can add a dev tool like `ts-node` or `tsx` and run it accordingly.
 
 The script will:
+
 - Load all relevant content (active records only)
 - Generate aggregated text for each record
 - Create embeddings with retry/backoff

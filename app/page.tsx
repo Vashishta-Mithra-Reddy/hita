@@ -5,7 +5,11 @@ import HeroSection from '@/components/HeroSection';
 import FadeInWhenVisible from '@/components/animations/FadeInWhenVisible';
 import InViewWrapper from '@/components/animations/InViewWrapper';
 import Modal from '@/components/modal';
+import Image from 'next/image';
+import Lightt from '@/public/lightt.png';
+import Hitax from '@/public/hita_logo.png';
 import Link from 'next/link';
+import FAQSection from '@/components/FAQSection';
 
 export default function Home() {
   return (
@@ -16,12 +20,12 @@ export default function Home() {
       <main className="min-h-screen w-[99vw] flex flex-col items-center">
         {/* Content Section 1 */}
         <InViewWrapper animationClass='animate-in fade-in slide-in-from-bottom-12'>
-        <section className="relative py-40 md:py-60 flex items-center justify-center px-12">
+        <section className="relative py-40 md:py-44 flex items-center justify-center px-12">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-6xl font-satoshi font-bold text-foreground mb-6 text-balance animate-in slide-in-from-bottom-28 duration-1000">
               Welcome to<br />
               <span className="inline-block pt-3 animate-in slide-in-from-bottom-32 duration-1000">
-                हित <span className="text-foreground/40 font-sans">| Hita</span>
+                हित <span className="text-foreground/40 font-sans animate-fourth">| Hita</span>
               </span>
             </h2>
 
@@ -35,13 +39,31 @@ export default function Home() {
         </section>
         </InViewWrapper>
 
+        <section className='flex flex-col md:flex-row gap-20 justify-center items-center pb-64 max-w-6xl wrapperx'>
+          <InViewWrapper>
+          <div>
+            <h3 className='text-4xl md:text-4xl font-satoshi md:text-start text-center tracking-tight text-foreground/80'>Why Hita?</h3>
+            <p className='mt-6 text-base md:text-base md:text-start text-center'>I have spent countless hours on researching the right product, that perfect remedy that could work, a clean brand that I could trust (You can think of it more like a directory of sorts for the products I trust.)</p>
+          </div>
+          </InViewWrapper>
+          <InViewWrapper animationClass='animate-in slide-in-from-right-20 zoom-in-75 duration-1000'>
+          <div className="relative group">
+            <Image src={Lightt} alt="An image of a luminous object" className="max-w-screen md:max-w-xl rounded-xl group-hover:brightness-200 transition-all duration-1000" />
+            <Image src={Hitax} width={100} height={100} alt="hita" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:scale-100 scale-75" />
+          </div>
+          </InViewWrapper>
+        </section>
+
+        <FAQSection/>
+
+
         {/* Content Section 2 */}
         <section className="max-w-7xl relative rounded-xl flex items-center justify-center p-8 bg-foreground/5">
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Link href="/products" className='hover:bg-blue-500/10 dark:hover:bg-blue-500/10 rounded-xl transition-all duration-700 animate-in slide-in-from-top-4'>
+              <Link href="/products" className='hover:bg-blue-500/10 dark:hover:bg-blue-500/10 rounded-xl transition-all duration-700'>
               <div className="text-center p-6">
-                <div className="w-16 h-16 bg-gradient-to-bl from-blue-500 to-cyan-400 rounded-full mx-auto mb-4 animate-fifth"></div>
+                <div className="w-16 h-16 bg-gradient-to-bl from-blue-500 to-cyan-400 rounded-full mx-auto mb-4 animate-second"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Products</h3>
                 <p className="text-foreground/80">
                   Better, healthier and trusted products.
@@ -49,7 +71,7 @@ export default function Home() {
               </div>
               </Link>
               
-              <Link href="/foods" className='hover:bg-green-500/10 dark:hover:bg-green-500/10 rounded-xl transition-all duration-700 animate-in slide-in-from-top-4 delay-100'>
+              <Link href="/foods" className='hover:bg-green-500/10 dark:hover:bg-green-500/10 rounded-xl transition-all duration-700'>
               <div className="text-center p-6">
                 <div className="w-16 h-16 bg-gradient-to-bl from-green-500 to-emerald-200 rounded-full mx-auto mb-4 animate-fifth"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Foods</h3>
@@ -59,7 +81,7 @@ export default function Home() {
               </div>
               </Link>
               
-              <Link href="/remedies" className='hover:bg-purple-500/10 dark:hover:bg-purple-500/10 rounded-xl transition-all duration-700 animate-in slide-in-from-top-4 delay-150'>
+              <Link href="/remedies" className='hover:bg-purple-500/10 dark:hover:bg-purple-500/10 rounded-xl transition-all duration-700'>
               <div className="text-center p-6">
                 <div className="w-16 h-16 bg-gradient-to-bl from-purple-500 to-pink-500 rounded-full mx-auto mb-4 animate-fifth"></div>
                 <h3 className="text-2xl font-satoshi font-semibold mb-3">Remedies</h3>
@@ -80,11 +102,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Content Section 3 */}
+        {/* Call to action */}
         <FadeInWhenVisible>
         <section className="max-w-7xl relative py-40 md:py-60 flex items-center justify-center p-8 w-full rounded-xl">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-satoshi font-bold mb-4">
+            <h2 className="text-4xl md:text-6xl text-foreground/90 font-satoshi font-bold mb-4">
               Start Your Journey
             </h2>
             <p className="text-xl text-foreground/80 mb-6">
@@ -102,6 +124,8 @@ export default function Home() {
           </div>
         </section>
         </FadeInWhenVisible>
+
+        
         
       </main>
       

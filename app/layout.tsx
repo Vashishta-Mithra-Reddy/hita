@@ -17,8 +17,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Hita",
-  description: "Your Well Wisher",
+  title: "Hita | Your Well Wisher",
+  description: "Hita is an AI-powered wellness platform to find clean, healthy products, remedies, and nutritional information. Powered by RAG and embeddings for accurate, context-aware answers.",
 };
 
 const geistSans = Geist({

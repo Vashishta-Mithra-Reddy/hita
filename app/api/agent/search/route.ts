@@ -535,6 +535,52 @@ function generateFallbackResponse(query: string, analysis: QueryAnalysis) {
   };
 }
 
+function generateSmartURL(query: string, analysis: QueryAnalysis): string | null {
+  const baseUrl = "https://hita.v19.tech";
+
+
+  // If it's conversational or greeting → no URL
+  if (analysis.intent === "greeting" || analysis.intent === "conversational") {
+    return null;
+  }
+
+  // Default order
+  // const orderBy = "desc";
+
+  // Check for vitamins/minerals in keywords
+  const vitamin = analysis.healthTopics.find(t => t.toLowerCase().includes("vitamin"));
+  const mineral = analysis.healthTopics.find(t => t.toLowerCase().includes("iron") || t.toLowerCase().includes("calcium") || t.toLowerCase().includes("zinc"));
+
+  switch (analysis.intent) {
+    case "nutritional_need":
+      if (vitamin) {
+        return `${baseUrl}/foods?nutrient=${encodeURIComponent(vitamin)}`;
+      }
+      if (mineral) {
+        return `${baseUrl}/foods?nutrient=${encodeURIComponent(mineral)}`;
+      }
+      return `${baseUrl}/foods`;
+
+    case "health_concern":
+    case "symptom_based":
+      if (analysis.symptoms.length > 0) {
+        return `${baseUrl}/remedies?symptom=${encodeURIComponent(analysis.symptoms[0])}`;
+      }
+      return `${baseUrl}/remedies`;
+
+    case "product_search":
+      return `${baseUrl}/products?search=${encodeURIComponent(query)}`;
+
+    case "lifestyle_advice":
+    case "general_wellness":
+      return `${baseUrl}/wellness-tips?topic=${encodeURIComponent(analysis.healthTopics[0] || "general")}`;
+
+    default:
+      return null;
+  }
+}
+
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🚀 Enhanced Agent API called');
@@ -590,6 +636,8 @@ export async function POST(request: NextRequest) {
     const aiResponse = await generateIntelligentAIResponse(query, queryAnalysis, enrichedResults);
     console.log('✅ AI response generation completed');
 
+    const smartUrl = generateSmartURL(query, queryAnalysis);
+
     // Step 5: Return comprehensive response
     const response = {
       ...aiResponse,
@@ -600,7 +648,8 @@ export async function POST(request: NextRequest) {
         needsPersonalization: queryAnalysis.needsPersonalization,
         urgency: queryAnalysis.urgency,
         healthTopics: queryAnalysis.healthTopics
-      }
+      },
+      smartUrl
     };
 
     console.log('🎉 Enhanced search completed successfully');

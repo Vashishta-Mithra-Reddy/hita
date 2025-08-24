@@ -12,7 +12,7 @@ interface InViewWrapperProps {
 
 export default function InViewWrapper({ 
   children,
-  animationClass = "animate-in fade-in duration-700 ease-out",
+  animationClass = "animate-in fade-in",
   triggerOnce = true,
   delay,
 }: InViewWrapperProps) {

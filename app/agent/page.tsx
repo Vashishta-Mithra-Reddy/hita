@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -52,6 +53,7 @@ interface ContentDetails {
 interface ApiSearchResult {
   id: string;
   content_type: ContentType;
+  smartUrl: string;
   source_id: string;
   similarity: number;
   metadata: EmbeddingMetadata;
@@ -60,6 +62,7 @@ interface ApiSearchResult {
 
 interface ApiSearchResponse {
   empathyMessage: string;
+  smartUrl: string;
   quickTips: string[];
   summary: string;
   searchResults: ApiSearchResult[];
@@ -73,6 +76,7 @@ export default function AgentPage() {
   const [ai, setAi] = useState<{
     empathyMessage: string;
     quickTips: string[];
+    smartUrl: string;
     summary: string;
   } | null>(null);
 
@@ -99,6 +103,7 @@ export default function AgentPage() {
       const data: ApiSearchResponse = await res.json();
       setAi({
         empathyMessage: data.empathyMessage,
+        smartUrl: data.smartUrl,
         quickTips: data.quickTips || [],
         summary: data.summary,
       });
@@ -282,6 +287,25 @@ export default function AgentPage() {
                       <span className="font-medium text-foreground/90">Summary: </span>
                       {ai.summary}
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Smart URL - New Section */}
+            {ai.smartUrl && (
+              <Card className="bg-blue-50 dark:bg-blue-500/20 border-blue-200 dark:border-blue-500/30 shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="font-medium text-blue-900 dark:text-white">Explore Further: </span>
+                    <Link 
+                      href={ai.smartUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-blue-600 dark:text-blue-300 hover:underline"
+                    >
+                      {ai.smartUrl}
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
