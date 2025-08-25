@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from 'react';
-import { ArrowRight, X, Apple, Package, Citrus, Heart, Sun } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { Button } from './ui/button';
-import ReactDOM from 'react-dom';
+import React, { useState } from "react";
+import { ArrowRight, X, Apple, Package, Citrus, Heart, Sun } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Modal = ({ triggerText = "Explore Hita" }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,121 +15,137 @@ const Modal = ({ triggerText = "Explore Hita" }) => {
       description: "Discover healthy products",
       icon: Package,
       href: "/products",
-      gradient: "from-blue-500 to-cyan-400"
     },
     {
-      title: "Foods", 
+      title: "Foods",
       description: "Explore nutritious foods",
       icon: Apple,
       href: "/foods",
-      gradient: "from-green-500 to-emerald-400"
     },
     {
       title: "Remedies",
       description: "Find natural remedies",
       icon: Citrus,
-      href: "/remedies", 
-      gradient: "from-purple-500 to-pink-500"
+      href: "/remedies",
     },
     {
       title: "Wellness Tips",
       description: "Get life-changing tips",
       icon: Heart,
       href: "/wellness-tips",
-      gradient: "from-amber-500 to-orange-400"
-    }
+    },
   ];
-
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
 
   return (
     <div>
-      <Button size="lg" onClick={openModal} className='rounded-xl py-6 px-8 group transition-all duration-500'>
+      {/* Button */}
+      <motion.div layoutId="modal-container">
+        <Button
+          size="lg"
+          onClick={() => setIsOpen(true)}
+          className="rounded-xl py-6 px-8 group transition-all duration-500"
+        >
+          {triggerText}
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300" />
+        </Button>
+      </motion.div>
 
-        {triggerText} <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300" />
-      </Button>
-      {isOpen && typeof window !== 'undefined' && ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
-            onClick={closeModal}
-          />
-          {/* Modal Content */}
-          <div className="relative bg-background rounded-2xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-300 px-2 py-2">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 ">
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-foreground text-start">Choose Your Wellness Path</h2>
-                <p className="hidden md:flex text-foreground/50 mt-1">Discover healthy living options</p>
+      {/* AnimatePresence for modal */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={() => setIsOpen(false)}
+            />
+
+            {/* Morphing container */}
+            <motion.div
+              layoutId="modal-container"
+              className="relative bg-background rounded-2xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6">
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-foreground text-start">
+                    Choose Your Wellness Path
+                  </h2>
+                  <p className="hidden md:flex text-foreground/50 mt-1">
+                    Discover healthy living options
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 hover:bg-foreground/10 rounded-xl border-2 border-dashed border-foreground/15 hover:border-transparent transition-colors duration-300"
+                >
+                  <X className="h-5 w-5 text-gray-500 animate-pulse" />
+                </button>
               </div>
-              <button
-                onClick={closeModal}
-                className="p-2 hover:bg-foreground/10 rounded-xl border-2 border-dashed border-foreground/15 items-start justify-start hover:border-transparent transition-colors duration-300"
 
-              >
-                <X className="h-5 w-5 text-gray-500 animate-pulse" />
-              </button>
-            </div>
-
-            {/* Content */}
-            <div className="p-6">
-              {/* Wellness Cards Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {wellnessPaths.map((path) => {
-                  const Icon = path.icon;
-                  return (
-                    <div
-                      key={path.title}
-                      className="group relative overflow-hidden rounded-xl bg-gradient-to-br hover:bg-foreground/10 p-4 md:p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl border-2 border-foreground/15 border-dashed hover:border-transparent"
-                      onClick={() => {
-                        router.push(path.href);
-                        closeModal();
-                      }}
-                    >
-                      <div className="flex items-center justify-center mb-2 mt-2 md:mt-0">
-                        <div className="p-2 dark:bg-foreground/20 bg-foreground/5 backdrop-blur-sm rounded-lg">
-                          <Icon className="h-6 w-6 text-foreground" />
+              {/* Content */}
+              <div className="p-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  {wellnessPaths.map((path) => {
+                    const Icon = path.icon;
+                    return (
+                      <div
+                        key={path.title}
+                        className="group relative overflow-hidden rounded-xl bg-gradient-to-br p-4 md:p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl border-2 border-foreground/15 border-dashed hover:border-transparent"
+                        onClick={() => {
+                          router.push(path.href);
+                          setIsOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center justify-center mb-2 mt-2 md:mt-0">
+                          <div className="p-2 dark:bg-foreground/20 bg-foreground/5 group-hover:bg-blue-500/10 dark:group-hover:bg-blue-500/20 backdrop-blur-sm rounded-lg transition-all duration-500">
+                            <Icon className="h-6 w-6 text-foreground group-hover:text-blue-500" />
+                          </div>
                         </div>
+                        <h3 className="text-base md:text-xl font-semibold text-foreground mb-1 mt-4 text-center">
+                          {path.title}
+                        </h3>
+                        <p className="text-foreground/80 text-sm text-center hidden md:flex">
+                          {path.description}
+                        </p>
                       </div>
-                      <h3 className="text-base md:text-xl font-semibold text-foreground mb-1 mt-4 text-center">{path.title}</h3>
-                      <p className="text-foreground/80 text-sm text-center hidden md:flex">{path.description}</p>
-                      
-                      {/* Hover Effect Overlay */}
-                      <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
 
-              {/* All Sections Option */}
-              <div className="pt-4">
+                {/* Agent Option */}
                 <div
-                  className="group flex items-center justify-between p-4 bg-background/50 hover:bg-foreground/10 rounded-xl cursor-pointer transition-all duration-200 px-6 border-2 border-dashed hover:border-transparent"
+                  className="group flex items-center justify-between p-4 bg-background/50 rounded-xl cursor-pointer transition-all duration-200 px-6 hover:ring-4 hover:ring-offset-2 ring-offset-background hover:ring-blue-500/20 hover:focus:ring-blue-400/20 focus:border-blue-500/70 hover:shadow-blue-500/20 border-2 border-foreground/5 hover:border-blue-500/70"
                   onClick={() => {
-                    router.push('/agent');
-                    closeModal();
+                    router.push("/agent");
+                    setIsOpen(false);
                   }}
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 dark:bg-foreground/20 bg-foreground/5 group-hover:bg-foreground/20 rounded-lg transition-colors duration-200">
-                      <Sun className="h-5 w-5 text-foreground animate-pulse" />
+                    <div className="p-2 dark:bg-foreground/20 bg-foreground/5 group-hover:bg-blue-500/10 dark:group-hover:bg-blue-500/20 rounded-lg transition-colors duration-500">
+                      <Sun className="h-5 w-5 text-foreground ease-out group-hover:animate-fifth group-hover:text-blue-500 transition-all duration-100" />
                     </div>
                     <div>
-                      <h3 className="text-start font-semibold text-foreground">Hita&apos;s Agent</h3>
-                      <p className="hidden md:flex text-sm text-foreground/50">Under construction, but you can check it out!</p>
+                      <h3 className="text-start font-semibold text-foreground">
+                        Hita&apos;s Agent
+                      </h3>
+                      <p className="hidden md:flex text-sm text-foreground/50">
+                        Under construction, but you can check it out!
+                      </p>
                     </div>
                   </div>
-                  <ArrowRight className="h-5 w-5 text-foreground/50 group-hover:text-foreground group-hover:translate-x-1 transition-all duration-200" />
+                  <ArrowRight className="h-5 w-5 text-foreground/50 group-hover:text-foreground group-hover:text-blue-500 group-hover:translate-x-1 transition-all duration-200" />
                 </div>
               </div>
-
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

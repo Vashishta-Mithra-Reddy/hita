@@ -6,10 +6,10 @@ export default function HitaDesc() {
     return(
         <section className="relative py-40 md:py-44 flex items-center justify-center px-12">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.h2 initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:0.5}} viewport={{once:true,amount:0.5}} className="text-4xl md:text-6xl font-satoshi font-bold text-foreground mb-6 text-balance">
+            <motion.h2 initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:0.5}} viewport={{once:true,amount:0.5}} className="text-4xl md:text-6xl font-satoshi font-black text-foreground mb-6 text-balance">
               Welcome to<br />
               <motion.span initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:0.5, delay: 0.2}} viewport={{once:true,amount:0.5}} className="inline-block pt-3">
-                हित <span className="text-foreground/40 font-sans animate-fourth">| Hita</span>
+                हित <span className="text-foreground/40 font-sans animate-fourth font-bold">| Hita</span>
               </motion.span>
             </motion.h2>
 

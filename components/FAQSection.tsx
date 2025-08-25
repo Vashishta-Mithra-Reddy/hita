@@ -26,15 +26,15 @@ const faqs = [
   {
     question: "Is Hita free to use?",
     answer:
-      "Yes, Hita is completely free. Our mission is to make wellness accessible and easy for everyone."
+      "Yes, Hita is completely free to browse."
   },
 ];
 
 export default function FAQSection() {
   return (
-    <motion.section initial={{scale:1.05}} whileInView={{scale:1}} transition={{duration:0.7}} viewport={{once:true,amount:0.5}} className="max-w-5xl mx-auto pb-48 px-6 md:px-12">
+    <motion.section initial={{scale:0.9}} whileInView={{scale:1}} transition={{duration:0.7}} viewport={{once:true,amount:0.5}} className="max-w-5xl mx-auto pb-48 px-8 md:px-12 wrapperx">
       <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-satoshi font-semibold mb-4 text-foreground/80">
+        <h2 className="text-4xl md:text-5xl font-satoshi font-extrabold mb-4 text-foreground/80">
           Frequently Asked Questions
         </h2>
         <p className="text-lg md:text-xl text-foreground/70">

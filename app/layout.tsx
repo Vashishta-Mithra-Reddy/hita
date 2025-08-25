@@ -29,7 +29,6 @@ const geistSans = Geist({
 
 const satoshi = localfont({
   variable: "--font-satoshi",
-  weight: "900",
   src: "./fonts/Satoshi-Variable.woff2",
   display: "swap"
 });
