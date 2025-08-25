@@ -1,3 +1,5 @@
+"use client";
+import {motion} from "framer-motion";
 import FAQItem from "./FAQItem";
 
 const faqs = [
@@ -30,7 +32,7 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <section className="max-w-5xl mx-auto pb-48 px-6 md:px-12">
+    <motion.section initial={{scale:1.05}} whileInView={{scale:1}} transition={{duration:0.7}} viewport={{once:true,amount:0.5}} className="max-w-5xl mx-auto pb-48 px-6 md:px-12">
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-satoshi font-semibold mb-4 text-foreground/80">
           Frequently Asked Questions
@@ -44,6 +46,6 @@ export default function FAQSection() {
           <FAQItem key={i} question={faq.question} answer={faq.answer} />
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 }
