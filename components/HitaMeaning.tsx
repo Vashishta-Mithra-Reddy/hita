@@ -1,5 +1,3 @@
-"use client";
-
 export default function HitaMeaning(){
     return(
         <section className="flex flex-col items-center justify-center pt-32 px-6 max-w-3xl text-center -rotate-2  hover:rotate-0 transition-all duration-500 opacity-65">

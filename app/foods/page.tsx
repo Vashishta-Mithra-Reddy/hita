@@ -33,7 +33,7 @@ export default function FoodsPage() {
           <div className="max-w-md h-12 rounded-lg bg-gray-100 dark:bg-foreground/10"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array(6).fill(0).map((_, index) => <FoodCardSkeleton key={index} />)}
+          {Array(12).fill(0).map((_, index) => <FoodCardSkeleton key={index} />)}
         </div>
       </div>
     }>
