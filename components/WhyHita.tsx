@@ -33,7 +33,7 @@ export default function WhyHita(){
             </motion.p>
             <ul className='mt-2 list-disc list-inside md:text-start text-center text-foreground/75'>
               {features.map((feature,index)=>(
-                <motion.li key={feature} initial={{opacity:0,x:50}} whileInView={{opacity:1,x:0}} transition={{duration:0.5, delay: 0.2*index}} viewport={{once:true,amount:0.5}}>
+                <motion.li key={feature} initial={{opacity:0,x:50}} whileInView={{opacity:1,x:0}} transition={{duration:0.5, delay: 0.2*index}} viewport={{once:true,amount:0.5}} className='text-balance'>
                     {feature}
                 </motion.li>
               ))}
