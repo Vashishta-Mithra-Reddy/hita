@@ -2,11 +2,10 @@ export const dynamic = 'force-dynamic';
 
 import { Suspense } from 'react';
 import { getWellnessTips, getWellnessTipCategories } from '@/lib/supabase/wellness';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { SearchFilter } from './search-filter'; // client component
+import { SearchFilter } from './search-filter'; 
 import BottomGradient from '@/components/BottomGradient';
 import { WellnessTipCardSkeleton } from '@/components/skeletons/WellnessTipCardSkeleton';
+import WellnessTipCard from '@/components/WellnessTipCard';
 
 type MaybeString = string | null;
 
@@ -57,24 +56,8 @@ async function WellnessTipsList({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {tips.map((tip) => (
-        <Card
-          key={tip.id}
-          className="overflow-hidden shadow-none border-2 border-dashed"
-        >
-          <CardHeader className='mb-0 pb-2'>
-            {tip.category && (
-              <Badge variant="secondary" className="w-fit opacity-60 mb-1">
-                {tip.category}
-              </Badge>
-            )}
-            <CardTitle className="text-lg ml-1">{tip.title}</CardTitle>
-            
-          </CardHeader>
-          <CardContent>
-            <p className="whitespace-pre-line text-balance ml-1">{tip.content}</p>
-          </CardContent>
-        </Card>
+      {tips.map((wellnesstip) => (
+        <WellnessTipCard key={wellnesstip.id} wellnesstip={wellnesstip}/>
       ))}
     </div>
   );
