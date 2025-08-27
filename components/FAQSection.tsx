@@ -32,7 +32,7 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <motion.section initial={{scale:0.9}} whileInView={{scale:1}} transition={{duration:0.7}} viewport={{once:true,amount:0.5}} className="max-w-5xl mx-auto pb-48 px-8 md:px-12 wrapperx">
+    <motion.section className="max-w-5xl mx-auto pb-48 px-8 md:px-12 wrapperx">
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-satoshi font-extrabold mb-4 text-foreground/80">
           Frequently Asked Questions
