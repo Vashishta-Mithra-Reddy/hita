@@ -16,7 +16,7 @@ export default function WhyHita(){
     return(
         <section className='flex flex-col md:flex-row gap-20 justify-center items-center pb-40 max-w-6xl wrapperx'>
           
-          <InViewWrapper animationClass='animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:slide-in-from-left-8 zoom-in-75 duration-1000'>
+          <InViewWrapper animationClass='animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:slide-in-from-left-8 zoom-in-75 fade-in duration-1000'>
           <div className="relative group">
             <Image src={Lightt} alt="An image of a luminous object" className="max-w-screen md:max-w-md rounded-xl group-hover:brightness-200 transition-all duration-1000 group-hover:rotate-2 group-hover:scale-105" />
             <Image src={Hitax} width={80} height={80} alt="hita" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:scale-100 scale-75" />
