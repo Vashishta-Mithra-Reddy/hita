@@ -62,16 +62,17 @@ async function WellnessTipsList({
           key={tip.id}
           className="overflow-hidden shadow-none border-2 border-dashed"
         >
-          <CardHeader>
-            <CardTitle className="text-lg">{tip.title}</CardTitle>
+          <CardHeader className='mb-0 pb-2'>
             {tip.category && (
-              <Badge variant="secondary" className="w-fit">
+              <Badge variant="secondary" className="w-fit opacity-60 mb-1">
                 {tip.category}
               </Badge>
             )}
+            <CardTitle className="text-lg ml-1">{tip.title}</CardTitle>
+            
           </CardHeader>
           <CardContent>
-            <p className="whitespace-pre-line text-balance">{tip.content}</p>
+            <p className="whitespace-pre-line text-balance ml-1">{tip.content}</p>
           </CardContent>
         </Card>
       ))}
