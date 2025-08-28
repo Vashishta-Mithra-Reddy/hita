@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 
 export default function WellnessTipCard({wellnesstip}:{wellnesstip : WellnessTip}){
     return(
-        <Card
+          <Card
           key={wellnesstip.id}
           className="overflow-hidden shadow-none border-2 border-dashed"
         >

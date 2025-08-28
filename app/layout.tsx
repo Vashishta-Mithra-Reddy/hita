@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Footer from "@/components/blocks/footer";
 import Header from "@/components/blocks/header";
 import BottomNav from "@/components/blocks/bottom-nav";
+import { Analytics } from "@vercel/analytics/next"
 // import RadialGradient from "@/components/RadialGradient";
 // import BottomGradient from "@/components/BottomGradient";
 
@@ -51,6 +52,7 @@ export default function RootLayout({
           <Header />
           <div>
             {children}
+            <Analytics/>  
           </div>
           {/* <RadialGradient/> */}
           {/* <BottomGradient/> */}

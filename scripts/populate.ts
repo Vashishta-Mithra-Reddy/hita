@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import {GoogleGenAI} from "@google/genai";
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,6 +12,10 @@ const supabase = createClient(
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+});
+
+const genai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY!,
 });
 
 // Enhanced interfaces with richer data
@@ -116,12 +121,22 @@ interface EnhancedWellnessTip {
 async function createEmbedding(text: string, retries = 3): Promise<number[] | null> {
   for (let i = 0; i < retries; i++) {
     try {
-      const response = await openai.embeddings.create({
-        model: "text-embedding-3-small",
-        input: text.slice(0, 8000), // Keep within token limits
-      });
+      // const response = await openai.embeddings.create({
+      //   model: "text-embedding-3-small",
+      //   input: text.slice(0, 8000), // Keep within token limits
+      // });
+
+      const response = await genai.models.embedContent({
+        model: 'gemini-embedding-001',
+        contents: text,
+        config: {
+            outputDimensionality: 1536,
+          },
+      })
       
-      return response.data[0].embedding;
+      if (response.embeddings) {
+        return response.embeddings[0].values ?? null;
+      } 
     } catch (error) {
       console.error(`Embedding attempt ${i + 1} failed:`, error);
       if (i === retries - 1) {

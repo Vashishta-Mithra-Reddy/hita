@@ -413,16 +413,16 @@ export default function AgentPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {wellnessTips.map((t) => (
               <Card key={t.id} className="overflow-hidden shadow-none border-2 border-dashed">
-                <CardHeader>
-                  <CardTitle className="text-lg">{t.title}</CardTitle>
+                <CardHeader className='mb-0 pb-2'>
                   {t.category && (
-                    <div className="text-xs inline-flex px-2 py-1 rounded-full bg-foreground/5 w-fit">
+                    <div className="font-semibold text-xs inline-flex px-2 py-1 mb-1 rounded-full bg-foreground/5 w-fit opacity-75">
                       {t.category}
                     </div>
                   )}
+                  <CardTitle className="text-lg ml-1">{t.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="whitespace-pre-line text-balance">{t.content}</p>
+                  <p className="whitespace-pre-line text-balance ml-1">{t.content}</p>
                 </CardContent>
               </Card>
             ))}

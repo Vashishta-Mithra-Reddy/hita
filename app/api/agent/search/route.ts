@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -9,6 +10,10 @@ const supabase = createClient(
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
+});
+
+const genai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY!,
 });
 
 interface EmbeddingMetadata {
@@ -254,17 +259,25 @@ async function searchEmbeddings(query: string, limit = 20): Promise<SearchResult
   try {
     console.log('🔍 Generating embedding for query:', query.slice(0, 50) + '...');
     
-    const embeddingResponse = await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: query,
-    });
+    // const embeddingResponse = await openai.embeddings.create({
+    //   model: "text-embedding-3-small",
+    //   input: query,
+    // });
 
-    const queryEmbedding = embeddingResponse.data[0].embedding;
+    const embeddingResponse = await await genai.models.embedContent({
+        model: 'gemini-embedding-001',
+        contents:query,
+        config: {
+            outputDimensionality: 1536,
+          },
+      })
+
+    const queryEmbedding = embeddingResponse.embeddings?.[0]?.values ?? null;
     
     console.log('🔎 Performing vector similarity search...');
     const { data, error } = await supabase.rpc('match_embeddings', {
       query_embedding: queryEmbedding,
-      match_threshold: 0.4, // More permissive threshold
+      match_threshold: 0.5, // More permissive threshold
       match_count: limit,
     });
 
