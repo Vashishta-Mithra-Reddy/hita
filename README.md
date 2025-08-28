@@ -1,6 +1,6 @@
 # Hita
 
-Hita is a knowledge platform focused on well-being and healthy living. It curates and presents information across:
+Hita is an AI-powered knowledge platform focused on well-being and healthy living. It curates and presents information across:
 
 - Foods (nutritional info, benefits, dietary badges, seasonal/region availability)
 - Products (brands, categories, links, offline availability, features, tags)
@@ -8,45 +8,70 @@ Hita is a knowledge platform focused on well-being and healthy living. It curate
 - Remedies (ingredients, preparation, usage, symptoms treated)
 - Supplementation guides
 - Wellness tips
+- AI Agent (intelligent search and recommendations)
+- Health Issues (browse content by specific health concerns)
+- User Submissions (community-contributed content)
 
-It is built with Next.js (App Router), React, Tailwind CSS, Supabase (Postgres + Auth + Storage), TypeScript, and OpenAI for vector embeddings.
+It is built with Next.js (App Router), React, Tailwind CSS, Supabase (Postgres + Auth + Storage), TypeScript, OpenAI for vector embeddings, and Google GenAI for enhanced AI capabilities.
 
 ## Features
 
 - Modern App Router-based Next.js app with responsive, accessible UI
+- AI-powered search agent with semantic search capabilities
 - Consistent layout across Foods, Products, Brands, Remedies, and Wellness Tips pages
+- Health issues browsing for targeted content discovery
+- User content submission system with authentication
 - Skeleton loading components for smooth perceived performance
 - Supabase-backed data layer with typed query helpers
 - Embeddings population script to create vector search data
+- Complete authentication flow with password reset and email confirmation
+- Enhanced UI with animations, modals, and responsive navigation
 - Theming and dark mode support
+- 3D graphics and interactive elements
 
 ## Tech Stack
 
 - Framework: Next.js (App Router), React
-- UI: Tailwind CSS, Radix UI
+- UI: Tailwind CSS, Radix UI, Framer Motion
+- 3D Graphics: Three.js, React Three Fiber
 - Data: Supabase (Postgres, Auth, Storage)
 - Language: TypeScript
-- Vector embeddings: OpenAI (text-embedding-3-small)
+- AI: OpenAI (text-embedding-3-small), Google GenAI
+- Web Scraping: Puppeteer
+- Animations: Framer Motion, React Spring
+- Theming: next-themes
 
 ## Project Structure
 
-- <mcfile name="app" path="c:\Vashishta\hita\app\"></mcfile>
-  - Foods: <mcfile name="foods" path="c:\Vashishta\hita\app\foods\"></mcfile>
-  - Products: <mcfile name="products" path="c:\Vashishta\hita\app\products\"></mcfile>
-  - Brands: <mcfile name="brands" path="c:\Vashishta\hita\app\brands\"></mcfile>
-  - Remedies: <mcfile name="remedies" path="c:\Vashishta\hita\app\remedies\"></mcfile>
-  - Wellness Tips: <mcfile name="wellness-tips" path="c:\Vashishta\hita\app\wellness-tips\"></mcfile>
-  - Auth: <mcfile name="auth" path="c:\Vashishta\hita\app\auth\"></mcfile>
-  - Root layout/page: <mcfile name="layout.tsx" path="c:\Vashishta\hita\app\layout.tsx"></mcfile>, <mcfile name="page.tsx" path="c:\Vashishta\hita\app\page.tsx"></mcfile>
-- <mcfile name="components" path="c:\Vashishta\hita\components\"></mcfile>
-  - Cards: FoodCard, ProductCard, RemedyCard
-  - Skeletons: <mcfile name="skeletons" path="c:\Vashishta\hita\components\skeletons\"></mcfile>
-  - UI primitives and shared components
-- <mcfile name="lib/supabase" path="c:\Vashishta\hita\lib\supabase\"></mcfile>
-  - Client setup: <mcfile name="client.ts" path="c:\Vashishta\hita\lib\supabase\client.ts"></mcfile>, <mcfile name="server.ts" path="c:\Vashishta\hita\lib\supabase\server.ts"></mcfile>
-  - Domain helpers: <mcfile name="products.ts" path="c:\Vashishta\hita\lib\supabase\products.ts"></mcfile>, <mcfile name="foods.ts" path="c:\Vashishta\hita\lib\supabase\foods.ts"></mcfile>, <mcfile name="wellness.ts" path="c:\Vashishta\hita\lib\supabase\wellness.ts"></mcfile>
-- Scripts: <mcfile name="populate.ts" path="c:\Vashishta\hita\scripts\populate.ts"></mcfile> (embeddings)
-- Database schema SQL: <mcfile name="schema.sql" path="c:\Vashishta\hita\supabase\schema.sql"></mcfile>
+- `app/`
+  - Foods: `app/foods/`
+  - Products: `app/products/`
+  - Brands: `app/brands/`
+  - Remedies: `app/remedies/`
+  - Wellness Tips: `app/wellness-tips/`
+  - Auth: `app/auth/`
+  - Agent: `app/agent/` (AI search and recommendations)
+  - Issues: `app/issues/` (browse by health concerns)
+  - Submit: `app/submit/` (user content submission)
+  - API: `app/api/agent/search/` (search API endpoint)
+  - Root layout/page: `app/layout.tsx`, `app/page.tsx`
+- `components/`
+  - Cards: FoodCard, ProductCard, RemedyCard, WellnessTipCard, BrandCard
+  - Skeletons: `components/skeletons/`
+  - UI primitives: `components/ui/`
+  - Blocks: `components/blocks/` (header, footer, navigation)
+  - Animations: `components/animations/` (FadeInWhenVisible, InViewWrapper)
+  - Auth components: login-form, sign-up-form, forgot-password-form, update-password-form
+  - Interactive components: modal, pagination-controls, theme-switcher
+- `lib/supabase/`
+  - Client setup: `lib/supabase/client.ts`, `lib/supabase/server.ts`
+  - Domain helpers: `lib/supabase/products.ts`, `lib/supabase/foods.ts`, `lib/supabase/wellness.ts`, `lib/supabase/remedies.ts`
+  - Middleware: `lib/supabase/middleware.ts`
+- `lib/`
+  - Utilities: `lib/utils.ts`
+  - Reddit integration: `lib/reddit.ts`
+- Scripts: `scripts/populate.ts` (embeddings)
+- Database schema SQL: `supabase/schema.sql`
 - Config: Tailwind, ESLint, Next, TSConfig
 
 ## Getting Started
@@ -76,9 +101,10 @@ OPENAI_API_KEY=your_openai_api_key
 
 Notes:
 
-- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are used for the app’s Supabase client on both server and browser contexts via <mcfile name="client.ts" path="c:\Vashishta\hita\lib\supabase\client.ts"></mcfile> and <mcfile name="server.ts" path="c:\Vashishta\hita\lib\supabase\server.ts"></mcfile>.
+- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are used for the app's Supabase client on both server and browser contexts via `lib/supabase/client.ts` and `lib/supabase/server.ts`.
 - `SUPABASE_SERVICE_ROLE_KEY` is required by the embeddings script to perform admin operations.
 - `OPENAI_API_KEY` is required by the embeddings script to create vector embeddings.
+- Additional API keys may be required for Google GenAI integration.
 
 ### Run the development server
 
@@ -108,15 +134,17 @@ npm start
 
 ## Data Layer
 
-The app uses Supabase Postgres tables for content such as categories, brands, products, foods, remedies, supplementation guides, wellness tips, and embeddings. See <mcfile name="schema.sql" path="c:\Vashishta\hita\supabase\schema.sql"></mcfile> for the canonical database structure.
+The app uses Supabase Postgres tables for content such as categories, brands, products, foods, remedies, supplementation guides, wellness tips, and embeddings. See `supabase/schema.sql` for the canonical database structure.
 
 Typed query helpers:
 
-- Products: <mcfile name="products.ts" path="c:\Vashishta\hita\lib\supabase\products.ts"></mcfile>
+- Products: `lib/supabase/products.ts`
   - Includes nested joins with `brand:brands(*)`, `category:categories(*)`, `product_links(*)`, and `offline_availability(*)`.
-- Foods: <mcfile name="foods.ts" path="c:\Vashishta\hita\lib\supabase\foods.ts"></mcfile>
+- Foods: `lib/supabase/foods.ts`
   - Includes helpers to safely extract nested data (vitamins, minerals, seasons, regions).
-- Wellness Tips: <mcfile name="wellness.ts" path="c:\Vashishta\hita\lib\supabase\wellness.ts"></mcfile>
+- Remedies: `lib/supabase/remedies.ts`
+  - Includes helpers for remedy categories, ingredients, and preparation methods.
+- Wellness Tips: `lib/supabase/wellness.ts`
 
 ## Pages Overview
 
@@ -125,13 +153,16 @@ Typed query helpers:
 - Brands: index and detail pages, including associated products
 - Remedies: index and detail pages (ingredients, preparation, usage)
 - Wellness Tips: list and filter by category
-- Auth: sign up, login, password actions
+- Agent: AI-powered search interface with semantic search capabilities
+- Issues: browse content organized by specific health concerns
+- Submit: authenticated content submission system for user contributions
+- Auth: complete authentication flow (sign up, login, password reset, email confirmation, password update)
 
-Skeleton components under <mcfile name="skeletons" path="c:\Vashishta\hita\components\skeletons\"></mcfile> provide consistent loading placeholders across pages.
+Skeleton components under `components/skeletons/` provide consistent loading placeholders across pages.
 
 ## Embeddings Population
 
-The script at <mcfile name="populate.ts" path="c:\Vashishta\hita\scripts\populate.ts"></mcfile> generates aggregated content for:
+The script at `scripts/populate.ts` generates aggregated content for:
 
 - Products, Foods, Remedies, Supplementation Guides, Wellness Tips
 
@@ -178,10 +209,39 @@ The script will:
 
 ## Configuration
 
-- Next.js config: <mcfile name="next.config.ts" path="c:\Vashishta\hita\next.config.ts"></mcfile> (remote image host)
-- Tailwind configuration: <mcfile name="tailwind.config.ts" path="c:\Vashishta\hita\tailwind.config.ts"></mcfile>
-- ESLint config: <mcfile name="eslint.config.mjs" path="c:\Vashishta\hita\eslint.config.mjs"></mcfile>
-- TypeScript config: <mcfile name="tsconfig.json" path="c:\Vashishta\hita\tsconfig.json"></mcfile>
+- Next.js config: `next.config.ts` (remote image host)
+- Tailwind configuration: `tailwind.config.ts`
+- ESLint config: `eslint.config.mjs`
+- TypeScript config: `tsconfig.json`
+
+## API Routes
+
+- Search API: `app/api/agent/search/route.ts`
+  - Provides semantic search capabilities using vector embeddings
+  - Supports filtering by content type (products, foods, remedies, etc.)
+  - Returns relevant results with metadata and similarity scores
+
+## UI Components & Animations
+
+The app includes enhanced UI components for better user experience:
+
+- **Layout Components**: `components/blocks/`
+  - Header with navigation and theme switching
+  - Footer with site information
+  - Bottom navigation for mobile
+  - Responsive navigation components
+
+- **Animation Components**: `components/animations/`
+  - FadeInWhenVisible: Smooth fade-in animations for elements entering viewport
+  - InViewWrapper: Intersection observer utilities for scroll-based animations
+
+- **Interactive Components**:
+  - Modal system for overlays
+  - Pagination controls for content browsing
+  - Theme switcher with dark/light mode support
+  - Loading screens and skeleton components
+
+- **3D Graphics**: Integration with Three.js for interactive visual elements
 
 ## Deployment
 
