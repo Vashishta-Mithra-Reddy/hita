@@ -51,14 +51,14 @@ export default function RootLayout({
           <Toaster/>
           <Header />
           <div>
-            {children}
-            <Analytics/>  
+            {children} 
           </div>
           {/* <RadialGradient/> */}
           {/* <BottomGradient/> */}
           <BottomNav/>
           <Footer />
         </ThemeProvider>
+        <Analytics/> 
       </body>
     </html>
   );
