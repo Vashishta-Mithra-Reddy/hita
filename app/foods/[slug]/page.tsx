@@ -9,6 +9,7 @@ import { Food } from '@/lib/supabase/foods';
 import { FoodDetailSkeleton } from '@/components/skeletons/FoodDetailSkeleton';
 import BottomGradient from '@/components/BottomGradient';
 import { Sun, CloudRain, Snowflake, Leaf, Globe2 } from 'lucide-react';
+import {motion} from "framer-motion";
 
 // Type definitions for Supabase query results
 type VitaminQueryResult = {
@@ -269,7 +270,7 @@ export default function FoodDetailPage() {
       <div className="rounded-2xl p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Food Image */}
-          <div className="flex items-center justify-center rounded-xl p-4">
+          <motion.div initial={{opacity:0.3,filter:"blur(5px)"}} whileInView={{opacity:1,filter:"blur(0px)"}} transition={{ease:"easeIn",duration:0.2}} viewport={{once:true,amount:0.5}} className="flex items-center justify-center rounded-xl p-4">
             {food.main_image_url ? (
               <img 
                 src={food.main_image_url} 
@@ -281,7 +282,7 @@ export default function FoodDetailPage() {
                 No image available
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Food Info */}
           <div className="flex flex-col justify-center md:items-start items-center">
