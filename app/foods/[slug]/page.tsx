@@ -284,11 +284,11 @@ export default function FoodDetailPage() {
           </div>
 
           {/* Food Info */}
-          <div>
+          <div className="flex flex-col justify-center md:items-start items-center">
             <h1 className="text-3xl font-bold">{food.name}</h1>
             
             {/* Dietary Badges */}
-            <div className="flex flex-wrap gap-2 mt-3">
+            <div className="flex flex-wrap gap-2 mt-4 justify-center sm:justify-start">
               {food.is_vegetarian && <Badge variant="outline">Vegetarian</Badge>}
               {food.is_vegan && <Badge variant="outline">Vegan</Badge>}
               {food.is_gluten_free && <Badge variant="outline">Gluten Free</Badge>}
@@ -302,12 +302,12 @@ export default function FoodDetailPage() {
 
             {/* Short Description */}
             {food.short_description && (
-              <p className="mt-4 font-medium text-foreground/80">{food.short_description}</p>
+              <p className="mt-4 font-medium text-foreground/80 md:text-start text-center">{food.short_description}</p>
             )}
 
             {/* Quick Nutritional Snapshot */}
             {food.nutritional_info && (
-              <div className="mt-5 grid grid-cols-3 gap-4 text-center">
+              <div className="mt-5 grid grid-cols-4 gap-6 text-center">
                 {food.nutritional_info.calories !== undefined && (
                   <div>
                     <p className="text-xl font-semibold">{food.nutritional_info.calories}</p>
@@ -326,12 +326,18 @@ export default function FoodDetailPage() {
                     <p className="text-xs text-foreground/60">Carbs</p>
                   </div>
                 )}
+                {food.nutritional_info.fiber !== undefined && (
+                  <div>
+                    <p className="text-xl font-semibold">{food.nutritional_info.fiber}g</p>
+                    <p className="text-xs text-foreground/60">Fiber</p>
+                  </div>
+                )}
               </div>
             )}
 
             {/* Selection Tips */}
             {food.selection_tips && food.selection_tips.length > 0 && (
-              <div className="mt-6">
+              <div className="mt-6 md:text-start text-center">
                 <h4 className="text-sm font-semibold mb-2">Selection Tips</h4>
                 <div className="space-y-1">
                   {food.selection_tips.slice(0, 3).map((tip, index) => (
@@ -372,17 +378,6 @@ export default function FoodDetailPage() {
             </div>
           )}
 
-          {food.selection_tips && (
-            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors md:col-span-2">
-              <h3 className="font-medium mb-3 text-lg">Selection Tips</h3>
-              <ul className='list-disc list-inside md:text-start text-center text-foreground/70'>
-                {food.selection_tips.map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
           {/* Nutritional Info Section */}
           {food.nutritional_info && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
@@ -419,6 +414,20 @@ export default function FoodDetailPage() {
                     <span className="font-medium">{food.nutritional_info.fiber}g</span>
                   </li>
                 )}
+              </ul>
+            </div>
+          )}
+
+          {/* Health Benefits Section */}
+          {food.health_benefits && food.health_benefits.length > 0 && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+              <h3 className="font-medium mb-3 text-lg">Health Benefits</h3>
+              <ul className="list-disc list-inside space-y-2">
+                {food.health_benefits.map((benefit: string, index: number) => (
+                  <li key={index} className='text-foreground/70'>
+                    {benefit}
+                  </li>
+                ))}
               </ul>
             </div>
           )}
@@ -528,20 +537,7 @@ export default function FoodDetailPage() {
               )}
             </div>
           ) : null}
-          {/* Health Benefits Section */}
-          {food.health_benefits && food.health_benefits.length > 0 && (
-            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
-              <h3 className="font-medium mb-3 text-lg">Health Benefits</h3>
-              <ul className="space-y-1 list-inside">
-                {food.health_benefits.map((benefit: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="text-foreground/70 mt-1">•</span>
-                    <span>{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          
 
           {/* Availability Section — improved and split */}
           {food.seasonal_availability && food.seasonal_availability.length > 0 && (
@@ -592,11 +588,10 @@ export default function FoodDetailPage() {
           {food.preparation_tips && food.preparation_tips.length > 0 && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <h3 className="font-medium mb-3 text-lg">Preparation Tips</h3>
-              <ul className="space-y-1 list-inside">
+              <ul className="list-disc space-y-1 list-inside">
                 {food.preparation_tips.map((tip: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="text-foreground/70 mt-1">•</span>
-                    <span>{tip}</span>
+                  <li key={index} className="text-foreground/70">
+                    {tip}
                   </li>
                 ))}
               </ul>
@@ -607,12 +602,22 @@ export default function FoodDetailPage() {
           {food.storage_tips && food.storage_tips.length > 0 && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <h3 className="font-medium mb-3 text-lg">Storage Tips</h3>
-              <ul className="space-y-1 list-inside">
+              <ul className="list-disc space-y-1 list-inside">
                 {food.storage_tips.map((tip: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <span className="text-foreground/70 mt-1">•</span>
-                    <span>{tip}</span>
+                  <li key={index} className="text-foreground/70">
+                    {tip}
                   </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {food.selection_tips && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors md:col-span-2">
+              <h3 className="font-medium mb-3 text-lg">Selection Tips</h3>
+              <ul className='list-disc list-inside md:text-start text-center text-foreground/70'>
+                {food.selection_tips.map((tip, index) => (
+                  <li key={index}>{tip}</li>
                 ))}
               </ul>
             </div>
