@@ -18,6 +18,7 @@ export interface Food {
   name: string;
   slug: string;
   category_id: string;
+  selection_tips: string[],
   description: string | null;
   short_description: string | null;
   nutritional_info: {

@@ -327,6 +327,7 @@ CREATE TABLE foods (
   description TEXT,
   short_description TEXT,
   nutritional_info JSONB,
+  selection_tips TEXT[],
   is_vegetarian BOOLEAN DEFAULT true,
   is_vegan BOOLEAN DEFAULT false,
   is_gluten_free BOOLEAN DEFAULT false,

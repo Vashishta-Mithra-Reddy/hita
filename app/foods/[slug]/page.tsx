@@ -287,6 +287,7 @@ export default function FoodDetailPage() {
           <div>
             <h1 className="text-3xl font-bold">{food.name}</h1>
             
+            {/* Dietary Badges */}
             <div className="flex flex-wrap gap-2 mt-3">
               {food.is_vegetarian && <Badge variant="outline">Vegetarian</Badge>}
               {food.is_vegan && <Badge variant="outline">Vegan</Badge>}
@@ -299,10 +300,65 @@ export default function FoodDetailPage() {
               )}
             </div>
 
+            {/* Short Description */}
             {food.short_description && (
-              <p className="mt-4 font-medium">{food.short_description}</p>
+              <p className="mt-4 font-medium text-foreground/80">{food.short_description}</p>
             )}
+
+            {/* Quick Nutritional Snapshot */}
+            {food.nutritional_info && (
+              <div className="mt-5 grid grid-cols-3 gap-4 text-center">
+                {food.nutritional_info.calories !== undefined && (
+                  <div>
+                    <p className="text-xl font-semibold">{food.nutritional_info.calories}</p>
+                    <p className="text-xs text-foreground/60">kcal</p>
+                  </div>
+                )}
+                {food.nutritional_info.protein !== undefined && (
+                  <div>
+                    <p className="text-xl font-semibold">{food.nutritional_info.protein}g</p>
+                    <p className="text-xs text-foreground/60">Protein</p>
+                  </div>
+                )}
+                {food.nutritional_info.carbs !== undefined && (
+                  <div>
+                    <p className="text-xl font-semibold">{food.nutritional_info.carbs}g</p>
+                    <p className="text-xs text-foreground/60">Carbs</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Selection Tips */}
+            {food.selection_tips && food.selection_tips.length > 0 && (
+              <div className="mt-6">
+                <h4 className="text-sm font-semibold mb-2">Selection Tips</h4>
+                <div className="space-y-1">
+                  {food.selection_tips.slice(0, 3).map((tip, index) => (
+                    <p key={index} className="text-sm text-foreground/70">
+                      {tip}
+                    </p>
+                  ))}
+                </div>
+                {food.selection_tips.length > 3 && (
+                  <Button 
+                    variant="link" 
+                    size="sm" 
+                    className="px-0 mt-1"
+                    onClick={() => {
+                      const tipsSection = document.querySelector("#selection-tips");
+                      tipsSection?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                  >
+                    View all tips →
+                  </Button>
+                )}
+              </div>
+            )}
+
+
           </div>
+
         </div>
 
         {/* Bento Box Layout for Food Details */}
@@ -315,6 +371,18 @@ export default function FoodDetailPage() {
               <p className="text-foreground/80">{food.description}</p>
             </div>
           )}
+
+          {food.selection_tips && (
+            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors md:col-span-2">
+              <h3 className="font-medium mb-3 text-lg">Selection Tips</h3>
+              <ul className='list-disc list-inside md:text-start text-center text-foreground/70'>
+                {food.selection_tips.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Nutritional Info Section */}
           {food.nutritional_info && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
