@@ -69,7 +69,7 @@ export default function FoodDetailPage() {
     if (pct == null) return 'bg-foreground/15';
     if (pct >= 50) return 'bg-green-500/80';
     if (pct >= 20) return 'bg-amber-500/80';
-    return 'bg-blue-500/80';
+    return 'bg-red-500/80';
   };
   const clampPct = (pct: number | null | undefined) => {
     if (pct == null || Number.isNaN(pct)) return 0;
@@ -441,15 +441,15 @@ export default function FoodDetailPage() {
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <h3 className="font-medium text-lg">Vitamins</h3>
               <p className="text-xs text-foreground/60 mb-4">Amounts per 100g</p>
-              {food.vitamins?.length ? (
+              {detailedVitamins?.length ? (
                 <div className="flex flex-wrap gap-2 mb-3 line-clamp-3">
-                  {food.vitamins.map((vitamin, index) => (
+                  {[...detailedVitamins].sort((a, b) => (b.rda_percent ?? 0) - (a.rda_percent ?? 0)).map((vitamin, index) => (
                     <Badge
                       key={`v-pill-${index}`}
                       variant="outline"
                       className="bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300"
                     >
-                      {vitamin.split('(')[0].trim()}
+                      {vitamin.name.split("(")[0]}
                     </Badge>
                   ))}
                 </div>
@@ -508,15 +508,15 @@ export default function FoodDetailPage() {
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
               <h3 className="font-medium text-lg">Minerals</h3>
               <p className="text-xs text-foreground/60 mb-4">Amounts per 100g</p>
-              {food.minerals?.length ? (
+              {detailedMinerals?.length ? (
                 <div className="flex flex-wrap gap-2 mb-3">
-                  {food.minerals.map((mineral, index) => (
+                  {[...detailedMinerals].sort((a, b) => (b.rda_percent ?? 0) - (a.rda_percent ?? 0)).map((mineral, index) => (
                     <Badge
                       key={`m-pill-${index}`}
                       variant="outline"
                       className="bg-blue-100/30 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
                     >
-                      {mineral}
+                      {mineral.name}
                     </Badge>
                   ))}
                 </div>
