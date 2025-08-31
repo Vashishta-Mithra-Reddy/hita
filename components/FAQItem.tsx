@@ -14,7 +14,7 @@ export default function FAQItem({ question, answer }: FAQItemProps) {
 
   return (
     <div
-      className="border-b border-foreground/10 pt-4 pb-2 cursor-pointer select-none"
+      className="pt-4 pb-2 cursor-pointer select-none"
       onClick={() => setOpen(!open)}
     >
       <div className="flex justify-between items-center">

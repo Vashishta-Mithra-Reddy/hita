@@ -69,7 +69,7 @@ export default function FoodDetailPage() {
     if (pct == null) return 'bg-foreground/15';
     if (pct >= 50) return 'bg-green-500/80';
     if (pct >= 20) return 'bg-amber-500/80';
-    return 'bg-red-500/80';
+    return 'bg-blue-500/80';
   };
   const clampPct = (pct: number | null | undefined) => {
     if (pct == null || Number.isNaN(pct)) return 0;
@@ -205,7 +205,8 @@ export default function FoodDetailPage() {
         const computePercent = (amount: number | null, unit: string | null, rda?: { amount: number; unit: string }) => {
           if (!amount || !unit || !rda) return null;
           if (rda.unit !== unit) return null;
-          return Math.max(0, Math.min(100, (amount / rda.amount) * 100));
+          // return Math.max(0, Math.min(100, (amount / rda.amount) * 100));
+          return (amount / rda.amount) * 100;
         };
 
         const vitaminsDetailed: DetailedNutrient[] = vitaminItems.map(v => {
@@ -422,7 +423,9 @@ export default function FoodDetailPage() {
           {/* Health Benefits Section */}
           {food.health_benefits && food.health_benefits.length > 0 && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
-              <h3 className="font-medium mb-3 text-lg">Health Benefits</h3>
+              <h3 className="font-medium text-lg">Health Benefits</h3>
+              <p className="text-xs text-foreground/60 mb-4">Why It’s Good for You</p>
+              
               <ul className="list-disc list-inside space-y-2">
                 {food.health_benefits.map((benefit: string, index: number) => (
                   <li key={index} className='text-foreground/70'>
@@ -439,14 +442,14 @@ export default function FoodDetailPage() {
               <h3 className="font-medium text-lg">Vitamins</h3>
               <p className="text-xs text-foreground/60 mb-4">Amounts per 100g</p>
               {food.vitamins?.length ? (
-                <div className="flex flex-wrap gap-2 mb-3">
+                <div className="flex flex-wrap gap-2 mb-3 line-clamp-3">
                   {food.vitamins.map((vitamin, index) => (
                     <Badge
                       key={`v-pill-${index}`}
                       variant="outline"
                       className="bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300"
                     >
-                      {vitamin}
+                      {vitamin.split('(')[0].trim()}
                     </Badge>
                   ))}
                 </div>
@@ -462,8 +465,22 @@ export default function FoodDetailPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-foreground/80">{v.name}</span>
                         <span className="font-medium text-sm">
-                          {v.amount_per_100g ?? '-'}{v.unit ?? ''}{typeof v.rda_percent === 'number' ? ` • ${v.rda_percent.toFixed(0)}% RDA` : ''}
+                          {v.amount_per_100g ?? '-'}
+                          {v.unit ?? ''}
+                          {typeof v.rda_percent === 'number' && (
+                            <>
+                              {' • '}
+                              <span
+                                className={
+                                  v.rda_percent > 100 ? 'font-bold text-green-600' : ''
+                                }
+                              >
+                                {v.rda_percent.toFixed(0)}% RDA
+                              </span>
+                            </>
+                          )}
                         </span>
+
                       </div>
                       <div className="h-2 w-full rounded-full bg-foreground/10 overflow-hidden">
                         <div
@@ -515,7 +532,20 @@ export default function FoodDetailPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-foreground/80">{m.name}</span>
                         <span className="font-medium text-sm">
-                          {m.amount_per_100g ?? '-'}{m.unit ?? ''}{typeof m.rda_percent === 'number' ? ` • ${m.rda_percent.toFixed(0)}% RDA` : ''}
+                          {m.amount_per_100g ?? '-'}
+                          {m.unit ?? ''}
+                          {typeof m.rda_percent === 'number' && (
+                            <>
+                              {' • '}
+                              <span
+                                className={
+                                  m.rda_percent > 100 ? 'font-bold text-green-600' : ''
+                                }
+                              >
+                                {m.rda_percent.toFixed(0)}% RDA
+                              </span>
+                            </>
+                          )}
                         </span>
                       </div>
                       <div className="h-2 w-full rounded-full bg-foreground/10 overflow-hidden">
