@@ -27,11 +27,11 @@ export default function WhyHita(){
             <h3 className='text-4xl md:text-5xl font-satoshi font-extrabold md:text-start text-center tracking-tight text-foreground/80'>
               What is Hita?
             </h3>
-            <motion.p initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:0.5}} viewport={{once:true,amount:0.5}} className='mt-6 text-base md:text-base md:text-start text-center text-pretty text-foreground/85'>
+            <motion.p initial={{opacity:0,y:50}} whileInView={{opacity:1,y:0}} transition={{duration:0.5}} viewport={{once:true,amount:0.5}} className='mt-6 text-base md:text-base md:text-start text-center text-balance md:text-pretty text-foreground/85'>
               Hita is a wellness platform designed to help you discover clean, reliable, and beneficial products with ease.  
               We simplify your search by bringing together trusted remedies, mindful choices, and transparent brands you can rely on. 
             </motion.p>
-            <ul className='mt-2 list-disc list-inside md:text-start text-center text-foreground/75'>
+            <ul className='mt-4 md:mt-2 list-disc list-inside md:text-start text-center text-foreground/75 md:space-y-0 space-y-2'>
               {features.map((feature,index)=>(
                 <motion.li key={feature} initial={{opacity:0,x:50}} whileInView={{opacity:1,x:0}} transition={{duration:0.5, delay: 0.2*index}} viewport={{once:true,amount:0.5}} className='text-balance'>
                     {feature}
