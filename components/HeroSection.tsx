@@ -15,7 +15,7 @@ export default function HeroSection() {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
 
-    const checkScreen = () => setIsMobile(window.innerWidth < 768); // Tailwind md breakpoint
+    const checkScreen = () => setIsMobile(window.innerWidth < 768); 
     checkScreen();
     window.addEventListener('resize', checkScreen);
 
@@ -28,8 +28,8 @@ export default function HeroSection() {
   const scrollProgress = Math.min(scrollY / 100, 1);
   const scale = 1 - scrollProgress * 0.1;
   const borderRadius = scrollProgress * 28;
-  const marginTop = scrollProgress * 32;
-  const marginHorizontal = scrollProgress * 32;
+  const marginTop = scrollProgress * (isMobile ? 40 : 32);
+  const marginHorizontal = scrollProgress * (isMobile ? 16 : 32);
 
   // Height logic
   const baseHeight = isMobile ? 80 : 76; // svh
@@ -42,7 +42,7 @@ export default function HeroSection() {
         className="
           overflow-hidden bg-black
           transition-all duration-700 ease-out
-          sticky top-16 md:top-36
+          sticky top-20 md:top-36
         "
         style={{
           transform: `scale(${scale})`,
