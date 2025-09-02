@@ -32,7 +32,7 @@ export default function HeroSection() {
         className="
           overflow-hidden bg-black
           transition-all duration-700 ease-out
-          sticky top-8 md:top-36
+          sticky top-16 md:top-36
         "
         style={{
           transform: `scale(${scale})`,

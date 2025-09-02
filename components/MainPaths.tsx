@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function MainPaths(){
     return (
-        <section className="max-w-7xl relative rounded-xl flex items-center justify-center p-8 bg-foreground/5">
+        <section className="max-w-7xl relative rounded-xl flex items-center justify-center mx-4 md:mx-0 p-8 bg-foreground/5">
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Link href="/products" className='hover:bg-blue-500/10 dark:hover:bg-blue-500/10 rounded-xl transition-all duration-700'>

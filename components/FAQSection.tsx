@@ -32,7 +32,7 @@ const faqs = [
 
 export default function FAQSection() {
   return (
-    <motion.section className="max-w-5xl mx-auto pb-48 px-8 md:px-12 wrapperx">
+    <motion.section className="max-w-5xl mx-auto pb-48 px-12 md:px-12 wrapperx">
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-satoshi font-extrabold mb-4 text-foreground/80">
           Frequently Asked Questions
@@ -41,7 +41,7 @@ export default function FAQSection() {
           Everything you need to know about Hita.
         </p>
       </div>
-      <div className="divide-y divide-foreground/10">
+      <div className="divide-y divide-foreground/10 px-4 md:px-0">
         {faqs.map((faq, i) => (
           <FAQItem key={i} question={faq.question} answer={faq.answer} />
         ))}

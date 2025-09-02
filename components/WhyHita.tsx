@@ -14,7 +14,7 @@ export default function WhyHita(){
     ];
 
     return(
-        <section className='flex flex-col md:flex-row gap-20 justify-center items-center pb-40 max-w-6xl wrapperx'>
+        <section className='flex flex-col md:flex-row gap-20 justify-center items-center pb-40 md:mx-0 mx-4 max-w-6xl wrapperx'>
           
           <InViewWrapper animationClass='animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:slide-in-from-left-8 zoom-in-75 fade-in duration-1000'>
           <div className="relative group">
