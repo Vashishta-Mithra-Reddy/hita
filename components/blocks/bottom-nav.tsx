@@ -12,6 +12,7 @@ export default function BottomNav() {
     { href: "/products", label: "Products", icon: <Package className="h-5 w-5" /> },
     { href: "/brands", label: "Brands", icon: <Fingerprint className="h-5 w-5" /> },
     { href: "/foods", label: "Foods", icon: <Apple className="h-5 w-5" /> },
+    // { href: "/recipes", label: "Recipes", icon: <BookOpen className="h-5 w-5" /> },
     { href: "/remedies", label: "Remedies", icon: <Citrus className="h-5 w-5" /> },
     { href: "/wellness-tips", label: "Wellness", icon: <Heart className="h-5 w-5" /> }
     
