@@ -8,14 +8,20 @@ const GradientBackground = dynamic(() => import('./GradientBackground'), { ssr: 
 
 export default function HeroSection() {
   const [scrollY, setScrollY] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
 
+    const checkScreen = () => setIsMobile(window.innerWidth < 768); // Tailwind md breakpoint
+    checkScreen();
+    window.addEventListener('resize', checkScreen);
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', checkScreen);
     };
   }, []);
 
@@ -24,6 +30,10 @@ export default function HeroSection() {
   const borderRadius = scrollProgress * 28;
   const marginTop = scrollProgress * 32;
   const marginHorizontal = scrollProgress * 32;
+
+  // Height logic
+  const baseHeight = isMobile ? 80 : 76; // svh
+  const height = `${(baseHeight-6) - scrollProgress * 20}svh`;
 
   return (
     <section className="relative min-h-screen">
@@ -40,8 +50,8 @@ export default function HeroSection() {
           marginTop: `${marginTop}px`,
           marginLeft: `${marginHorizontal}px`,
           marginRight: `${marginHorizontal}px`,
-          height: `${76 - scrollProgress * 20}vh`,
-          minHeight: '76vh'
+          height,
+          minHeight: `${baseHeight}svh`,
         }}
       >
         {/* Gradient Background */}
@@ -94,7 +104,6 @@ export default function HeroSection() {
         <div 
           className="
             absolute bottom-8 left-1/2 transform -translate-x-1/2
-
             opacity-100 translate-y-0 transition-all duration-1000
           "
         >
@@ -106,7 +115,7 @@ export default function HeroSection() {
       </div>
 
       {/* Spacer */}
-      <div className="h-3/4" />
+      <div className="h-1/4 md:h-3/4" />
     </section>
   );
 }
