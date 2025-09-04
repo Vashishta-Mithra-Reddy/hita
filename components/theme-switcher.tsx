@@ -7,7 +7,7 @@ import useSound from "use-sound";
 export function ThemeSwitcher() {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
-  const [click] = useSound("public/notification.wav", { volume: 0.20 });
+  const [click] = useSound("click.wav", { volume: 0.20 });
 
   React.useEffect(() => {
     setMounted(true);
