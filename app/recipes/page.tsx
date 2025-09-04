@@ -14,7 +14,7 @@ export default function RecipesPage() {
           Clean, Delicious and Nourishing 
         </p>
         <div className="mb-8">
-          <CategoryGridSkeleton count={12} />
+          <CategoryGridSkeleton count={9} />
         </div>
         <div className="mb-8">
           <h2 className="text-lg font-medium mb-3">Filter by Dietary Preferences</h2>

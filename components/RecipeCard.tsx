@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import { Badge } from "./ui/badge"
-import FadeInWhenVisible from "./animations/FadeInWhenVisible"
 import { Clock, Users, ChefHat } from "lucide-react"
 
 interface Recipe {
@@ -48,7 +47,6 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
     ((recipe.prep_time_minutes || 0) + (recipe.cook_time_minutes || 0))
 
   return (
-    <FadeInWhenVisible>
       <Link href={`/recipes/${recipe.slug}`} className="block group">
         <div className="rounded-2xl transition-all duration-300 p-6 w-full border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-0.5">
           {/* Content */}
@@ -136,6 +134,5 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
           </div>
         </div>
       </Link>
-    </FadeInWhenVisible>
   )
 }

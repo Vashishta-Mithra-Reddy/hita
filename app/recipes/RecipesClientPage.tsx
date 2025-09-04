@@ -52,9 +52,11 @@ export default function RecipesClientPage() {
 
   // Difficulty filters
   const difficultyFilters = [
+    { name: "Very Easy", value: "very_easy"},
     { name: "Easy", value: "easy" },
     { name: "Medium", value: "medium" },
     { name: "Hard", value: "hard" },
+    { name: "Expert", value: "expert"},
   ];
 
   // Fetch categories
@@ -200,7 +202,7 @@ export default function RecipesClientPage() {
       {/* Categories Section */}
       <div className="mb-8">
         {categoryLoading ? (
-          <CategoryGridSkeleton count={12} />
+          <CategoryGridSkeleton count={9} />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             <button
@@ -226,7 +228,7 @@ export default function RecipesClientPage() {
                   recipesRef.current?.scrollIntoView({ behavior: "smooth" });
                   router.push("?page=1");
                 }}
-                className={`p-4 rounded-lg text-center transition-all ${
+                className={`p-4 rounded-lg text-center transition-all lg:min-w-[270px] ${
                   selectedCategory === category.id
                     ? "bg-blue-100 text-blue-800 shadow-md"
                     : "bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200"

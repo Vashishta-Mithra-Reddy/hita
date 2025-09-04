@@ -145,7 +145,7 @@ export default function FoodsClientPage() {
                 foodsRef.current?.scrollIntoView({ behavior: "smooth" });
                 router.push("?page=1"); // reset to page 1
               }}
-              className={`p-4 rounded-lg text-center transition-all ${
+              className={`p-4 rounded-lg text-center transition-all lg:min-w-[270px] ${
                 !selectedCategory
                   ? "bg-blue-100 text-blue-800 shadow-md"
                   : "bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200"
@@ -162,7 +162,7 @@ export default function FoodsClientPage() {
                   foodsRef.current?.scrollIntoView({ behavior: "smooth" });
                   router.push("?page=1"); // reset to page 1
                 }}
-                className={`p-4 rounded-lg text-center transition-all ${
+                className={`p-4 rounded-lg text-center transition-all lg:min-w-[270px] ${
                   selectedCategory === category.id
                     ? "bg-blue-100 text-blue-800 shadow-md"
                     : "bg-gray-100 dark:bg-foreground/10 hover:bg-gray-200"
