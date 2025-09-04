@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
 import { Food } from '@/lib/supabase/foods';
-import { FoodDetailSkeleton } from '@/components/skeletons/FoodDetailSkeleton';
+// import { FoodDetailSkeleton } from '@/components/skeletons/FoodDetailSkeleton';
 import BottomGradient from '@/components/BottomGradient';
 import { Sun, CloudRain, Snowflake, Leaf, Globe2 } from 'lucide-react';
 import {motion} from "framer-motion";
+import Spinner from '@/components/animations/Spinner';
 
 // Type definitions for Supabase query results
 type VitaminQueryResult = {
@@ -254,7 +255,7 @@ export default function FoodDetailPage() {
     fetchFood();
   }, [params.slug]);
 
-  if (loading) return <FoodDetailSkeleton />;
+  if (loading) return <Spinner />;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
   if (!food) return <div className="p-6 text-center">Food not found</div>;
 
@@ -268,7 +269,12 @@ export default function FoodDetailPage() {
         ← Back to Foods
       </Button>
 
-      <div className="rounded-2xl p-6 md:p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.5 }}
+        className="rounded-2xl p-6 md:p-8"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Food Image */}
           <motion.div initial={{opacity:0.3,filter:"blur(5px)"}} whileInView={{opacity:1,filter:"blur(0px)"}} transition={{ease:"easeIn",duration:0.2}} viewport={{once:true,amount:0.5}} className="flex items-center justify-center rounded-xl p-4">
@@ -666,7 +672,7 @@ export default function FoodDetailPage() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
       <BottomGradient/>
     </div>
   );

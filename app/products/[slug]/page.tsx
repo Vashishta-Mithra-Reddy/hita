@@ -7,8 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
 import { OfflineAvailability, Product, ProductLink } from '@/lib/supabase/products';
 import Link from 'next/link';
-import { ProductDetailSkeleton } from '@/components/skeletons/ProductDetailSkeleton';
+// import { ProductDetailSkeleton } from '@/components/skeletons/ProductDetailSkeleton';
 import BottomGradient from '@/components/BottomGradient';
+import Spinner from '@/components/animations/Spinner';
+import { motion } from 'framer-motion';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -50,7 +52,7 @@ export default function ProductDetailPage() {
     fetchProduct();
   }, [params.slug]);
 
-  if (loading) return <ProductDetailSkeleton />;
+  if (loading) return <Spinner />;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
   if (!product) return <div className="p-6 text-center">Product not found</div>;
 
@@ -64,10 +66,15 @@ export default function ProductDetailPage() {
         ← Back to Products
       </Button>
 
-      <div className="rounded-2xl p-6 md:p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.5 }}
+        className="rounded-2xl p-6 md:p-8"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 place-items-center">
           {/* Product Image */}
-          <div className="flex items-center justify-center bg-foreground/5 rounded-xl p-4">
+          <div className="flex items-center justify-center rounded-xl p-4">
             {product.main_image_url ? (
               <img 
                 src={product.main_image_url} 
@@ -250,7 +257,7 @@ export default function ProductDetailPage() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
       <BottomGradient/>
     </div>
   );

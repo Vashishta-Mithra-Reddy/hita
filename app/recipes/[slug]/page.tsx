@@ -444,7 +444,7 @@ export default function RecipeDetailPage() {
         {recipe.recipe_tools && recipe.recipe_tools.length > 0 && (
           <div className="mt-6 border-2 border-dashed border-foreground/20 rounded-xl p-6">
             <h3 className="text-xl font-semibold mb-4">Required Tools</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {recipe.recipe_tools.map((tool) => (
                 <div key={tool.id} className="flex items-start">
                   <span className={`w-2 h-2 rounded-full mt-2 mr-3 flex-shrink-0 ${tool.is_essential ? "bg-red-500" : "bg-foreground/60"}`}></span>
@@ -511,7 +511,7 @@ export default function RecipeDetailPage() {
         )}
         </div>
 
-        <div className="mt-12">
+        <div className="rounded-xl mt-12">
         {/* Related Foods */}
         {relatedFoods.length > 0 && (
           <div>

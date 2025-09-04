@@ -6,9 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
 import { Remedy } from '@/lib/supabase/remedies';
-import { RemedyDetailSkeleton } from '@/components/skeletons/RemedyDetailSkeleton';
+// import { RemedyDetailSkeleton } from '@/components/skeletons/RemedyDetailSkeleton';
 import BottomGradient from '@/components/BottomGradient';
 import { FlaskConical, ScrollText, TriangleAlert, ShieldAlert, Info, ListChecks, Beaker } from 'lucide-react';
+import Spinner from '@/components/animations/Spinner';
+import { motion } from 'framer-motion';
 
 export default function RemedyDetailPage() {
   const params = useParams();
@@ -68,7 +70,7 @@ export default function RemedyDetailPage() {
     fetchRemedy();
   }, [params.slug]);
 
-  if (loading) return <RemedyDetailSkeleton />;
+  if (loading) return <Spinner />;
   if (error) return <div className="p-6 text-center text-red-500">{error}</div>;
   if (!remedy) return <div className="p-6 text-center">Remedy not found</div>;
 
@@ -82,7 +84,12 @@ export default function RemedyDetailPage() {
         ← Back to Remedies
       </Button>
 
-      <div className="rounded-2xl p-6 md:p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.5 }}
+        className="rounded-2xl p-6 md:p-8"
+      >
         {/* Header Section */}
         <div className="grid grid-cols-1 md:grid-cols-1 gap-8">
           <div className='bg-foreground/5 w-full px-8 py-12 rounded-lg'>
@@ -338,7 +345,7 @@ export default function RemedyDetailPage() {
             Proceed with caution especially if you have existing health conditions or are taking medications.
           </p>
         </div>
-      </div>
+      </motion.div>
       <BottomGradient/>
     </div>
   );
