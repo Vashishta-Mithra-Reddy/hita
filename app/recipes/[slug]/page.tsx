@@ -11,6 +11,7 @@ import { Recipe } from "@/lib/supabase/recipes";
 import BottomGradient from "@/components/BottomGradient";
 import { Clock, Users, ChefHat, ArrowLeft, Timer, Image as ImageIcon, Tag } from "lucide-react";
 import { motion } from "framer-motion";
+import Spinner from "@/components/animations/Spinner";
 
 // ---- Local types to match your DB + nested selects ----
 type Instruction = {
@@ -228,21 +229,7 @@ export default function RecipeDetailPage() {
 
   if (loading) {
     return (
-      <div className="wrapperx max-w-6xl mx-auto">
-        <div className="animate-pulse">
-          <div className="h-10 w-24 bg-gray-200 rounded mb-6"></div>
-          <div className="rounded-2xl p-6 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="h-80 bg-gray-200 rounded-lg"></div>
-              <div className="space-y-4">
-                <div className="h-10 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                <div className="h-24 bg-gray-200 rounded"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Spinner/>
     );
   }
 
@@ -258,24 +245,24 @@ export default function RecipeDetailPage() {
 
   return (
     <div className="wrapperx max-w-6xl mx-auto">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-6 hover:bg-foreground/10">
+      <Button variant="ghost" onClick={() => router.back()} className="mb-6 hover:bg-foreground/10 border-2">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back
       </Button>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={{ duration: 0.5 }}
         className="rounded-2xl p-6 md:p-8"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Recipe Image */}
-          <div className="flex items-center justify-center bg-foreground/5 rounded-xl p-4">
+          <div className="flex items-center justify-center rounded-xl p-4">
             <img
               src={recipe.main_image_url || "/placeholder.svg"}
               alt={recipe.name}
-              className="max-w-full max-h-80 object-cover rounded-lg shadow-lg"
+              className="max-w-full max-h-80 object-cover rounded-lg"
             />
           </div>
 
@@ -524,11 +511,11 @@ export default function RecipeDetailPage() {
         )}
         </div>
 
-        <div className="bg-foreground/5 rounded-xl px-8 py-6 mt-12">
+        <div className="mt-12">
         {/* Related Foods */}
         {relatedFoods.length > 0 && (
           <div>
-            <h3 className="text-2xl font-semibold mb-1">Related Foods</h3>
+            <h3 className="text-2xl font-semibold mb-1 text-foreground/70">Related Foods</h3>
             <p className="text-foreground/60 mb-6">Explore the foods used in this recipe for more nutritional information and health benefits.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedFoods.map((food) => (
@@ -553,7 +540,7 @@ export default function RecipeDetailPage() {
         {/* Related Products */}
         {relatedProducts.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-2xl font-semibold mb-1">Related Products</h3>
+            <h3 className="text-2xl font-semibold mb-1 text-foreground/70">Related Products</h3>
             <p className="text-foreground/60 mb-6">Find and purchase the products used in this recipe from trusted sources.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedProducts.map((product) => (

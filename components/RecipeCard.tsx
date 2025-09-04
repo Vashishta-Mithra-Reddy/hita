@@ -53,13 +53,13 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
         <div className="rounded-2xl transition-all duration-300 p-6 w-full border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-0.5">
           {/* Content */}
           <div className="space-y-3">
-            <div className="flex flex-col items-center md:items-start justify-start gap-4">
-              <div className="relative overflow-hidden rounded-2xl bg-foreground/5 aspect-square w-[200px] h-[200px] flex-shrink-0">
+            <div className="flex flex-col items-center justify-start gap-4">
+              <div className="relative overflow-hidden rounded-2xl bg-foreground/5 aspect-square w-[250px] h-[200px] flex-shrink-0">
                 <img
                   src={recipe.main_image_url || "/placeholder.svg"}
                   alt={recipe.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white"
+                  className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-500 bg-foreground/10 dark:bg-white"
                 />
               </div>
               

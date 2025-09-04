@@ -69,9 +69,9 @@ export default function SubmitPage() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-semibold mb-6">Submit Remedy or Product</h1>
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="max-w-5xl mx-auto font-satoshi wrapperx">
+      <h1 className="text-3xl font-bold mb-6">Submit Remedy or Product</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <Label htmlFor="type">Submission Type</Label>
           <Select value={type} onValueChange={setType}>
