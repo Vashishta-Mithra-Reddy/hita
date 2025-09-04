@@ -319,51 +319,51 @@ EXECUTE FUNCTION update_updated_at_column();
 -- ======================================
 -- Table: foods
 -- ======================================
-CREATE TABLE foods (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  name TEXT NOT NULL,
-  slug TEXT NOT NULL UNIQUE,
-  category_id UUID REFERENCES food_categories(id) NOT NULL,
-  description TEXT,
-  short_description TEXT,
-  nutritional_info JSONB,
-  selection_tips TEXT[],
-  is_vegetarian BOOLEAN DEFAULT true,
-  is_vegan BOOLEAN DEFAULT false,
-  is_gluten_free BOOLEAN DEFAULT false,
-  is_dairy_free BOOLEAN DEFAULT false,
-  main_image_url TEXT,
-  additional_images TEXT[],
-  tags TEXT[],
-  preparation_tips TEXT[],
-  storage_tips TEXT[],
-  is_common BOOLEAN DEFAULT true,
-  is_active BOOLEAN DEFAULT true,
-  is_featured BOOLEAN DEFAULT false,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+  CREATE TABLE foods (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    category_id UUID REFERENCES food_categories(id) NOT NULL,
+    description TEXT,
+    short_description TEXT,
+    nutritional_info JSONB,
+    selection_tips TEXT[],
+    is_vegetarian BOOLEAN DEFAULT true,
+    is_vegan BOOLEAN DEFAULT false,
+    is_gluten_free BOOLEAN DEFAULT false,
+    is_dairy_free BOOLEAN DEFAULT false,
+    main_image_url TEXT,
+    additional_images TEXT[],
+    tags TEXT[],
+    preparation_tips TEXT[],
+    storage_tips TEXT[],
+    is_common BOOLEAN DEFAULT true,
+    is_active BOOLEAN DEFAULT true,
+    is_featured BOOLEAN DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  );
 
-CREATE TRIGGER trg_update_foods
-BEFORE UPDATE ON foods
-FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column();
+  CREATE TRIGGER trg_update_foods
+  BEFORE UPDATE ON foods
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
 
--- ======================================
--- Table: vitamins (master list)
--- ======================================
-CREATE TABLE vitamins (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  name TEXT NOT NULL UNIQUE
-);
+  -- ======================================
+  -- Table: vitamins (master list)
+  -- ======================================
+  CREATE TABLE vitamins (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL UNIQUE
+  );
 
--- ======================================
--- Table: minerals (master list)
--- ======================================
-CREATE TABLE minerals (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  name TEXT NOT NULL UNIQUE
-);
+  -- ======================================
+  -- Table: minerals (master list)
+  -- ======================================
+  CREATE TABLE minerals (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL UNIQUE
+  );
 
 -- ======================================
 -- Table: vitamin_rda
@@ -469,3 +469,160 @@ CREATE TABLE embeddings (
 );
 
 CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops);
+
+
+-- =====================================================
+-- RECIPE SYSTEM - DATABASE SCHEMA (Supabase Ready)
+-- =====================================================
+
+-- UUID generator extension (if not already enabled)
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- =====================================================
+-- 1. RECIPE CATEGORIES TABLE
+-- =====================================================
+CREATE TABLE recipe_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL UNIQUE,
+    description TEXT,
+    icon_url TEXT,
+    parent_category_id UUID REFERENCES recipe_categories(id),
+    is_active BOOLEAN DEFAULT true,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 2. RECIPES TABLE
+-- =====================================================
+CREATE TYPE recipe_difficulty_enum AS ENUM ('very_easy','easy','medium','hard','expert');
+
+CREATE TABLE recipes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL,
+    slug TEXT NOT NULL UNIQUE,
+    category_id UUID REFERENCES recipe_categories(id),
+    description TEXT,
+    short_description TEXT,
+    
+    -- Timing
+    prep_time_minutes INTEGER,
+    cook_time_minutes INTEGER,
+    total_time_minutes INTEGER GENERATED ALWAYS AS (
+        COALESCE(prep_time_minutes, 0) + COALESCE(cook_time_minutes, 0)
+    ) STORED,
+    
+    -- Recipe Details
+    servings INTEGER,
+    difficulty_level recipe_difficulty_enum,
+    
+    -- Nutritional Information
+    nutritional_info JSONB,
+    
+    -- Classification
+    cuisine_type TEXT,
+    meal_type TEXT[], -- e.g. ['breakfast', 'dinner']
+    dietary_tags TEXT[], -- e.g. ['vegan','gluten-free']
+    
+    -- Media
+    main_image_url TEXT,
+    additional_images TEXT[],
+    
+    -- Tips and Info
+    cooking_tips TEXT[],
+    storage_tips TEXT[],
+    tags TEXT[],
+    
+    -- Health Benefits (now array, not separate table)
+    health_benefits TEXT[],
+    
+    -- Instructions (structured JSON for order + metadata)
+    instructions JSONB, -- [{step, instruction, duration_minutes, temperature, notes}]
+    
+    -- Boolean Flags
+    is_healthy BOOLEAN DEFAULT false,
+    is_quick BOOLEAN DEFAULT false,
+    is_vegetarian BOOLEAN DEFAULT false,
+    is_vegan BOOLEAN DEFAULT false,
+    is_gluten_free BOOLEAN DEFAULT false,
+    is_dairy_free BOOLEAN DEFAULT false,
+    is_featured BOOLEAN DEFAULT false,
+    is_active BOOLEAN DEFAULT true,
+    
+    -- Metadata
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 3. INGREDIENTS (MASTER LIST)
+-- =====================================================
+CREATE TABLE ingredients (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL UNIQUE,
+    image_url TEXT,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 4. RECIPE INGREDIENTS (Link Recipes to Ingredients/Foods/Products)
+-- =====================================================
+CREATE TABLE recipe_ingredients (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
+    ingredient_id UUID REFERENCES ingredients(id),
+    food_id UUID REFERENCES foods(id),
+    product_id UUID REFERENCES products(id),
+    quantity NUMERIC,
+    unit TEXT,
+    notes TEXT,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- 5. RECIPE TOOLS TABLE
+-- =====================================================
+CREATE TABLE recipe_tools (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
+    tool_name TEXT NOT NULL,
+    tool_type TEXT, -- 'appliance','cookware','utensil','bakeware'
+    is_essential BOOLEAN DEFAULT true,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- INDEXES
+-- =====================================================
+
+-- Recipe search
+CREATE INDEX idx_recipes_slug ON recipes(slug);
+CREATE INDEX idx_recipes_name ON recipes USING gin (name gin_trgm_ops);
+CREATE INDEX idx_recipes_description ON recipes USING gin (description gin_trgm_ops);
+CREATE INDEX idx_recipes_tags ON recipes USING gin (tags);
+CREATE INDEX idx_recipes_dietary_tags ON recipes USING gin (dietary_tags);
+CREATE INDEX idx_recipes_meal_type ON recipes USING gin (meal_type);
+
+-- Boolean filters
+CREATE INDEX idx_recipes_is_healthy ON recipes (is_healthy) WHERE is_healthy = true;
+CREATE INDEX idx_recipes_is_quick ON recipes (is_quick) WHERE is_quick = true;
+CREATE INDEX idx_recipes_is_vegetarian ON recipes (is_vegetarian) WHERE is_vegetarian = true;
+CREATE INDEX idx_recipes_is_vegan ON recipes (is_vegan) WHERE is_vegan = true;
+CREATE INDEX idx_recipes_is_gluten_free ON recipes (is_gluten_free) WHERE is_gluten_free = true;
+CREATE INDEX idx_recipes_is_dairy_free ON recipes (is_dairy_free) WHERE is_dairy_free = true;
+CREATE INDEX idx_recipes_is_featured ON recipes (is_featured) WHERE is_featured = true;
+
+-- Ingredients
+CREATE INDEX idx_recipe_ingredients_recipe_id ON recipe_ingredients (recipe_id);
+CREATE INDEX idx_recipe_ingredients_ingredient_id ON recipe_ingredients (ingredient_id);
+CREATE INDEX idx_recipe_ingredients_food_id ON recipe_ingredients (food_id);
+CREATE INDEX idx_recipe_ingredients_product_id ON recipe_ingredients (product_id);
+
+-- Tools
+CREATE INDEX idx_recipe_tools_recipe_id ON recipe_tools (recipe_id);
+CREATE INDEX idx_recipe_tools_name ON recipe_tools USING gin (tool_name gin_trgm_ops);

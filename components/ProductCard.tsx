@@ -7,11 +7,11 @@ interface Product {
   name: string
   slug: string
   description: string
-  main_image: string
-  availableAt: {
-    amazon: string
-    local?: string[]
-  }
+  main_image_url: string
+  // availableAt: {
+  //   amazon: string
+  //   local?: string[]
+  // }
   verified?: boolean
 }
 
@@ -26,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
 
             <div className="relative overflow-hidden rounded-2xl bg-foreground/5 aspect-square w-[100px] h-[100px] flex-shrink-0">
               <img
-                src={product.main_image || "/placeholder.svg"}
+                src={product.main_image_url || "/placeholder.svg"}
                 alt={product.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white dark:opacity-90"

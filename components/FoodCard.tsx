@@ -3,14 +3,14 @@
 import Link from "next/link"
 // import Image from "next/image"
 import { Badge } from "./ui/badge"
-import FadeInWhenVisible from "./animations/FadeInWhenVisible"
+// import FadeInWhenVisible from "./animations/FadeInWhenVisible"
 
 interface Food {
   id: string
   name: string
   slug: string
   description: string
-  main_image: string
+  main_image_url: string
   vitamins: string[] | null
   minerals: string[] | null
   is_common: boolean
@@ -18,7 +18,7 @@ interface Food {
 
 export function FoodCard({ food }: { food: Food }) {
   return (
-    <FadeInWhenVisible>
+    // <FadeInWhenVisible>
     <Link href={`/foods/${food.slug}`} className="block group">
       <div className="rounded-2xl transition-all duration-300 p-6 w-full border-2 border-foreground/20 border-dashed hover:border-foreground/40 hover:-translate-y-1">
         {/* Content */}
@@ -26,7 +26,7 @@ export function FoodCard({ food }: { food: Food }) {
           <div className="flex flex-row items-center md:items-start justify-start gap-4">
             <div className="relative overflow-hidden rounded-2xl bg-foreground/5 aspect-square w-[100px] h-[100px] flex-shrink-0">
               <img
-                src={food.main_image || "/placeholder.svg"}
+                src={food.main_image_url || "/placeholder.svg"}
                 alt={food.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white"
@@ -64,6 +64,6 @@ export function FoodCard({ food }: { food: Food }) {
         </div>
       </div>
     </Link>
-    </FadeInWhenVisible>
+    // </FadeInWhenVisible>
   )
 }

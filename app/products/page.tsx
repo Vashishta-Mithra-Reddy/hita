@@ -47,11 +47,11 @@ async function ProductsList({
     slug: product.slug,
     name: product.name,
     description: product.short_description || product.description || '',
-    main_image: product.main_image_url || 'https://cnbronoezgwgolbyywqr.supabase.co/storage/v1/object/public/photos//placeholder_hita.png',
-    availableAt: {
-      amazon: product.product_links?.find(link => link.platform_name.toLowerCase() === 'amazon')?.product_url || '#',
-      local: product.offline_availability?.map(store => store.store_chain) || [],
-    },
+    main_image_url: product.main_image_url || 'https://cnbronoezgwgolbyywqr.supabase.co/storage/v1/object/public/photos//placeholder_hita.png',
+    // availableAt: {
+    //   amazon: product.product_links?.find(link => link.platform_name.toLowerCase() === 'amazon')?.product_url || '#',
+    //   local: product.offline_availability?.map(store => store.store_chain) || [],
+    // },
     verified: product.is_featured,
   }));
 

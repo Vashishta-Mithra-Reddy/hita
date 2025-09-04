@@ -133,7 +133,7 @@ export default function AgentPage() {
         name: d.name || '',
         slug: d.slug || '',
         description: d.short_description || d.description || '',
-        main_image:
+        main_image_url:
           d.main_image_url ||
           'https://cnbronoezgwgolbyywqr.supabase.co/storage/v1/object/public/photos//placeholder_hita.png',
         availableAt: {
@@ -154,7 +154,7 @@ export default function AgentPage() {
         name: d.name || '',
         slug: d.slug || '',
         description: d.short_description || d.description || '',
-        main_image:
+        main_image_url:
           d.main_image_url ||
           'https://cnbronoezgwgolbyywqr.supabase.co/storage/v1/object/public/photos//placeholder_hita.png',
         vitamins: null, // not provided by API here

@@ -114,7 +114,7 @@ export default function FoodsClientPage() {
     slug: food.slug,
     name: food.name,
     description: food.short_description || food.description || "",
-    main_image:
+    main_image_url:
       food.main_image_url ||
       "https://cnbronoezgwgolbyywqr.supabase.co/storage/v1/object/public/photos//placeholder_hita.png",
     vitamins: food.vitamins,
