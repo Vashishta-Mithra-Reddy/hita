@@ -293,7 +293,7 @@ export default function FoodDetailPage() {
 
           {/* Food Info */}
           <div className="flex flex-col justify-center md:items-start items-center">
-            <h1 className="text-3xl font-bold">{food.name}</h1>
+            <h1 className="text-3xl font-bold md:text-start text-center">{food.name}</h1>
             
             {/* Dietary Badges */}
             <div className="flex flex-wrap gap-2 mt-4 justify-center sm:justify-start">
@@ -469,7 +469,7 @@ export default function FoodDetailPage() {
                   ).map((v, i) => (
                     <li key={`vit-row-${i}`} className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-foreground/80">{v.name}</span>
+                        <span className="text-foreground/80 line-clamp-1">{v.name}</span>
                         <span className="font-medium text-sm">
                           {v.amount_per_100g ?? '-'}
                           {v.unit ?? ''}
@@ -652,7 +652,7 @@ export default function FoodDetailPage() {
           {food.selection_tips && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors md:col-span-2">
               <h3 className="font-medium mb-3 text-lg">Selection Tips</h3>
-              <ul className='list-disc list-inside md:text-start text-center text-foreground/70'>
+              <ul className='list-disc list-inside text-start text-foreground/70'>
                 {food.selection_tips.map((tip, index) => (
                   <li key={index}>{tip}</li>
                 ))}

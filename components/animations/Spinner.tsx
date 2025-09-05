@@ -22,13 +22,14 @@ export default function Spinner() {
         }}        
       >
         <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" />
-        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(45 187.5 187.5)" />
-        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(90 187.5 187.5)" />
-        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(135 187.5 187.5)" />
-        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(180 187.5 187.5)" />
-        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(225 187.5 187.5)" />
-        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(270 187.5 187.5)" />
-        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(315 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(40 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(80 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(120 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(160 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(200 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(240 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(280 187.5 187.5)" />
+        <rect x="176.5" y="59.5" width="22" height="72" rx="9" ry="9" transform="rotate(320 187.5 187.5)" />
       </motion.svg>
     </div>
   );

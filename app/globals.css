@@ -98,7 +98,7 @@
 
 @layer components {
   .wrapperx {
-    @apply px-8 md:px-6 pt-8 md:pt-28 pb-16 md:pb-20 md:py-80;
+    @apply px-6 md:px-6 pt-8 md:pt-28 pb-16 md:pb-20 md:py-80;
   }
 }
 
