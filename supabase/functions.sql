@@ -1,7 +1,8 @@
 CREATE OR REPLACE FUNCTION get_foods_rich_in_nutrient(
   nutrient_type text, -- 'vitamin' or 'mineral'
   nutrient_id uuid,
-  min_amount numeric DEFAULT 0
+  min_amount numeric DEFAULT 0,
+  p_category_id uuid DEFAULT NULL
 )
 RETURNS TABLE (
   food_name text,
@@ -33,6 +34,7 @@ BEGIN
     WHERE f.is_active = true
       AND v.id = nutrient_id
       AND fv.amount_per_100g >= min_amount
+      AND (p_category_id IS NULL OR f.category_id = p_category_id)
     ORDER BY fv.amount_per_100g DESC;
       
   ELSIF nutrient_type = 'mineral' THEN
@@ -56,8 +58,8 @@ BEGIN
     WHERE f.is_active = true
       AND m.id = nutrient_id
       AND fm.amount_per_100g >= min_amount
+      AND (p_category_id IS NULL OR f.category_id = p_category_id)
     ORDER BY fm.amount_per_100g DESC;
   END IF;
 END;
 $$ LANGUAGE plpgsql;
-
