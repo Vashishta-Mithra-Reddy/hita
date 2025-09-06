@@ -43,7 +43,7 @@ const Modal = ({ triggerText = "Explore Hita" }) => {
         <Button
           size="lg"
           onClick={() => setIsOpen(true)}
-          className="rounded-xl py-6 px-8 group transition-all duration-500"
+          className="rounded-xl py-6 px-8 group transition-all duration-500 bg-foreground/80"
         >
           {triggerText}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-all duration-300" />

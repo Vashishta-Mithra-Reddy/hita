@@ -22,7 +22,7 @@ export default function Navigation() {
                 href="/" 
                 className="flex items-center font-bold px-4 border-r-2 border-dashed border-foreground/10 hover:bg-foreground/5 transition-colors duration-200 rounded-l-xl"
             >
-                <span className="text-3xl py-5 pl-6 px-5">हित</span>
+                <span className="text-3xl py-5 pl-6 px-5 text-foreground dark:text-muted-foreground">हित</span>
             </Link>
             
             <div className="flex flex-row">

@@ -7,7 +7,7 @@ import useSound from "use-sound";
 export function ThemeSwitcher() {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
-  const [click] = useSound("click.wav", { volume: 0.20 });
+  const [click] = useSound("@/public/click.wav", { volume: 0.20 });
 
   React.useEffect(() => {
     setMounted(true);
@@ -21,7 +21,7 @@ export function ThemeSwitcher() {
 
   return (
     <div
-      className={`flex items-center gap-2 rounded-r-xl px-12 py-4 text-center border-l-2 border-dashed border-foreground/10 transition-all duration-300 hover:bg-foreground/5 hover:text-foreground/90 relative cursor-pointer`}
+      className={`text-foreground dark:text-muted-foreground flex items-center gap-2 rounded-r-xl px-12 py-4 text-center border-l-2 border-dashed border-foreground/10 transition-all duration-300 hover:bg-foreground/5 hover:text-foreground/90 relative cursor-pointer`}
       onClick={toggleTheme}
     >
       {/* Icons render always, with fallback logic to avoid layout shift */}

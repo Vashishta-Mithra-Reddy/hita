@@ -16,12 +16,12 @@ export default function Home() {
       <main className="min-h-screen w-[99vw] flex flex-col items-center">
 
         <HitaDesc/>
+    
+        <MainPaths/>
 
         <WhyHita/>
 
         <FAQSection/>
-
-        <MainPaths/>
 
         <HitaMeaning/>
 

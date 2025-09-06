@@ -4,8 +4,11 @@ import Link from "next/link";
 
 export default function MainPaths(){
     return (
-        <section className="max-w-7xl relative rounded-xl flex items-center justify-center mx-4 md:mx-0 p-8 bg-foreground/5">
+        <section className="max-w-7xl relative rounded-xl flex items-center justify-center mx-4 md:mx-0 p-8 my-20 bg-foreground/5">
           <div className="max-w-4xl mx-auto">
+            {/* <h2 className="text-3xl font-semibold mt-4 mb-8 text-foreground/50 text-center">
+              Explore
+            </h2> */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <Link href="/products" className='hover:bg-blue-500/10 dark:hover:bg-blue-500/10 rounded-xl transition-all duration-700'>
               <motion.div initial={{opacity:0,y:50, scale:0.9}} whileInView={{opacity:1,y:0, scale:1}} transition={{duration:0.7}} viewport={{once:true,amount:0.5}} className="text-center p-6">
