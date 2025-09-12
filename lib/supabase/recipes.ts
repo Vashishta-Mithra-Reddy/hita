@@ -125,11 +125,19 @@ export interface RecipeIngredient {
 export interface RecipeTool {
   id: string;
   recipe_id: string;
-  tool_name: string;
-  tool_type: string | null; // 'appliance','cookware','utensil','bakeware'
+  tool_id: string;
   is_essential: boolean;
   notes: string | null;
+  sort_order: number; 
   created_at: string;
+
+  tool?: { // Added tool relation
+    id: string;
+    name: string;
+    tool_type?: string | null;
+    image_url?: string | null;
+    description?: string | null;
+  };
 }
 
 // Remove old interfaces that are no longer needed

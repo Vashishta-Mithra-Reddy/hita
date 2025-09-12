@@ -587,15 +587,27 @@ CREATE TABLE recipe_ingredients (
 );
 
 -- =====================================================
--- 5. RECIPE TOOLS TABLE
+-- TOOLS (MASTER LIST)
+-- =====================================================
+CREATE TABLE tools (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL UNIQUE,
+    tool_type TEXT, -- 'appliance','cookware','utensil','bakeware'
+    image_url TEXT,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =====================================================
+-- RECIPE TOOLS (Link Recipes to Tools)
 -- =====================================================
 CREATE TABLE recipe_tools (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     recipe_id UUID REFERENCES recipes(id) ON DELETE CASCADE,
-    tool_name TEXT NOT NULL,
-    tool_type TEXT, -- 'appliance','cookware','utensil','bakeware'
+    tool_id UUID REFERENCES tools(id) ON DELETE CASCADE,
     is_essential BOOLEAN DEFAULT true,
     notes TEXT,
+    sort_order INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

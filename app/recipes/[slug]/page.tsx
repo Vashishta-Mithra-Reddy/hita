@@ -58,10 +58,18 @@ type RecipeWithJoins = Recipe & {
   recipe_ingredients?: RecipeIngredientJoin[] | null;
   recipe_tools?: {
     id: string;
-    tool_name: string;
-    tool_type?: string | null;
+    recipe_id: string;
+    tool_id: string;
     is_essential?: boolean | null;
     notes?: string | null;
+    sort_order?: number | null;
+    tool?: {
+      id: string;
+      name: string;
+      tool_type?: string | null;
+      image_url?: string | null;
+      description?: string | null;
+    } | null;
   }[] | null;
   instructions?: Instruction[] | null;
   dietary_tags?: string[] | null;
@@ -127,7 +135,8 @@ export default function RecipeDetailPage() {
               )
             ),
             recipe_tools(
-              id, tool_name, tool_type, is_essential, notes
+              id, recipe_id, tool_id, is_essential, notes, sort_order,
+              tool:tools(id, name, tool_type, image_url, description)
             )
           `
           )
@@ -452,8 +461,8 @@ export default function RecipeDetailPage() {
                 <div key={tool.id} className="flex items-start">
                   <span className={`w-2 h-2 rounded-full mt-2 mr-3 flex-shrink-0 ${tool.is_essential ? "bg-red-500" : "bg-foreground/60"}`}></span>
                   <div>
-                    <span className="text-foreground/80 font-medium">{tool.tool_name}</span>
-                    {tool.tool_type && <span className="text-foreground/60 text-sm ml-2">({tool.tool_type})</span>}
+                    <span className="text-foreground/80 font-medium">{tool.tool?.name}</span>
+                    {tool.tool?.tool_type && <span className="text-foreground/60 text-sm ml-2">({tool.tool.tool_type})</span>}
                     {tool.is_essential && <span className="text-red-500 text-xs ml-2">Essential</span>}
                     {tool.notes && <p className="text-sm text-foreground/60 mt-1">{tool.notes}</p>}
                   </div>
