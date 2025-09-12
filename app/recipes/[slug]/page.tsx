@@ -85,22 +85,22 @@ export default function RecipeDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const getDifficultyColor = (level: string | null) => {
-    switch (level) {
-      case "very_easy":
-        return "bg-emerald-100/30 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300";
-      case "easy":
-        return "bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-      case "medium":
-        return "bg-yellow-100/30 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-      case "hard":
-        return "bg-red-100/30 text-red-800 dark:bg-red-900/30 dark:text-red-300";
-      case "expert":
-        return "bg-purple-100/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
-      default:
-        return "bg-gray-100/30 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
-    }
-  };
+  // const getDifficultyColor = (level: string | null) => {
+  //   switch (level) {
+  //     case "very_easy":
+  //       return "bg-emerald-100/30 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300";
+  //     case "easy":
+  //       return "bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+  //     case "medium":
+  //       return "bg-yellow-100/30 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+  //     case "hard":
+  //       return "bg-red-100/30 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+  //     case "expert":
+  //       return "bg-purple-100/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
+  //     default:
+  //       return "bg-gray-100/30 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
+  //   }
+  // };
 
   useEffect(() => {
     const fetchRecipe = async () => {
