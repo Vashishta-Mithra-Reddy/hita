@@ -310,23 +310,23 @@ export default function RecipeDetailPage() {
             <div className="flex flex-wrap gap-2 mb-4">
               {recipe.is_healthy && <Badge className="bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300">Healthy</Badge>}
               {recipe.is_quick && <Badge className="bg-blue-100/30 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">Quick</Badge>}
-              {recipe.is_vegetarian && <Badge className="bg-emerald-100/30 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">Vegetarian</Badge>}
+              {recipe.is_vegetarian && !recipe.is_vegan && <Badge className="bg-emerald-100/30 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">Vegetarian</Badge>}
               {recipe.is_vegan && <Badge className="bg-purple-100/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">Vegan</Badge>}
               {recipe.is_gluten_free && <Badge className="bg-orange-100/30 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">Gluten-Free</Badge>}
               {recipe.is_dairy_free && <Badge className="bg-cyan-100/30 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300">Dairy-Free</Badge>}
-              {recipe.difficulty_level && <Badge className={getDifficultyColor(String(recipe.difficulty_level))}>{String(recipe.difficulty_level).replace("_", " ")}</Badge>}
+              {/* {recipe.difficulty_level && <Badge className={getDifficultyColor(String(recipe.difficulty_level))}>{String(recipe.difficulty_level).replace("_", " ")}</Badge>} */}
               {recipe.cuisine_type && <Badge variant="outline">{recipe.cuisine_type}</Badge>}
 
-              {(recipe.meal_type ?? []).map((m) => (
+              {/* {(recipe.meal_type ?? []).map((m) => (
                 <Badge key={`meal-${m}`} variant="outline" className="border-foreground/30">
                   {m}
                 </Badge>
-              ))}
-              {(recipe.dietary_tags ?? []).map((t) => (
+              ))} */}
+              {/* {(recipe.dietary_tags ?? []).map((t) => (
                 <Badge key={`diet-${t}`} variant="outline" className="border-foreground/30">
                   {t}
                 </Badge>
-              ))}
+              ))} */}
             </div>
 
             {/* Description */}
