@@ -88,6 +88,9 @@ export interface Recipe {
   is_dairy_free: boolean;
   is_featured: boolean;
   is_active: boolean;
+
+  source_url: string | null;
+  recipe_source: string | null;
   
   // Metadata
   created_at: string;

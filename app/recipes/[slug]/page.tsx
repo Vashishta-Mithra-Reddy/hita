@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { FoodCard } from "@/components/FoodCard";
 import { Recipe } from "@/lib/supabase/recipes";
 import BottomGradient from "@/components/BottomGradient";
-import { Clock, Users, ChefHat, ArrowLeft, Timer, Image as ImageIcon, Tag } from "lucide-react";
+import { Clock, Users, ChefHat, ArrowLeft, Timer, Image as ImageIcon} from "lucide-react";
 import { motion } from "framer-motion";
 import Spinner from "@/components/animations/Spinner";
 
@@ -65,6 +66,8 @@ type RecipeWithJoins = Recipe & {
   instructions?: Instruction[] | null;
   dietary_tags?: string[] | null;
   meal_type?: string[] | null;
+  source_url?: string | null; // Add this line
+  recipe_source?: string | null; // Add this line
 };
 
 export default function RecipeDetailPage() {
@@ -258,11 +261,11 @@ export default function RecipeDetailPage() {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Recipe Image */}
-          <div className="flex items-center justify-center rounded-xl p-4">
+          <div className="flex items-start justify-center rounded-xl pt-2">
             <img
               src={recipe.main_image_url || "/placeholder.svg"}
               alt={recipe.name}
-              className="max-w-full max-h-80 object-cover rounded-lg"
+              className="max-w-full max-h-[400px] object-cover rounded-lg"
             />
           </div>
 
@@ -417,8 +420,8 @@ export default function RecipeDetailPage() {
             <h3 className="text-xl font-semibold mb-4">Instructions</h3>
             <ol className="space-y-4">
               {sortedInstructions.map((instruction, idx) => (
-                <li key={`${instruction.step ?? idx}`} className="flex items-center">
-                  <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-4 mt-1 flex-shrink-0">
+                <li key={`${instruction.step ?? idx}`} className="flex items-end">
+                  <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3.5 mt-1 flex-shrink-0">
                     {instruction.step ?? idx + 1}
                   </span>
                   <div className="flex-1">
@@ -463,8 +466,8 @@ export default function RecipeDetailPage() {
         {/* Health Benefits */}
         {recipe.health_benefits && recipe.health_benefits.length > 0 && (
           <div className="mt-6 border-2 border-dashed border-foreground/20 rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Tag className="w-4 h-4" />
+            <div className="flex items-center gap-2 mb-4">
+              {/* <Tag className="w-4 h-4" /> */}
               <h3 className="text-xl font-semibold">Health Benefits</h3>
             </div>
             <ul className="space-y-2">
@@ -510,6 +513,40 @@ export default function RecipeDetailPage() {
           </div>
         )}
         </div>
+
+        
+        {/* Recipe Credits */}
+        {(recipe.source_url || recipe.recipe_source) && (
+          <div className="mt-6 border-2 border-dashed border-foreground/20 rounded-xl p-6">
+            <h3 className="text-xl font-semibold mb-2">Credits</h3>
+            {recipe.source_url && (
+              <p className="text-foreground/80 leading-relaxed">
+                Source:{" "}
+                <Link
+                  href={recipe.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  View Original Recipe
+                </Link>
+              </p>
+            )}
+            {recipe.recipe_source && (
+              <p className="text-foreground/80 leading-relaxed">
+                Instagram:{" "}
+                <Link
+                  href={`https://www.instagram.com/${recipe.recipe_source}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  Visit @{recipe.recipe_source} on Instagram
+                </Link>
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="rounded-xl mt-12">
         {/* Related Foods */}

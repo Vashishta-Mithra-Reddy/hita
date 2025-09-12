@@ -550,6 +550,9 @@ CREATE TABLE recipes (
     is_dairy_free BOOLEAN DEFAULT false,
     is_featured BOOLEAN DEFAULT false,
     is_active BOOLEAN DEFAULT true,
+
+    source_url TEXT UNIQUE,
+    recipe_source TEXT UNIQUE,
     
     -- Metadata
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
