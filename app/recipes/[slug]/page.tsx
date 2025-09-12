@@ -269,12 +269,13 @@ export default function RecipeDetailPage() {
         className="rounded-2xl p-6 md:p-8"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
           {/* Recipe Image */}
-          <div className="flex items-start justify-center rounded-xl pt-2">
+          <div className="flex items-center justify-center rounded-xl">
             <img
               src={recipe.main_image_url || "/placeholder.svg"}
               alt={recipe.name}
-              className="max-w-full max-h-[400px] object-cover rounded-lg"
+              className="w-full max-w-full max-h-[420px] object-cover rounded-lg"
             />
           </div>
 
@@ -429,11 +430,11 @@ export default function RecipeDetailPage() {
             <h3 className="text-xl font-semibold mb-4">Instructions</h3>
             <ol className="space-y-4">
               {sortedInstructions.map((instruction, idx) => (
-                <li key={`${instruction.step ?? idx}`} className="flex items-end">
-                  <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-semibold mr-3.5 mt-1 flex-shrink-0">
+                <li key={`${instruction.step ?? idx}`} className="flex items-start">
+                  <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-center text-sm font-semibold mr-3.5 mt-1 flex-shrink-0">
                     {instruction.step ?? idx + 1}
                   </span>
-                  <div className="flex-1">
+                  <div className="flex-1 pt-1">
                     <p className="text-foreground/80 leading-relaxed">{instruction.instruction}</p>
                     {!!instruction.duration_minutes && (
                       <div className="flex items-center gap-1 mt-1 text-sm text-foreground/60">
