@@ -29,7 +29,7 @@ export function FoodCard({ food }: { food: Food }) {
                 src={food.main_image_url || "/placeholder.svg"}
                 alt={food.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white"
+                className="object-cover rounded-xl group-hover:scale-105 transition-transform duration-300 bg-foreground/10 dark:bg-white dark:brightness-[0.85]"
               />
             </div>
             

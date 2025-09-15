@@ -79,7 +79,7 @@ export default function ProductDetailPage() {
               <img 
                 src={product.main_image_url} 
                 alt={product.name} 
-                className="max-h-80 object-contain rounded-lg"
+                className="max-h-80 object-contain rounded-lg dark:brightness-[0.85]"
               />
             ) : (
               <div className="h-64 w-full flex items-center justify-center text-gray-400">

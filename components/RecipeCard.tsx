@@ -57,7 +57,7 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
                   src={recipe.main_image_url || "/placeholder.svg"}
                   alt={recipe.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  className="object-cover rounded-xl group-hover:scale-105 transition-all duration-500 bg-foreground/10 dark:bg-white"
+                  className="object-cover rounded-xl group-hover:scale-105 transition-all duration-500 bg-foreground/10 dark:brightness-[0.85]"
                 />
               </div>
               

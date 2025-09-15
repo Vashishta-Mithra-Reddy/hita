@@ -86,20 +86,20 @@ export default function RecipeDetailPage() {
   const [loading, setLoading] = useState(true);
 
   // const getDifficultyColor = (level: string | null) => {
-  //   switch (level) {
-  //     case "very_easy":
-  //       return "bg-emerald-100/30 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300";
-  //     case "easy":
-  //       return "bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-  //     case "medium":
-  //       return "bg-yellow-100/30 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-  //     case "hard":
-  //       return "bg-red-100/30 text-red-800 dark:bg-red-900/30 dark:text-red-300";
-  //     case "expert":
-  //       return "bg-purple-100/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
-  //     default:
-  //       return "bg-gray-100/30 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
-  //   }
+  //    switch (level) {
+  //      case "very_easy":
+  //        return "bg-emerald-100/30 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300";
+  //      case "easy":
+  //        return "bg-green-100/30 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+  //      case "medium":
+  //        return "bg-yellow-100/30 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+  //      case "hard":
+  //        return "bg-red-100/30 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+  //      case "expert":
+  //        return "bg-purple-100/30 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
+  //      default:
+  //        return "bg-gray-100/30 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
+  //    }
   // };
 
   useEffect(() => {
@@ -275,7 +275,7 @@ export default function RecipeDetailPage() {
             <img
               src={recipe.main_image_url || "/placeholder.svg"}
               alt={recipe.name}
-              className="w-full max-w-full max-h-[420px] object-cover rounded-lg"
+              className="w-full max-w-full max-h-[420px] object-cover rounded-lg dark:brightness-[0.85]"
             />
           </div>
 
@@ -363,7 +363,7 @@ export default function RecipeDetailPage() {
           {recipe.recipe_ingredients && recipe.recipe_ingredients.length > 0 && (
             <div className="border-2 border-dashed border-foreground/20 rounded-xl p-6">
               <h3 className="text-xl font-semibold mb-4">Ingredients</h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {[...recipe.recipe_ingredients]
                   .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
                   .map((ingredient) => {
@@ -375,12 +375,18 @@ export default function RecipeDetailPage() {
                     const quantity = ingredient.quantity != null ? `${ingredient.quantity}` : "";
                     const unit = ingredient.unit || "";
                     const notes = ingredient.notes ? ` (${ingredient.notes})` : "";
+                    // const imageUrl = ingredient.food?.main_image_url ?? ingredient.product?.main_image_url ?? "/placeholder.svg";
 
                     return (
                       <li key={ingredient.id} className="flex items-start">
+                        {/* {imageUrl!="" &&(<img
+                          src={imageUrl}
+                          alt={name.slice(0, 3)}
+                          className="w-12 h-12 object-cover rounded-md flex-shrink-0"
+                        />)} */}  
                         <span className="w-2 h-2 bg-foreground/60 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                         <span className="text-foreground/80">
-                          {quantity} {unit} {name}
+                          {quantity!="0"?quantity:""} {unit!="none"?unit:""} {capitalizeFirstLetters(name)}
                           {notes}
                         </span>
                       </li>
@@ -611,4 +617,11 @@ export default function RecipeDetailPage() {
       <BottomGradient />
     </div>
   );
+}
+
+function capitalizeFirstLetters(val: string) {
+  return String(val)
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }

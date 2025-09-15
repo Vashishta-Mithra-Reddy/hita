@@ -10,7 +10,7 @@ export default function BrandCard({ brand }: { brand: Brand }) {
                 <img 
                   src={brand.logo_url} 
                   alt={brand.name} 
-                  className="w-16 h-16 px-2 object-contain bg-white rounded-xl"
+                  className="w-16 h-16 px-2 object-contain bg-white rounded-xl dark:brightness-[0.85]"
                 />
               ) : (
                 <div className="w-16 h-16 bg-gray-100 rounded-xl flex items-center justify-center text-gray-400">
