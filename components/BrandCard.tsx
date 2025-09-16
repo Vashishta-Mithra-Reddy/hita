@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function BrandCard({ brand }: { brand: Brand }) {
     return (
         <Link key={brand.id} href={`/brands/${brand.slug}`} className="block">
-          <div className="rounded-2xl border-dashed duration-300 p-6 h-full border-2 hover:scale-105 border-foreground/20 hover:border-foreground/40">
+          <div className="rounded-2xl border-dashed duration-300 p-6 h-full border-2 hover:scale-[1.02] hover:-translate-y-1 border-foreground/20 hover:border-foreground/40">
             <div className="flex items-center gap-4 mb-4">
               {brand.logo_url ? (
                 <img 

@@ -208,7 +208,7 @@ export default function RecipesClientPage() {
             <button
               onClick={() => {
                 setSelectedCategory(null);
-                recipesRef.current?.scrollIntoView({ behavior: "smooth" });
+                // recipesRef.current?.scrollIntoView({ behavior: "smooth" });
                 router.push("?page=1");
               }}
               className={`p-4 rounded-lg text-center transition-all ${
@@ -225,7 +225,7 @@ export default function RecipesClientPage() {
                 key={category.id}
                 onClick={() => {
                   setSelectedCategory(category.id);
-                  recipesRef.current?.scrollIntoView({ behavior: "smooth" });
+                  // recipesRef.current?.scrollIntoView({ behavior: "smooth" });
                   router.push("?page=1");
                 }}
                 className={`p-4 rounded-lg text-center transition-all lg:min-w-[270px] ${
