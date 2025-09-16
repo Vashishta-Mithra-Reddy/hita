@@ -15,7 +15,7 @@ interface Remedy {
 export function RemedyCard({ remedy }: { remedy: Remedy }) {
   return (
     <Link href={`/remedies/${remedy.slug}`}>
-    <div className="p-6 border-2 border-dashed rounded-xl space-y-2 transition-all hover:-translate-y-1 hover:scale-[1.01] duration-300 hover:border-foreground/20">
+    <div className="p-6 border-2 border-dashed rounded-xl space-y-2 transition-all hover:-translate-y-1 hover:scale-[1.01] duration-300 hover:border-foreground/20 max-h-[400px]">
       <h2 className="text-xl font-bold">{remedy.name}</h2>
       <p className="text-foreground/60 text-sm">{remedy.description}</p>
       

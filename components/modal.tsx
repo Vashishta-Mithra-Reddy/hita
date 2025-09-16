@@ -96,7 +96,7 @@ const Modal = ({ triggerText = "Explore Hita" }) => {
                     return (
                       <div
                         key={path.title}
-                        className="group relative overflow-hidden rounded-xl bg-gradient-to-br p-4 md:p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl border-2 border-foreground/15 border-dashed hover:border-transparent"
+                        className="group relative overflow-hidden rounded-xl bg-gradient-to-br p-4 md:p-6 cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 border-2 border-foreground/15 border-dashed"
                         onClick={() => {
                           router.push(path.href);
                           setIsOpen(false);
@@ -120,7 +120,7 @@ const Modal = ({ triggerText = "Explore Hita" }) => {
 
                 {/* Agent Option */}
                 <div
-                  className="group flex items-center justify-between p-4 bg-background/50 rounded-xl cursor-pointer transition-all duration-200 px-6 hover:ring-4 hover:ring-offset-2 ring-offset-background hover:ring-blue-500/20 hover:focus:ring-blue-400/20 focus:border-blue-500/70 hover:shadow-blue-500/20 border-2 border-foreground/5 hover:border-blue-500/70"
+                  className="group flex items-center justify-between p-4 bg-background/50 rounded-xl cursor-pointer transition-all duration-500 px-6 hover:ring-2 hover:ring-offset-2 ring-offset-background hover:ring-blue-500/20 hover:focus:ring-blue-400/20 focus:border-blue-500/70 hover:shadow-blue-500/20 border-2 border-foreground/5 hover:border-blue-500/60"
                   onClick={() => {
                     router.push("/agent");
                     setIsOpen(false);

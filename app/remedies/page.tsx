@@ -41,7 +41,7 @@ async function RemediesList({ search }: { search: string }) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 min-h-[400px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {transformedRemedies.map((remedy) => (
         <RemedyCard key={remedy.slug} remedy={remedy} />
       ))}
