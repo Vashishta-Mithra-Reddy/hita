@@ -19,8 +19,68 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Hita | Your Well Wisher",
+  title: "Hita Wellness | Your Well Wisher",
   description: "Hita is an AI-powered wellness platform to find clean, healthy products, remedies, and nutritional information. Powered by RAG and embeddings for accurate, context-aware answers.",
+  keywords: [
+    "Hita Wellness",
+    "AI wellness platform",
+    "healthy products",
+    "natural remedies",
+    "nutritional information",
+    "AI-powered health",
+    "clean living",
+    "holistic health",
+    "wellness solutions",
+    "personalized health",
+    "integrative medicine",
+    "dietary advice",
+    "supplement guide",
+    "health insights",
+    "mind-body wellness",
+    "preventative health",
+    "sustainable wellness",
+    "eco-friendly products",
+    "natural healing",
+    "health technology",
+  ],
+  openGraph: {
+    title: "Hita Wellness | Your Well Wisher",
+    description: "Hita is an AI-powered wellness platform to find clean, healthy products, remedies, and nutritional information. Powered by RAG and embeddings for accurate, context-aware answers.",
+    url: defaultUrl,
+    siteName: "Hita Wellness",
+    // images: [
+    //   {
+    //     url: `${defaultUrl}/og-image.jpg`, // Assuming you have an Open Graph image
+    //     width: 1200,
+    //     height: 630,
+    //     alt: "Hita Wellness - AI-powered platform for healthy living",
+    //   },
+    // ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Hita Wellness | Your Well Wisher",
+    description: "Hita is an AI-powered wellness platform to find clean, healthy products, remedies, and nutritional information. Powered by RAG and embeddings for accurate, context-aware answers.",
+    // images: [`${defaultUrl}/twitter-image.jpg`], 
+  },
+  // You can add more meta tags here as needed, e.g., robots, author, etc.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  // Add canonical URL if applicable
+  alternates: {
+    canonical: defaultUrl,
+  },
 };
 
 const geistSans = Geist({
