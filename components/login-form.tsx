@@ -32,7 +32,13 @@ export function LoginForm({
         password,
       });
       if (error) throw error;
+    // Wait for session to persist before redirecting
+    const { data: session } = await supabase.auth.getSession();
+    if (session.session) {
       router.push("/agent");
+    } else {
+      throw new Error("Session not persisted");
+    }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
