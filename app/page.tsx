@@ -6,6 +6,7 @@ import HitaDesc from '@/components/HitaDesc';
 import MainPaths from '@/components/MainPaths';
 import WhyHita from '@/components/WhyHita';
 import HitaMeaning from '@/components/HitaMeaning';
+import NavigationCard from '@/components/NavigationCard';
 
 export default function Home() {
   return (
@@ -16,6 +17,16 @@ export default function Home() {
       <main className="min-h-screen w-[99vw] flex flex-col items-center">
 
         <HitaDesc/>
+
+        <div className='w-full max-w-5xl'>
+        <NavigationCard
+          title="Get proper context aware answers to your health queries."
+          href="/agent"
+          tag="Go to the Agent Page"
+          delay={0.2}
+          className='font-satoshi font-bold'
+        />
+        </div>
     
         <MainPaths/>
 

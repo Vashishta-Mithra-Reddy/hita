@@ -6,6 +6,7 @@ import { CategoryGridSkeleton } from '@/components/skeletons/CategorySkeleton';
 import { ProductFilter } from './product-filter';
 import BottomGradient from '@/components/BottomGradient';
 import { Skeleton } from '@/components/ui/skeleton';
+import NavigationCard from '@/components/NavigationCard';
 /**
  * Server component that fetches categories and renders the client ProductFilter.
  */
@@ -115,6 +116,14 @@ export default async function ProductsPage({
       >
         <ProductsList search={search} category={category} />
       </Suspense>
+
+      <NavigationCard
+        title="Checkout the trusted brands directory"
+        href="/brands"
+        tag="Go to Brands Page"
+        delay={0.2}
+        className='mt-8'
+      />
       
       <BottomGradient />
     </div>
