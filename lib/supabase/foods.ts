@@ -513,9 +513,17 @@ export async function getFoodNutrientDetails(foodId: string) {
   // Transform the data safely
   const processedVitamins = vitaminsData
     ? (vitaminsData as SupabaseVitaminResponse[]).map(v => ({
-        amount_per_100g: v.amount_per_100g,
+        // Convert Vitamin A from beta-carotene to retinol activity equivalents (RAE): divide by 12
+        name: extractVitaminName(v.vitamin),
         unit: v.unit,
-        name: extractVitaminName(v.vitamin)
+        amount_per_100g: (() => {
+          const nm = extractVitaminName(v.vitamin);
+          const base = v.amount_per_100g;
+          if (nm && typeof base === 'number' && nm.toLowerCase().includes('vitamin a')) {
+            return base / 12;
+          }
+          return base;
+        })()
       })).filter(v => v.name !== null)
     : [];
     

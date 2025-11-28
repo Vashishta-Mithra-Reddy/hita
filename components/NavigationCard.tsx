@@ -40,10 +40,11 @@ export default function NavigationCard({
 }: NavigationCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut", delay }}
-      className={`w-full flex-center`}
+      initial={{ opacity: 0, y: 30, filter: "blur(5px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 0.5, ease: "easeIn", delay }}
+      className={`w-full flex-center max-w-screen font-jakarta`}
     >
       <Link
         href={href}
@@ -78,7 +79,7 @@ export default function NavigationCard({
             />
           )}
 
-          <h2 className="text-3xl font-semibold drop-shadow-md">{title}</h2>
+          <h2 className="text-3xl font-semibold drop-shadow-md mx-12">{title}</h2>
 
           <div className="mt-2 flex items-center justify-center gap-2 text-sm font-medium text-white/80">
             {tag}

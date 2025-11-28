@@ -79,7 +79,7 @@ interface ContentDetails {
 
 interface SearchResult {
   id: string;
-  content_type: 'product' | 'food' | 'remedy' | 'supplement_guide' | 'wellness_tip';
+  content_type: 'product' | 'food' | 'remedy' | 'supplement_guide' | 'wellness_tip' | 'recipe';
   source_id: string;
   metadata: EmbeddingMetadata;
   similarity: number;
@@ -243,15 +243,15 @@ function getRelevantContentTypes(intent: string): string[] {
   switch (intent) {
     case 'health_concern':
     case 'symptom_based':
-      return ['remedy', 'supplement_guide', 'food'];
+      return ['remedy', 'supplement_guide', 'food', 'recipe'];
     case 'product_search':
       return ['product', 'supplement_guide'];
     case 'nutritional_need':
-      return ['food', 'supplement_guide', 'product'];
+      return ['food', 'supplement_guide', 'product', 'recipe'];
     case 'lifestyle_advice':
-      return ['wellness_tip', 'remedy'];
+      return ['wellness_tip', 'remedy', 'recipe'];
     default:
-      return ['product', 'food', 'remedy', 'supplement_guide', 'wellness_tip'];
+      return ['product', 'food', 'remedy', 'supplement_guide', 'wellness_tip', 'recipe'];
   }
 }
 
@@ -259,20 +259,12 @@ async function searchEmbeddings(query: string, limit = 20): Promise<SearchResult
   try {
     console.log('🔍 Generating embedding for query:', query.slice(0, 50) + '...');
     
-    // const embeddingResponse = await openai.embeddings.create({
-    //   model: "text-embedding-3-small",
-    //   input: query,
-    // });
+    const embeddingResponse = await openai.embeddings.create({
+      model: 'text-embedding-3-small',
+      input: query,
+    });
 
-    const embeddingResponse = await await genai.models.embedContent({
-        model: 'gemini-embedding-001',
-        contents:query,
-        config: {
-            outputDimensionality: 1536,
-          },
-      })
-
-    const queryEmbedding = embeddingResponse.embeddings?.[0]?.values ?? null;
+    const queryEmbedding = embeddingResponse.data?.[0]?.embedding ?? null;
     
     console.log('🔎 Performing vector similarity search...');
     const { data, error } = await supabase.rpc('match_embeddings', {
@@ -385,6 +377,18 @@ async function fetchFullDetails(results: SearchResult[]): Promise<SearchResult[]
             .single();
           details = tip;
           break;
+
+        case 'recipe':
+          const { data: recipe } = await supabase
+            .from('recipes')
+            .select(`
+              id, name, slug, description, short_description,
+              main_image_url, is_healthy, is_quick
+            `)
+            .eq('id', result.source_id)
+            .single();
+          details = recipe;
+          break;
       }
 
       if (details) {
@@ -407,6 +411,135 @@ async function fetchFullDetails(results: SearchResult[]): Promise<SearchResult[]
 
   console.log(`✅ Successfully enriched ${enrichedResults.length} out of ${results.length} results`);
   return enrichedResults;
+}
+
+// Ensure slug exists on details; if missing, generate from title/name
+function ensureSlug(details: ContentDetails | undefined, fallbackName?: string): ContentDetails | undefined {
+  if (!details) return details;
+  const slugify = (s: string) => s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+  if (!details.slug) {
+    const base = details.title || details.name || fallbackName || '';
+    if (base) {
+      return { ...details, slug: slugify(base) };
+    }
+  }
+  return details;
+}
+
+async function getDirectTopItemsByIntent(analysis: QueryAnalysis): Promise<SearchResult[]> {
+  const results: SearchResult[] = [];
+  const types = getRelevantContentTypes(analysis.intent);
+
+  try {
+    if (types.includes('food')) {
+      const { data: foods } = await supabase
+        .from('foods')
+        .select('id, name, slug, description, short_description, main_image_url, is_vegetarian, is_vegan, is_gluten_free')
+        .eq('is_active', true)
+        .order('is_featured', { ascending: false })
+        .limit(6);
+      foods?.forEach(f => results.push({
+        id: `direct_food_${f.id}`,
+        content_type: 'food',
+        source_id: f.id,
+        similarity: 0.4,
+        metadata: { name: f.name, slug: f.slug, tags: [] },
+        details: { id: f.id, name: f.name, slug: f.slug, description: f.description, short_description: f.short_description, main_image_url: f.main_image_url }
+      }));
+    }
+
+    if (types.includes('product')) {
+      const { data: products } = await supabase
+        .from('products')
+        .select('id, name, slug, description, short_description, main_image_url')
+        .order('is_featured', { ascending: false })
+        .limit(6);
+      products?.forEach(p => results.push({
+        id: `direct_product_${p.id}`,
+        content_type: 'product',
+        source_id: p.id,
+        similarity: 0.4,
+        metadata: { name: p.name, slug: p.slug, tags: [] },
+        details: { id: p.id, name: p.name, slug: p.slug, description: p.description, short_description: p.short_description, main_image_url: p.main_image_url }
+      }));
+    }
+
+    if (types.includes('remedy')) {
+      const { data: remedies } = await supabase
+        .from('remedies')
+        .select('id, title, slug, description, symptoms_treated, is_verified')
+        .order('effectiveness_rating', { ascending: false })
+        .limit(6);
+      remedies?.forEach(r => results.push({
+        id: `direct_remedy_${r.id}`,
+        content_type: 'remedy',
+        source_id: r.id,
+        similarity: 0.4,
+        metadata: { title: r.title, slug: r.slug, symptoms_treated: r.symptoms_treated },
+        details: { id: r.id, title: r.title, slug: r.slug, description: r.description, symptoms_treated: r.symptoms_treated, is_verified: r.is_verified }
+      }));
+    }
+
+    if (types.includes('supplement_guide')) {
+      const { data: guides } = await supabase
+        .from('supplementation_guides')
+        .select('id, title, supplement_name, description, benefits, recommended_dosage, side_effects, health_goals, tags')
+        .limit(6);
+      guides?.forEach(g => {
+        const details: ContentDetails = { id: g.id, title: g.title, description: g.description, supplement_name: g.supplement_name, recommended_dosage: g.recommended_dosage };
+        const withSlug = ensureSlug(details, g.title);
+        results.push({
+          id: `direct_supp_${g.id}`,
+          content_type: 'supplement_guide',
+          source_id: g.id,
+          similarity: 0.35,
+          metadata: { title: g.title, supplement_name: g.supplement_name },
+          details: withSlug
+        });
+      });
+    }
+
+    if (types.includes('wellness_tip')) {
+      const { data: tips } = await supabase
+        .from('wellness_tips')
+        .select('id, title, slug, content, category')
+        .limit(6);
+      tips?.forEach(t => results.push({
+        id: `direct_tip_${t.id}`,
+        content_type: 'wellness_tip',
+        source_id: t.id,
+        similarity: 0.3,
+        metadata: { title: t.title, slug: t.slug },
+        details: { id: t.id, title: t.title, slug: t.slug, content: t.content, category: t.category }
+      }));
+    }
+
+    // Optional recipe support if present
+    if (types.includes('recipe')) {
+      const { data: recipes } = await supabase
+        .from('recipes')
+        .select('id, name, slug, description, short_description, main_image_url, is_healthy, is_quick')
+        .eq('is_active', true)
+        .order('is_featured', { ascending: false })
+        .limit(6);
+      recipes?.forEach(rc => results.push({
+        id: `direct_recipe_${rc.id}`,
+        content_type: 'recipe',
+        source_id: rc.id,
+        similarity: 0.35,
+        metadata: { name: rc.name, slug: rc.slug },
+        details: { id: rc.id, name: rc.name, slug: rc.slug, description: rc.description, short_description: rc.short_description, main_image_url: rc.main_image_url }
+      }));
+    }
+  } catch (err) {
+    console.error('❌ Direct fallback fetch failed:', err);
+  }
+
+  return results.slice(0, 15);
 }
 
 // Intelligent AI response generation based on query analysis
@@ -624,13 +757,20 @@ export async function POST(request: NextRequest) {
     const searchResults = await performIntelligentSearch(query, queryAnalysis);
     console.log(`✅ Intelligent search completed: ${searchResults.length} results found`);
 
-    // Handle no results scenario better
+    // Handle no results scenario better: attempt direct DB fallback
     if (searchResults.length === 0) {
-      console.log('⚠️ No search results found, generating helpful response anyway');
-      const aiResponse = await generateIntelligentAIResponse(query, queryAnalysis, []);
+      console.log('⚠️ No search results found. Trying direct top items fallback by intent...');
+      const directFallback = await getDirectTopItemsByIntent(queryAnalysis);
+      const fallbackWithSlugs = directFallback.map(r => ({
+        ...r,
+        details: ensureSlug(r.details, r.metadata?.name || r.metadata?.title)
+      }));
+      console.log('✅ Direct fallback results:', fallbackWithSlugs.length);
+
+      const aiResponse = await generateIntelligentAIResponse(query, queryAnalysis, fallbackWithSlugs);
       return NextResponse.json({
         ...aiResponse,
-        searchResults: [],
+        searchResults: fallbackWithSlugs,
         queryAnalysis: {
           intent: queryAnalysis.intent,
           isConversational: queryAnalysis.isConversational,
@@ -642,11 +782,18 @@ export async function POST(request: NextRequest) {
     // Step 3: Fetch enhanced details
     console.log('📝 Step 3: Fetching enhanced details...');
     const enrichedResults = await fetchFullDetails(searchResults);
-    console.log(`✅ Details fetching completed: ${enrichedResults.length} enriched results`);
+    const enrichedWithSlugs = enrichedResults.map(r => ({
+      ...r,
+      details: ensureSlug(r.details, r.metadata?.name || r.metadata?.title)
+    }));
+    console.log(`✅ Details fetching completed: ${enrichedWithSlugs.length} enriched results`);
 
     // Step 4: Generate intelligent AI response
     console.log('🤖 Step 4: Generating intelligent AI response...');
-    const aiResponse = await generateIntelligentAIResponse(query, queryAnalysis, enrichedResults);
+    // If enriched results are still empty, use direct database fallback
+    const finalResults = enrichedWithSlugs.length > 0 ? enrichedWithSlugs : await getDirectTopItemsByIntent(queryAnalysis);
+
+    const aiResponse = await generateIntelligentAIResponse(query, queryAnalysis, finalResults);
     console.log('✅ AI response generation completed');
 
     const smartUrl = generateSmartURL(query, queryAnalysis);
@@ -654,7 +801,7 @@ export async function POST(request: NextRequest) {
     // Step 5: Return comprehensive response
     const response = {
       ...aiResponse,
-      searchResults: enrichedResults,
+      searchResults: finalResults,
       queryAnalysis: {
         intent: queryAnalysis.intent,
         isConversational: queryAnalysis.isConversational,

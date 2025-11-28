@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Plus_Jakarta_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import localfont from "next/font/local";
 
@@ -8,8 +8,9 @@ import { Toaster } from "@/components/ui/sonner";
 import Footer from "@/components/blocks/footer";
 import Header from "@/components/blocks/header";
 import BottomNav from "@/components/blocks/bottom-nav";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
+// import { PostHogProvider } from "@/components/PostHogProvider";
 // import RadialGradient from "@/components/RadialGradient";
 // import BottomGradient from "@/components/BottomGradient";
 
@@ -89,12 +90,16 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
+  subsets: ["latin"],
+});
+
 const satoshi = localfont({
   variable: "--font-satoshi",
   src: "./fonts/Satoshi-Variable.woff2",
   display: "swap"
 });
-
 
 export default function RootLayout({
   children,
@@ -112,33 +117,34 @@ export default function RootLayout({
             })(window,document,'script','dataLayer','GTM-PQGRKC83');`}
         </Script>
       </head>
-      <body className={`${geistSans.className} ${satoshi.variable} antialiased flex flex-col items-center`}>
-        
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-PQGRKC83"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          ></iframe>
-        </noscript>
+      <body className={`${geistSans.className} ${satoshi.variable} ${jakarta.variable} antialiased flex flex-col items-center`}>
+        {/* <PostHogProvider> */}
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-PQGRKC83"
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            ></iframe>
+          </noscript>
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-        >
-          <Toaster/>
-          <Header />
-          <div>
-            {children} 
-          </div>
-          {/* <RadialGradient/> */}
-          {/* <BottomGradient/> */}
-          <BottomNav/>
-          <Footer />
-        </ThemeProvider>
-        <Analytics/> 
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+          >
+            <Toaster/>
+            <Header />
+            <div className="w-full">
+              {children} 
+            </div>
+            {/* <RadialGradient/> */}
+            {/* <BottomGradient/> */}
+            <BottomNav/>
+            <Footer />
+          </ThemeProvider>
+          <Analytics/>
+        {/* </PostHogProvider> */}
       </body>
     </html>
   );

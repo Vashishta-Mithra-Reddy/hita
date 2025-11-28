@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
+import { getUserPreferences, Gender, AgeGroup, ReproductiveStatus } from '@/lib/supabase/diet';
 import { Food } from '@/lib/supabase/foods';
 // import { FoodDetailSkeleton } from '@/components/skeletons/FoodDetailSkeleton';
 import BottomGradient from '@/components/BottomGradient';
@@ -173,47 +174,95 @@ export default function FoodDetailPage() {
         const vitaminIds = vitaminItems.map(v => v.id).filter(Boolean) as string[];
         const mineralIds = mineralItems.map(m => m.id).filter(Boolean) as string[];
 
+        // Resolve target group from user preferences
+        const prefs = await getUserPreferences();
+        const gender: Gender | null = (prefs?.gender as Gender) ?? null;
+        const ageYears: number | null = (prefs?.age_years as number) ?? null;
+        const deriveAgeGroup = (years: number | null, fallback: AgeGroup | null): AgeGroup => {
+          if (years != null && !Number.isNaN(years)) {
+            if (years >= 60) return 'older';
+            if (years >= 16 && years <= 18) return 'teen';
+            return 'adult';
+          }
+          return (fallback as AgeGroup) || 'adult';
+        };
+        const ageGroup: AgeGroup = deriveAgeGroup(ageYears, (prefs?.age_group as AgeGroup) || 'adult');
+        const repro: ReproductiveStatus = (prefs?.pregnancy_status as ReproductiveStatus) || 'none';
+        const resolveTargetGroup = (): string => {
+          if (gender === 'female' && repro === 'pregnant') return 'pregnant';
+          if (gender === 'female' && repro === 'lactating') return 'lactating';
+          if (gender) return `${ageGroup}_${gender}`;
+          return 'adult_male';
+        };
+        const targetGroup = resolveTargetGroup();
+        const fallbackGroups = (
+          gender === 'female'
+            ? [targetGroup, 'adult_female', 'older_female', 'teen_female']
+            : [targetGroup, 'adult_male', 'older_male', 'teen_male']
+        );
+
         const [vitRdaRes, minRdaRes] = await Promise.all([
           vitaminIds.length
             ? supabase
                 .from('vitamin_rda')
-                .select('vitamin_id, recommended_daily_amount, unit')
+                .select('vitamin_id, recommended_daily_amount, unit, target_group')
                 .in('vitamin_id', vitaminIds)
-            : Promise.resolve({ data: [] as VitaminRdaQueryResult[] }),
+                .in('target_group', fallbackGroups)
+            : Promise.resolve({ data: [] as any[] }),
           mineralIds.length
             ? supabase
                 .from('mineral_rda')
-                .select('mineral_id, recommended_daily_amount, unit')
+                .select('mineral_id, recommended_daily_amount, unit, target_group')
                 .in('mineral_id', mineralIds)
-            : Promise.resolve({ data: [] as MineralRdaQueryResult[] }),
+                .in('target_group', fallbackGroups)
+            : Promise.resolve({ data: [] as any[] }),
         ]);
 
+        // Prefer exact target_group, then fallbacks by order
+        const groupPriority = new Map<string, number>(fallbackGroups.map((g, idx) => [g, idx]));
         const vitaminRdaMap = new Map<string, { amount: number; unit: string }>();
-        (vitRdaRes.data as VitaminRdaQueryResult[] ?? []).forEach((r) => {
-          if (r.vitamin_id && r.recommended_daily_amount && r.unit) {
+        const vitPrMap = new Map<string, number>();
+        for (const r of (vitRdaRes.data as any[] ?? [])) {
+          const pr = groupPriority.has(r.target_group) ? (groupPriority.get(r.target_group) as number) : Number.MAX_SAFE_INTEGER;
+          const existingPr = vitPrMap.get(r.vitamin_id);
+          if (existingPr === undefined || pr < existingPr) {
             vitaminRdaMap.set(r.vitamin_id, { amount: Number(r.recommended_daily_amount), unit: r.unit });
+            vitPrMap.set(r.vitamin_id, pr);
           }
-        });
+        }
 
         const mineralRdaMap = new Map<string, { amount: number; unit: string }>();
-        (minRdaRes.data as MineralRdaQueryResult[] ?? []).forEach((r) => {
-          if (r.mineral_id && r.recommended_daily_amount && r.unit) {
+        const minPrMap = new Map<string, number>();
+        for (const r of (minRdaRes.data as any[] ?? [])) {
+          const pr = groupPriority.has(r.target_group) ? (groupPriority.get(r.target_group) as number) : Number.MAX_SAFE_INTEGER;
+          const existingPr = minPrMap.get(r.mineral_id);
+          if (existingPr === undefined || pr < existingPr) {
             mineralRdaMap.set(r.mineral_id, { amount: Number(r.recommended_daily_amount), unit: r.unit });
+            minPrMap.set(r.mineral_id, pr);
           }
-        });
+        }
 
         // Compute RDA% if unit matches
         const computePercent = (amount: number | null, unit: string | null, rda?: { amount: number; unit: string }) => {
           if (!amount || !unit || !rda) return null;
-          if (rda.unit !== unit) return null;
-          // return Math.max(0, Math.min(100, (amount / rda.amount) * 100));
+          const normalizeUnit = (u?: string | null) => {
+            const s = (u || '').trim().toLowerCase();
+            if (!s) return '';
+            if (s === 'µg' || s === 'ug' || s === 'μg' || s === 'mcg') return 'mcg';
+            return s;
+          };
+          if (normalizeUnit(rda.unit) !== normalizeUnit(unit)) return null;
           return (amount / rda.amount) * 100;
         };
 
         const vitaminsDetailed: DetailedNutrient[] = vitaminItems.map(v => {
           const rda = v.id ? vitaminRdaMap.get(v.id) : undefined;
-          const pct = computePercent(v.amount_per_100g, v.unit, rda);
-          return { name: v.name, amount_per_100g: v.amount_per_100g, unit: v.unit, rda_percent: pct };
+          const isVitaminA = typeof v.name === 'string' && v.name.toLowerCase().includes('vitamin a');
+          const adjustedAmount = (v.amount_per_100g != null)
+            ? (isVitaminA ? (Number(v.amount_per_100g) / 12) : Number(v.amount_per_100g))
+            : null;
+          const pct = computePercent(adjustedAmount, v.unit, rda);
+          return { name: v.name, amount_per_100g: adjustedAmount, unit: v.unit, rda_percent: pct };
         });
 
         const mineralsDetailed: DetailedNutrient[] = mineralItems.map(m => {
@@ -313,35 +362,49 @@ export default function FoodDetailPage() {
               <p className="mt-4 font-medium text-foreground/80 md:text-start text-center">{food.short_description}</p>
             )}
 
-            {/* Quick Nutritional Snapshot */}
-            {food.nutritional_info && (
-              <div className="mt-5 grid grid-cols-4 gap-6 text-center">
-                {food.nutritional_info.calories !== undefined && (
-                  <div>
-                    <p className="text-xl font-semibold">{food.nutritional_info.calories}</p>
-                    <p className="text-xs text-foreground/60">kcal</p>
-                  </div>
-                )}
-                {food.nutritional_info.protein !== undefined && (
-                  <div>
-                    <p className="text-xl font-semibold">{food.nutritional_info.protein}g</p>
-                    <p className="text-xs text-foreground/60">Protein</p>
-                  </div>
-                )}
-                {food.nutritional_info.carbs !== undefined && (
-                  <div>
-                    <p className="text-xl font-semibold">{food.nutritional_info.carbs}g</p>
-                    <p className="text-xs text-foreground/60">Carbs</p>
-                  </div>
-                )}
-                {food.nutritional_info.fiber !== undefined && (
-                  <div>
-                    <p className="text-xl font-semibold">{food.nutritional_info.fiber}g</p>
-                    <p className="text-xs text-foreground/60">Fiber</p>
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Quick Nutritional Snapshot (main_nutrients) */}
+            {food.nutritional_info && (() => {
+              const m = (food.nutritional_info as any)?.main_nutrients || (food.nutritional_info as any) || {};
+              const energy = Number(m?.energy_kcal ?? 0);
+              const protein = Number(m?.protein_g ?? 0);
+              const carbs = Number(m?.total_carbohydrates_g ?? 0);
+              const fat = Number(m?.total_fat_g ?? 0);
+              const fiber = Number(m?.total_fiber_g ?? 0);
+              return (
+                <div className="mt-5 grid grid-cols-5 gap-6 text-center">
+                  {m?.energy_kcal !== undefined && (
+                    <div>
+                      <p className="text-xl font-semibold">{Math.round(energy)}</p>
+                      <p className="text-xs text-foreground/60">kcal</p>
+                    </div>
+                  )}
+                  {m?.protein_g !== undefined && (
+                    <div>
+                      <p className="text-xl font-semibold">{Math.round(protein)}g</p>
+                      <p className="text-xs text-foreground/60">Protein</p>
+                    </div>
+                  )}
+                  {m?.total_carbohydrates_g !== undefined && (
+                    <div>
+                      <p className="text-xl font-semibold">{Math.round(carbs)}g</p>
+                      <p className="text-xs text-foreground/60">Carbs</p>
+                    </div>
+                  )}
+                  {m?.total_fat_g !== undefined && (
+                    <div>
+                      <p className="text-xl font-semibold">{Math.round(fat)}g</p>
+                      <p className="text-xs text-foreground/60">Fat</p>
+                    </div>
+                  )}
+                  {m?.total_fiber_g !== undefined && (
+                    <div>
+                      <p className="text-xl font-semibold">{Math.round(fiber)}g</p>
+                      <p className="text-xs text-foreground/60">Fiber</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Selection Tips */}
             {food.selection_tips && food.selection_tips.length > 0 && (
@@ -387,44 +450,52 @@ export default function FoodDetailPage() {
           )}
 
           {/* Nutritional Info Section */}
-          {food.nutritional_info && (
-            <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
-              <h3 className="font-medium text-lg">Nutritional Information</h3>
-              <p className="text-xs text-foreground/60 mb-4">Values per 100g</p>
-              <ul className="space-y-2">
-                {food.nutritional_info.calories !== undefined && (
-                  <li className="flex justify-between">
-                    <span>Calories:</span>
-                    <span className="font-medium">{food.nutritional_info.calories} kcal</span>
-                  </li>
-                )}
-                {food.nutritional_info.protein !== undefined && (
-                  <li className="flex justify-between">
-                    <span>Protein:</span>
-                    <span className="font-medium">{food.nutritional_info.protein}g</span>
-                  </li>
-                )}
-                {food.nutritional_info.carbs !== undefined && (
-                  <li className="flex justify-between">
-                    <span>Carbohydrates:</span>
-                    <span className="font-medium">{food.nutritional_info.carbs}g</span>
-                  </li>
-                )}
-                {food.nutritional_info.fat !== undefined && (
-                  <li className="flex justify-between">
-                    <span>Fat:</span>
-                    <span className="font-medium">{food.nutritional_info.fat}g</span>
-                  </li>
-                )}
-                {food.nutritional_info.fiber !== undefined && (
-                  <li className="flex justify-between">
-                    <span>Fiber:</span>
-                    <span className="font-medium">{food.nutritional_info.fiber}g</span>
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
+          {food.nutritional_info && (() => {
+            const m = (food.nutritional_info as any)?.main_nutrients || (food.nutritional_info as any) || {};
+            const energy = Number(m?.energy_kcal ?? 0);
+            const protein = Number(m?.protein_g ?? 0);
+            const carbs = Number(m?.total_carbohydrates_g ?? 0);
+            const fat = Number(m?.total_fat_g ?? 0);
+            const fiber = Number(m?.total_fiber_g ?? 0);
+            return (
+              <div className="border-2 border-dashed border-foreground/20 rounded-xl p-5 hover:border-foreground/30 transition-colors">
+                <h3 className="font-medium text-lg">Nutritional Information</h3>
+                <p className="text-xs text-foreground/60 mb-4">Values per 100g</p>
+                <ul className="space-y-2">
+                  {m?.energy_kcal !== undefined && (
+                    <li className="flex justify-between">
+                      <span>Calories:</span>
+                      <span className="font-medium">{Math.round(energy)} kcal</span>
+                    </li>
+                  )}
+                  {m?.protein_g !== undefined && (
+                    <li className="flex justify-between">
+                      <span>Protein:</span>
+                      <span className="font-medium">{Math.round(protein)}g</span>
+                    </li>
+                  )}
+                  {m?.total_carbohydrates_g !== undefined && (
+                    <li className="flex justify-between">
+                      <span>Carbohydrates:</span>
+                      <span className="font-medium">{Math.round(carbs)}g</span>
+                    </li>
+                  )}
+                  {m?.total_fat_g !== undefined && (
+                    <li className="flex justify-between">
+                      <span>Fat:</span>
+                      <span className="font-medium">{Math.round(fat)}g</span>
+                    </li>
+                  )}
+                  {m?.total_fiber_g !== undefined && (
+                    <li className="flex justify-between">
+                      <span>Fiber:</span>
+                      <span className="font-medium">{Math.round(fiber)}g</span>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            );
+          })()}
 
           {/* Health Benefits Section */}
           {food.health_benefits && food.health_benefits.length > 0 && (
@@ -471,7 +542,7 @@ export default function FoodDetailPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-foreground/80 line-clamp-1">{v.name}</span>
                         <span className="font-medium text-sm">
-                          {v.amount_per_100g ?? '-'}
+                          {typeof v.amount_per_100g === 'number' ? Math.round(v.amount_per_100g) : '-'}
                           {v.unit ?? ''}
                           {typeof v.rda_percent === 'number' && (
                             <>
@@ -538,7 +609,7 @@ export default function FoodDetailPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-foreground/80">{m.name}</span>
                         <span className="font-medium text-sm">
-                          {m.amount_per_100g ?? '-'}
+                          {typeof m.amount_per_100g === 'number' ? Math.round(m.amount_per_100g) : '-'}
                           {m.unit ?? ''}
                           {typeof m.rda_percent === 'number' && (
                             <>

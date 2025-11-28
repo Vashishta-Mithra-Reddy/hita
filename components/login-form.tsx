@@ -85,7 +85,7 @@ export function LoginForm({
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="md:w-80 h-12 rounded-xl border-blue-200 dark:border-blue-200/30 focus:border-blue-400 px-4"
+                        className="h-12 rounded-xl border-blue-200 dark:border-blue-200/30 focus:border-blue-400 px-4"
                       />
                     </div>
                     {/* <p className="text-[0.8rem] text-muted-foreground px-2.5">

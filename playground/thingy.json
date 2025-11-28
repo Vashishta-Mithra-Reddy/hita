@@ -1,0 +1,127 @@
+{
+  "meta": {
+    "code": "code",
+    "name": "name",
+    "scientific_name": "scie",
+    "local_name": "lang",
+    "food_group": "grup",
+    "tags": "tags",
+    "regions": "regn"
+  },
+  "main_nutrients": {
+    "energy_kcal": "enerkc",
+    "protein_g": "protcnt",
+    "total_carbohydrates_g": "choavldf",
+    "total_fat_g": "fatce",
+    "total_sugars_g": "fsugar",
+    "total_fiber_g": "fibtg",
+    "total_soluble_fiber_g": "fibsol",
+    "total_insoluble_fiber_g": "fibins",
+    "water_g": "water"
+  },
+  "energy_and_composition": {
+    "energy_kcal": "enerkc",
+    "moisture_g": "water",
+    "ash_g": "ash"
+  },
+  "macronutrients": {
+    "carbohydrates": {
+      "total_available_cho_g": "choavldf",
+      "starch_g": "starch",
+      "total_fiber_g": "fibtg",
+      "soluble_fiber_g": "fibsol",
+      "insoluble_fiber_g": "fibins"
+    },
+    "sugars": {
+      "free_sugars_g": "fsugar",
+      "fructose_g": "frus",
+      "glucose_g": "glus",
+      "sucrose_g": "sucs",
+      "maltose_g": "mals",
+      "lactose_g": "lactose",
+      "oligosaccharides_g": "olsac"
+    },
+    "protein": {
+      "total_protein_g": "protcnt"
+    },
+    "fats": {
+      "total_fat_g": "fatce",
+      "cholesterol_mg": "cholc",
+      "trans_fat_g": "fatrn"
+    }
+  },
+  "fatty_acid_profile": {
+    "summary": {
+      "saturated_mg": "fasat",
+      "monounsaturated_mg": "fams",
+      "polyunsaturated_mg": "fapu"
+    },
+    "essential_fatty_acids": {
+      "omega_3_alpha_linolenic_mg": "f18d3n3",
+      "omega_6_linoleic_mg": "f18d2cn6",
+      "epa_mg": "f20d5n3",
+      "dha_mg": "f22d6n3",
+      "arachidonic_acid_mg": "f20d4n6"
+    }
+  },
+  "amino_acid_profile": {
+    "essential": {
+      "histidine_g": "his",
+      "isoleucine_g": "ile",
+      "leucine_g": "leu",
+      "lysine_g": "lys",
+      "methionine_g": "met",
+      "phenylalanine_g": "phe",
+      "threonine_g": "thr",
+      "tryptophan_g": "trp",
+      "valine_g": "val"
+    },
+    "non_essential": {
+      "alanine_g": "ala",
+      "arginine_g": "arg",
+      "aspartic_acid_g": "asp",
+      "glutamic_acid_g": "glu",
+      "glycine_g": "gly",
+      "proline_g": "pro",
+      "serine_g": "ser",
+      "tyrosine_g": "tyr",
+      "cysteine_g": "cys"
+    }
+  },
+  "bioactives_and_phytochemicals": {
+    "totals": {
+      "total_polyphenols_mg": "polyph",
+      "total_saponins_g": "sapon",
+      "carotenoids_total_mcg": "cartoid"
+    },
+    "phytoestrogens": {
+      "daidzein_mg": "daidzn",
+      "genistein_mg": "gnstein"
+    },
+    "flavonoids": {
+      "quercetin_mg": "querce",
+      "kaempferol_mg": "kaemf",
+      "catechin_mg": "catec",
+      "epigallocatechin_3_gallate_mg": "epicatgc3gal"
+    },
+    "specific_compounds": {
+      "resveratrol_mg": "rsvrtol",
+      "lycopene_mcg": "lycpn",
+      "lutein_mcg": "lutn",
+      "zeaxanthin_mcg": "zea"
+    }
+  },
+  "organic_acids_and_antinutrients": {
+    "organic_acids": {
+      "citric_acid_mg": "citac",
+      "malic_acid_mg": "malac",
+      "tartaric_acid_mg": "tarac"
+    },
+    "anti_nutrients": {
+      "total_oxalates_mg": "oxalt",
+      "soluble_oxalates_mg": "oxals",
+      "insoluble_oxalates_mg": "oxali",
+      "phytate_mg": "phytac"
+    }
+  }
+}

@@ -59,6 +59,8 @@ export default {
       },
       fontFamily: {
         satoshi: ['var(--font-satoshi)', 'sans-serif'],
+        jakarta: ['var(--font-jakarta)', 'sans-serif'],
+        geistSans: ['var(--font-geist-sans)', 'sans-serif'],
       },
       backgroundImage: {
         'radial': 'radial-gradient(var(--tw-gradient-stops))',

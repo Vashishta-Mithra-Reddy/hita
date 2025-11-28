@@ -51,12 +51,42 @@ export async function updateSession(request: NextRequest) {
     !request.nextUrl.pathname.startsWith("/brands") &&
     !request.nextUrl.pathname.startsWith("/foods") &&
     !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !request.nextUrl.pathname.startsWith("/auth") &&
+    (!request.nextUrl.pathname.startsWith("/diet") || request.nextUrl.pathname === "/diet/me")
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
+  }
+
+  // Enforce onboarding before using the diet builder
+  if (
+    user &&
+    request.nextUrl.pathname.startsWith("/diet/me") &&
+    !request.nextUrl.pathname.startsWith("/onboarding")
+  ) {
+    const { data: prefs } = await supabase
+      .from("user_preferences")
+      .select("diet_type, meals_per_day, meal_slot_labels")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const meals = Number(prefs?.meals_per_day ?? 0);
+    const labelsCount = Array.isArray(prefs?.meal_slot_labels)
+      ? (prefs?.meal_slot_labels?.length ?? 0)
+      : 0;
+
+    const onboardingComplete =
+      !!prefs?.diet_type && meals > 0 && labelsCount === meals;
+
+    if (!onboardingComplete) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/onboarding";
+      const backTo = request.nextUrl.pathname + request.nextUrl.search;
+      url.searchParams.set("next", backTo);
+      return NextResponse.redirect(url);
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

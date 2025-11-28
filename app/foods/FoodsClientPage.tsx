@@ -7,6 +7,7 @@ import { FoodCard } from "@/components/FoodCard";
 import { createClient } from "@/lib/supabase/client";
 import { Food, FoodCategory } from "@/lib/supabase/foods";
 import { FoodCardSkeleton } from "@/components/skeletons/FoodCardSkeleton";
+import { getTargetGroupAuto } from "@/lib/supabase/diet"; 
 import BottomGradient from "@/components/BottomGradient";
 import { CategoryGridSkeleton } from "@/components/skeletons/CategorySkeleton";
 import { PaginationControls } from "@/components/pagination-controls";
@@ -139,13 +140,16 @@ export default function FoodsClientPage() {
       const supabase = createClient();
 
       if (selectedNutrient) {
+        const urlTargetGroup = searchParams.get("target_group");
+        const targetGroup = urlTargetGroup || await getTargetGroupAuto();
         // First, get the total count of foods for this nutrient (without pagination)
         const { data: countData, error: countError } = await supabase
           .rpc('get_foods_rich_in_nutrient', { 
             nutrient_type: selectedNutrient.type,
             nutrient_id: selectedNutrient.id,
             min_amount: 0,
-            p_category_id: selectedCategory
+            p_category_id: selectedCategory,
+            p_target_group: targetGroup
           });
         
         // Then get the paginated data
@@ -154,7 +158,8 @@ export default function FoodsClientPage() {
             nutrient_type: selectedNutrient.type,
             nutrient_id: selectedNutrient.id,
             min_amount: 0,
-            p_category_id: selectedCategory
+            p_category_id: selectedCategory,
+            p_target_group: targetGroup
           })
           .range((currentPage - 1) * pageSize, (currentPage * pageSize) - 1);
 

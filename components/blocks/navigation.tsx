@@ -7,6 +7,7 @@ export default function Navigation() {
     const pathname = usePathname();
     
     const navItems = [
+        { href: "/diet", label: "Diet" },
         { href: "/products", label: "Products" },
         // { href: "/brands", label: "Brands" },
         { href: "/foods", label: "Foods" },
@@ -16,7 +17,7 @@ export default function Navigation() {
     ];
     
     return (
-        <div className="hidden md:flex items-stretch justify-between w-full">
+        <div className="hidden md:flex items-stretch justify-between w-full font-geistSans">
             {/* Logo/Brand */}
             <Link 
                 href="/" 

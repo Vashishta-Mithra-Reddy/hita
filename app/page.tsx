@@ -18,12 +18,12 @@ export default function Home() {
 
         <HitaDesc/>
 
-        <div className='w-full max-w-5xl'>
+        <div className='max-w-5xl max-w-screen mx-8 md:mx-0'>
         <NavigationCard
-          title="Get proper context aware answers to your health queries."
+          title="Get context aware answers to your health queries."
           href="/agent"
           tag="Go to the Agent Page"
-          delay={0.2}
+          delay={0.8}
           className='font-satoshi font-bold'
         />
         </div>
