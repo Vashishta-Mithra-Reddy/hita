@@ -143,11 +143,11 @@ export default function Footer() {
           <p className="flex items-center justify-center md:justify-start text-sm text-muted-foreground">
             Built by&nbsp;
             <Link
-              href="https://www.vashishtamithra.com/"
+              href="https://www.v19.tech/"
               target="_blank"
               className="underline text-foreground inline-flex items-center gap-1 group transition-all duration-500 pl-1 hover:text-primary"
             >
-              Vashishta Mithra
+              V19
               <ArrowUpRight className="w-4 h-4 transition-all duration-500" />
             </Link>
           </p>
