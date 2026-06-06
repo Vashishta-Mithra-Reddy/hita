@@ -75,6 +75,15 @@ function toNum(v: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+// Safely extract a message from an unknown caught error.
+function errMsg(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
+
+// Joined content rows used to hydrate plan items with food/recipe details.
+type FoodContent = NonNullable<DietPlanItem['foods']>;
+type RecipeContent = NonNullable<DietPlanItem['recipes']>;
+
 function readMainMacros(nutritional_info: NutritionalInfo | null | undefined): { calories: number; protein: number; carbs: number; fat: number; fiber: number } {
   const ni = nutritional_info;
   if (!ni) return { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
@@ -336,11 +345,11 @@ export default function DietPlanBuilder() {
   // -- State --
   const [planId, setPlanId] = useState<string | null>(null);
   const [planName, setPlanName] = useState("My Optimized Plan");
-  const [goal, setGoal] = useState<string>("muscle_gain");
+  const [goal] = useState<string>("muscle_gain");
   const [targetCalories, setTargetCalories] = useState<number>(2500);
   const [dayIndex, setDayIndex] = useState<number>(0);
   const [items, setItems] = useState<DietPlanItem[]>([]);
-  const [mealSlots, setMealSlots] = useState<string[]>(["breakfast", "lunch", "snack", "dinner"]);
+  const [mealSlots] = useState<string[]>(["breakfast", "lunch", "snack", "dinner"]);
   const [isPublic, setIsPublic] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -553,7 +562,7 @@ export default function DietPlanBuilder() {
         if (!byDaySlot[key]) byDaySlot[key] = [];
         byDaySlot[key].push(i);
       });
-      Object.entries(byDaySlot).forEach(([key, list]) => {
+      Object.entries(byDaySlot).forEach(([, list]) => {
         // Sort by existing order to keep relative positions
         list.sort((a, b) => (a.meal_slot_order || 0) - (b.meal_slot_order || 0));
         list.forEach((item, idx) => {
@@ -613,9 +622,9 @@ export default function DietPlanBuilder() {
       setItems(fetched);
       setIsDirty(false);
       toast.success("All changes saved.");
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      toast.error("Save failed: " + e.message);
+      toast.error("Save failed: " + errMsg(e));
     } finally {
       toast.dismiss(toastId);
       setIsSaving(false);
@@ -631,8 +640,8 @@ export default function DietPlanBuilder() {
       setIsPublic(!!plan.is_public);
       toast.dismiss(toastId);
       toast.success("Plan created! You can now add meals.");
-    } catch (err: any) {
-      toast.error("Error creating plan: " + err.message);
+    } catch (err: unknown) {
+      toast.error("Error creating plan: " + errMsg(err));
     }
   };
 
@@ -641,15 +650,15 @@ export default function DietPlanBuilder() {
     const foodIds = Array.from(new Set(list.filter(i => i.content_type === 'food' && i.source_id).map(i => i.source_id!)));
     const recipeIds = Array.from(new Set(list.filter(i => i.content_type === 'recipe' && i.source_id).map(i => i.source_id!)));
 
-    const foodsMap: Record<string, any> = {};
-    const recipesMap: Record<string, any> = {};
+    const foodsMap: Record<string, FoodContent> = {};
+    const recipesMap: Record<string, RecipeContent> = {};
 
     if (foodIds.length > 0) {
       const { data } = await supabase
         .from('foods')
         .select('id, name, slug, nutritional_info, main_image_url')
         .in('id', foodIds);
-      (data || []).forEach((f: any) => { foodsMap[f.id] = f; });
+      (data || []).forEach((f: FoodContent) => { foodsMap[f.id] = f; });
     }
 
     if (recipeIds.length > 0) {
@@ -657,13 +666,13 @@ export default function DietPlanBuilder() {
         .from('recipes')
         .select('id, name, slug, nutritional_info, main_image_url')
         .in('id', recipeIds);
-      (data || []).forEach((r: any) => { recipesMap[r.id] = r; });
+      (data || []).forEach((r: RecipeContent) => { recipesMap[r.id] = r; });
     }
 
     return list.map(i => ({
       ...i,
       foods: i.content_type === 'food' && i.source_id ? foodsMap[i.source_id!] : i.foods,
-      recipes: i.content_type === 'recipe' && i.source_id ? recipesMap[i.source_id!] : (i as any).recipes,
+      recipes: i.content_type === 'recipe' && i.source_id ? recipesMap[i.source_id!] : i.recipes,
     }));
   };
 
@@ -689,9 +698,9 @@ export default function DietPlanBuilder() {
         setIsDirty(true);
       });
       toast.success("Weekly plan generated!");
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      toast.error("AI generation failed: " + (e?.message || 'Unexpected error'));
+      toast.error("AI generation failed: " + errMsg(e));
     } finally {
       setIsGenerating(false);
     }
@@ -724,7 +733,7 @@ export default function DietPlanBuilder() {
         source_id: food.id,
         slug: food.slug,
         portion_size_grams: 100,
-        foods: { id: food.id, name: food.name, nutritional_info: food.nutritional_info, main_image_url: (food as any).main_image_url }
+        foods: { id: food.id, name: food.name, nutritional_info: food.nutritional_info, main_image_url: food.main_image_url }
       };
       setItems(prev => {
         const filtered = prev.filter(i => i.id !== oldItem.id);
@@ -746,7 +755,7 @@ export default function DietPlanBuilder() {
         source_id: food.id,
         slug: food.slug,
         portion_size_grams: 100,
-        foods: { id: food.id, name: food.name, nutritional_info: food.nutritional_info, main_image_url: (food as any).main_image_url }
+        foods: { id: food.id, name: food.name, nutritional_info: food.nutritional_info, main_image_url: food.main_image_url }
       };
       setItems(prev => [...prev, newItem]);
       normalizeOrders();
@@ -774,7 +783,7 @@ export default function DietPlanBuilder() {
     toast.info(`Marked ${item.foods?.name || item.slug} as disliked.`);
     try {
       await addDislike("food", item.slug || "");
-    } catch (e) {
+    } catch {
       toast.error("Failed to update preferences");
     }
   }, []);
@@ -972,8 +981,8 @@ export default function DietPlanBuilder() {
                        await updatePlanVisibility(planId, true);
                        setIsPublic(true);
                        toast.success("Plan published. You can now share the link.");
-                     } catch (e: any) {
-                       toast.error("Failed to publish: " + e.message);
+                     } catch (e: unknown) {
+                       toast.error("Failed to publish: " + errMsg(e));
                      }
                    }}
                  >
@@ -1362,9 +1371,9 @@ export default function DietPlanBuilder() {
                 const filename = `${planName?.trim() || 'Diet Plan'}.pdf`;
                 await exportElementToPdf(el, filename);
                 toast.success('PDF ready — download should start');
-              } catch (e: any) {
+              } catch (e: unknown) {
                 console.error(e);
-                toast.error(`Failed to export PDF: ${e?.message || 'Unknown error'}`);
+                toast.error(`Failed to export PDF: ${errMsg(e)}`);
               } finally {
                 setIsExporting(false);
               }

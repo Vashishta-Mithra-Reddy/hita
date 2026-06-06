@@ -1,13 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient as createServerSupabase } from '@/lib/supabase/server';
-import type { DietType, IndianRegion, MealSlot, UserPreferences } from '@/types/diet';
+import type { DietType, IndianRegion, UserPreferences, DietPlanItem } from '@/types/diet';
 
 type GeneratedItemSpec = {
   name: string;
   slug?: string;
   portion_size_grams?: number;
 };
+
+// Shape of the food rows we select from Supabase (columns vary per query, so
+// most fields are optional). Used to type sort/score/filter callbacks.
+type FoodRow = {
+  id: string;
+  name: string;
+  slug: string | null;
+  nutritional_info?: unknown;
+  is_vegetarian?: boolean | null;
+  is_vegan?: boolean | null;
+  is_gluten_free?: boolean | null;
+  is_dairy_free?: boolean | null;
+  is_common?: boolean | null;
+  is_featured?: boolean | null;
+  is_active?: boolean | null;
+  tags?: string[] | null;
+};
+
+type SlugRow = { slug: string | null };
+type DislikeRow = { slug: string | null; content_type: string | null };
 
 type GeneratedDaySpec = {
   day_index: number; // 0-based index for the week
@@ -45,8 +65,8 @@ export async function POST(req: NextRequest) {
       .eq('user_id', userId);
 
     const dislikes = (dislikesRaw || [])
-      .filter((d: any) => d.content_type === 'food' && typeof d.slug === 'string')
-      .map((d: any) => d.slug.toLowerCase());
+      .filter((d: DislikeRow) => d.content_type === 'food' && typeof d.slug === 'string')
+      .map((d: DislikeRow) => String(d.slug).toLowerCase());
 
     // Resolve meal slots and target calories
     let mealSlots: string[] = (requestedMealSlots && requestedMealSlots.length)
@@ -118,8 +138,8 @@ export async function POST(req: NextRequest) {
           if (preferVeg) return !!(f.is_vegetarian || f.is_vegan);
           return true;
         });
-      commonFoods.sort((a: any, b: any) => {
-        const score = (x: any) => (x.is_featured ? 2 : 0) + (x.is_common ? 1 : 0);
+      commonFoods.sort((a: FoodRow, b: FoodRow) => {
+        const score = (x: FoodRow) => (x.is_featured ? 2 : 0) + (x.is_common ? 1 : 0);
         return score(b) - score(a);
       });
 
@@ -131,7 +151,7 @@ export async function POST(req: NextRequest) {
       };
 
       const pickRotating = (count: number, startIdx: number) => {
-        const picked: any[] = [];
+        const picked: FoodRow[] = [];
         for (let i = 0; i < count && commonFoods.length; i++) {
           const idx = (startIdx + i) % commonFoods.length;
           picked.push(commonFoods[idx]);
@@ -140,7 +160,7 @@ export async function POST(req: NextRequest) {
       };
 
       let cursor = 0;
-      const fallbackItems: any[] = [];
+      const fallbackItems: DietPlanItem[] = [];
       for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
         for (const label of mealSlots) {
           const isSnack = label.includes('snack');
@@ -199,25 +219,25 @@ export async function POST(req: NextRequest) {
         .from('foods')
         .select('slug')
         .eq('is_active', true);
-      foodsSlugs = (foodRows || []).map((r: any) => String(r.slug)).filter(Boolean);
+      foodsSlugs = (foodRows || []).map((r: SlugRow) => String(r.slug)).filter(Boolean);
 
       const { data: recipeRows } = await supabase
         .from('recipes')
         .select('slug')
         .eq('is_active', true);
-      recipesSlugs = (recipeRows || []).map((r: any) => String(r.slug)).filter(Boolean);
+      recipesSlugs = (recipeRows || []).map((r: SlugRow) => String(r.slug)).filter(Boolean);
 
       const { data: productRows } = await supabase
         .from('products')
         .select('slug')
         .eq('is_active', true);
-      productsSlugs = (productRows || []).map((r: any) => String(r.slug)).filter(Boolean);
+      productsSlugs = (productRows || []).map((r: SlugRow) => String(r.slug)).filter(Boolean);
     } catch (e) {
       console.warn('[DietWeek] Failed to fetch slug catalogs:', e);
     }
 
     // Full user preferences for better personalization
-    let fullPrefs: any = null;
+    let fullPrefs: Partial<UserPreferences> | null = null;
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -329,8 +349,7 @@ SeasonHints:
 
     try {
       // Some OpenAI SDK versions include usage; log defensively
-      // @ts-ignore
-      const usage = (completion as any)?.usage;
+      const usage = completion?.usage;
       if (usage) console.log('[DietWeek] OpenAI usage:', usage);
       console.log('[DietWeek] OpenAI choice length:', completion?.choices?.length || 0);
     } catch {}
@@ -377,7 +396,7 @@ SeasonHints:
 
       // Fuzzy by name
       if (name) {
-        let query = supabase
+        const query = supabase
           .from('foods')
           .select('id, name, slug, nutritional_info, is_vegetarian, is_vegan, is_gluten_free, is_dairy_free, is_common')
           .ilike('name', `%${name}%`)
@@ -391,8 +410,8 @@ SeasonHints:
         const preferVeg = dietType === 'vegetarian' || dietType === 'vegan' || dietType === 'eggetarian';
         const preferVegan = dietType === 'vegan';
 
-        candidates.sort((a: any, b: any) => {
-          const score = (x: any) => (
+        candidates.sort((a: FoodRow, b: FoodRow) => {
+          const score = (x: FoodRow) => (
             (preferVegan ? Number(x.is_vegan) : 0) +
             (preferVeg ? Number(x.is_vegetarian) : 0) +
             (x.is_common ? 1 : 0)
@@ -408,7 +427,7 @@ SeasonHints:
     };
 
     // Build DietPlanItem[] from generated spec
-    const items: any[] = [];
+    const items: DietPlanItem[] = [];
     for (const day of parsed.days || []) {
       const dayIndex = Number(day.day_index || 0);
       for (const meal of day.meals || []) {
@@ -509,23 +528,23 @@ SeasonHints:
         autumn: ['autumn', 'post_monsoon', 'fall'],
       };
       const fallbackSeasonTags = seasonAliasMap[currentSeason] || [currentSeason];
-      commonFoods.sort((a: any, b: any) => {
-        const tagScoreState = (x: any) => {
+      commonFoods.sort((a: FoodRow, b: FoodRow) => {
+        const tagScoreState = (x: FoodRow) => {
           const t = Array.isArray(x.tags) ? (x.tags as string[]) : [];
           return t.map(v => String(v || '').toLowerCase()).reduce((acc, v) => acc + (fallbackStateTags.includes(v) ? 1 : 0), 0);
         };
-        const tagScoreSeason = (x: any) => {
+        const tagScoreSeason = (x: FoodRow) => {
           const t = Array.isArray(x.tags) ? (x.tags as string[]) : [];
           return t.map(v => String(v || '').toLowerCase()).reduce((acc, v) => acc + (fallbackSeasonTags.includes(v) ? 1 : 0), 0);
         };
-        const score = (x: any) => (x.is_featured ? 2 : 0) + (x.is_common ? 1 : 0) + tagScoreState(x) * 2 + tagScoreSeason(x) * 1;
+        const score = (x: FoodRow) => (x.is_featured ? 2 : 0) + (x.is_common ? 1 : 0) + tagScoreState(x) * 2 + tagScoreSeason(x) * 1;
         return score(b) - score(a);
       });
 
       console.log('[DietWeek] Common foods pool size:', commonFoods.length);
 
       const pickRotating = (count: number, startIdx: number) => {
-        const picked: any[] = [];
+        const picked: FoodRow[] = [];
         for (let i = 0; i < count && commonFoods.length; i++) {
           const idx = (startIdx + i) % commonFoods.length;
           picked.push(commonFoods[idx]);
@@ -548,7 +567,7 @@ SeasonHints:
       };
 
       let cursor = 0;
-      const fallbackItems: any[] = [];
+      const fallbackItems: DietPlanItem[] = [];
       for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
         for (const label of mealSlots) {
           const isSnack = label.toLowerCase().includes('snack');
@@ -586,8 +605,9 @@ SeasonHints:
     }
 
     return NextResponse.json({ items, targetCalories, mealSlots, usedFallback: false });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Diet weekly generation error:', error);
-    return NextResponse.json({ error: error?.message || 'Failed to generate weekly plan' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Failed to generate weekly plan';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

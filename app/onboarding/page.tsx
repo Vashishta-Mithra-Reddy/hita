@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import DietOnboardingForm from "@/components/diet/DietOnboardingForm";
 
 export default function OnboardingPage() {
@@ -10,7 +11,9 @@ export default function OnboardingPage() {
             We need a few details to calculate your macros and structure your daily meals.
           </p>
         </div>
-        <DietOnboardingForm />
+        <Suspense fallback={null}>
+          <DietOnboardingForm />
+        </Suspense>
       </div>
     </div>
   );
