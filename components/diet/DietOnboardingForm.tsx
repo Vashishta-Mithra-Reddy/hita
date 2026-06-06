@@ -9,16 +9,14 @@ import {
   Clock, 
   CheckCircle2, 
   Loader2,
-  Leaf,
-  Beef,
   Fish,
   Egg,
-  Globe,
   ArrowRight,
   X,   
   Drumstick,
   Vegan,
-  Salad
+  Salad,
+  type LucideIcon
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -40,12 +38,15 @@ import Spinner from "../animations/Spinner";
 
 import { 
   upsertUserPreferences, 
-  getUserPreferences, 
+  getUserPreferences 
+} from "@/lib/supabase/diet";
+
+import { 
   type DietType, 
   type Gender, 
   type AgeGroup, 
   type ReproductiveStatus 
-} from "@/lib/supabase/diet";
+} from "@/types/diet";
 
 // --- Constants ---
 
@@ -58,7 +59,7 @@ const INDIAN_STATES = [
   "Delhi","Jammu & Kashmir","Ladakh","Lakshadweep","Puducherry"
 ];
 
-const DIET_OPTIONS: { id: DietType; label: string; icon: any; desc: string }[] = [
+const DIET_OPTIONS: { id: DietType; label: string; icon: LucideIcon; desc: string }[] = [
   { id: "vegetarian", label: "Vegetarian", icon: Salad, desc: "No meat, poultry, or seafood." },
   { id: "non_vegetarian", label: "Non-Veg", icon: Drumstick, desc: "Meat Eater." },
   { id: "eggetarian", label: "Eggetarian", icon: Egg, desc: "Vegetarian diet + eggs." },
@@ -245,8 +246,9 @@ export default function DietOnboardingForm() {
         router.push(nextPath || "/diet/me");
       }, 500);
       
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save preferences. Please try again.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to save preferences. Please try again.";
+      toast.error(message);
     } finally {
       setSaving(false);
     }
@@ -509,7 +511,7 @@ export default function DietOnboardingForm() {
                             <Label className="flex items-center gap-2 text-muted-foreground text-sm">
                                 <Ruler className="w-4 h-4" /> Height
                             </Label>
-                            <Tabs value={heightUnit} onValueChange={(v) => setHeightUnit(v as any)} className="h-7">
+                            <Tabs value={heightUnit} onValueChange={(v) => setHeightUnit(v as "cm" | "ft")} className="h-7">
                                 <TabsList className="h-7 p-0 bg-muted/50">
                                     <TabsTrigger value="cm" className="h-full px-3 text-xs rounded-sm">cm</TabsTrigger>
                                     <TabsTrigger value="ft" className="h-full px-3 text-xs rounded-sm">ft</TabsTrigger>
@@ -557,7 +559,7 @@ export default function DietOnboardingForm() {
                             <Label className="flex items-center gap-2 text-muted-foreground text-sm">
                                 <Weight className="w-4 h-4" /> Weight
                             </Label>
-                            <Tabs value={weightUnit} onValueChange={(v) => setWeightUnit(v as any)} className="h-7">
+                            <Tabs value={weightUnit} onValueChange={(v) => setWeightUnit(v as "kg" | "lbs")} className="h-7">
                                 <TabsList className="h-7 p-0 bg-muted/50">
                                     <TabsTrigger value="kg" className="h-full px-3 text-xs rounded-sm">kg</TabsTrigger>
                                     <TabsTrigger value="lbs" className="h-full px-3 text-xs rounded-sm">lbs</TabsTrigger>

@@ -1,21 +1,26 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
-import { getDietPlan, computeDailyTotals, DietPlan, DietPlanItem } from "@/lib/supabase/diet";
+import { useEffect, useMemo, useState, use } from "react";
+// import { useParams, notFound } from "next/navigation";
+// import Link from "next/link";
+// import { ChevronLeft } from "lucide-react";
+
+import { getDietPlan, computeDailyTotals } from "@/lib/supabase/diet";
+import { DietPlan, DietPlanItem, DailyTotals } from "@/types/diet";
+// import DietPlanPdf from "@/components/diet/DietPlanPdf";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import RdaCard from "@/components/diet/RdaCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/animations/Spinner";
 
-export default async function DietPlanPublicPage({params}: {params: Promise<{ id: string }>}) {
-  const { id } = await params;
-  const [plan, setPlan] = useState<any>(null);
-  const [items, setItems] = useState<any[]>([]);
+export default function DietPlanPublicPage({params}: {params: Promise<{ id: string }>}) {
+  const { id } = use(params);
+  const [plan, setPlan] = useState<DietPlan | null>(null);
+  const [items, setItems] = useState<DietPlanItem[]>([]);
   const [dayIndex, setDayIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [totals, setTotals] = useState<{ calories: number; protein: number; carbs: number; fat: number; fiber: number; rdaCoverage: Record<string, number> } | null>(null);
+  const [totals, setTotals] = useState<DailyTotals | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -40,13 +45,17 @@ export default async function DietPlanPublicPage({params}: {params: Promise<{ id
 
   const itemsBySlot = useMemo(() => {
     const map: Record<number, DietPlanItem[]> = {};
+    if (!plan?.meal_slots) return map;
+    
     items.filter(i => i.day_index === dayIndex).forEach(i => {
-      const idx = typeof i.meal_slot_index === "number" ? i.meal_slot_index : 0;
-      if (!map[idx]) map[idx] = [];
-      map[idx].push(i);
+      const idx = plan.meal_slots!.indexOf(i.meal_slot);
+      if (idx !== -1) {
+        if (!map[idx]) map[idx] = [];
+        map[idx].push(i);
+      }
     });
     return map;
-  }, [items, dayIndex]);
+  }, [items, dayIndex, plan]);
 
   if (loading) return <Spinner />;
   if (!plan) return <div className="p-6 text-center">Diet not found</div>;

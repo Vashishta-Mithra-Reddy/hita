@@ -7,6 +7,16 @@ export default function DietPage() {
       <p className="text-base text-muted-foreground italic mb-6">
         Browse curated and community plans. Create your own anytime.
       </p>
+      <div className="relative flex justify-center items-center mb-6">
+        <img
+          src="/graphics/platey.png"
+          alt="Indian Plate"
+          className="w-full object-cover rounded-md"
+        />
+        <p className="absolute text-white text-center text-3xl italic mb-6">
+          Let&apos;s Start By creating your own diet plan.
+        </p>
+      </div>
       <DietList />
     </div>
   );

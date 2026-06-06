@@ -1,4 +1,5 @@
 import { createClient } from './server';
+import { NutritionalInfo } from '@/types/diet';
 
 // Types based on your database schema
 export interface FoodCategory {
@@ -21,13 +22,7 @@ export interface Food {
   selection_tips: string[],
   description: string | null;
   short_description: string | null;
-  nutritional_info: {
-    calories?: number;
-    protein?: number;
-    carbs?: number;
-    fat?: number;
-    fiber?: number;
-  } | null;
+  nutritional_info: NutritionalInfo | null;
   // These will now come from join tables
   vitamins: string[] | null; 
   minerals: string[] | null;
@@ -540,3 +535,4 @@ export async function getFoodNutrientDetails(foodId: string) {
     minerals: processedMinerals
   };
 }
+

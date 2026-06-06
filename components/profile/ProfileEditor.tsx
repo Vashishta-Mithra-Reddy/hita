@@ -2,7 +2,6 @@
 
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import {
   getUserPreferences,
@@ -13,11 +12,13 @@ import {
   getUserFavorites,
   addFavorite,
   removeFavorite,
+} from "@/lib/supabase/diet";
+import {
   type DietType,
   type Gender,
   type AgeGroup,
   type ReproductiveStatus,
-} from "@/lib/supabase/diet";
+} from "@/types/diet";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +26,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, X, Heart, Ban, Search, Save, UserCircle2 } from "lucide-react";
 
@@ -64,6 +64,7 @@ const REPRODUCTIVE_OPTIONS: { id: ReproductiveStatus; label: string }[] = [
 ];
 
 type SearchType = "food" | "recipe";
+type SearchItem = { id: string; name: string; slug: string; main_image_url?: string | null };
 
 export default function ProfileEditor() {
   const supabase = useMemo(() => createClient(), []);
@@ -92,13 +93,13 @@ export default function ProfileEditor() {
   const [dislikes, setDislikes] = useState<{ slug: string; content_type: string }[]>([]);
   const [dislikeSearch, setDislikeSearch] = useState<string>("");
   const [dislikeSearchType, setDislikeSearchType] = useState<SearchType>("food");
-  const [dislikeResults, setDislikeResults] = useState<any[]>([]);
+  const [dislikeResults, setDislikeResults] = useState<SearchItem[]>([]);
 
   // Likes (Favorites)
   const [favorites, setFavorites] = useState<{ id: string; item_type: string; item_id: string; name?: string; slug?: string }[]>([]);
   const [likeSearch, setLikeSearch] = useState<string>("");
   const [likeSearchType, setLikeSearchType] = useState<SearchType>("food");
-  const [likeResults, setLikeResults] = useState<any[]>([]);
+  const [likeResults, setLikeResults] = useState<SearchItem[]>([]);
 
   // Helpers
   const defaultSlotsFromCount = useCallback((count: number) => {
@@ -147,15 +148,16 @@ export default function ProfileEditor() {
           const detailsMap: Record<string, { name?: string; slug?: string }> = {};
 
           if (foodIds.length) {
-            const { data } = await supabase.from("foods").select("id, name, slug").in("id", foodIds);
-            (data || []).forEach((f: any) => { detailsMap[f.id] = { name: f.name, slug: f.slug }; });
+            const { data: foodData } = await supabase.from("foods").select("id, name, slug").in("id", foodIds);
+            (foodData ?? []).forEach((f: { id: string; name: string; slug: string }) => { detailsMap[f.id] = { name: f.name, slug: f.slug }; });
           }
           if (recipeIds.length) {
-            const { data } = await supabase.from("recipes").select("id, name, slug").in("id", recipeIds);
-            (data || []).forEach((r: any) => { detailsMap[r.id] = { name: r.name, slug: r.slug }; });
+            const { data: recipeData } = await supabase.from("recipes").select("id, name, slug").in("id", recipeIds);
+            (recipeData ?? []).forEach((r: { id: string; name: string; slug: string }) => { detailsMap[r.id] = { name: r.name, slug: r.slug }; });
           }
 
-          setFavorites((favs || []).map((f: any) => ({ ...f, ...detailsMap[f.item_id] })) as any);
+          const favRows = (favs || []) as Array<{ id: string; item_type: string; item_id: string }>;
+          setFavorites(favRows.map((f) => ({ ...f, ...(detailsMap[f.item_id] ?? {}) })));
         }
       } catch (err) {
         console.error(err);
@@ -213,16 +215,17 @@ export default function ProfileEditor() {
         allergies: allergies?.length ? allergies : null,
       });
       toast.success("Profile updated successfully!");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to save preferences.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to save preferences.";
+      toast.error(message);
     } finally {
       setSavingPrefs(false);
     }
   };
 
-  const searchItems = async (query: string, type: SearchType) => {
+  const searchItems = async (query: string, type: SearchType): Promise<SearchItem[]> => {
     if (!query || query.trim().length < 2) {
-      return [];
+      return [] as SearchItem[];
     }
     if (type === "food") {
       const { data } = await supabase
@@ -230,14 +233,14 @@ export default function ProfileEditor() {
         .select("id, name, slug, main_image_url")
         .ilike("name", `%${query}%`)
         .limit(12);
-      return data || [];
+      return (data ?? []) as SearchItem[];
     } else {
       const { data } = await supabase
         .from("recipes")
         .select("id, name, slug, main_image_url")
         .ilike("name", `%${query}%`)
         .limit(12);
-      return data || [];
+      return (data ?? []) as SearchItem[];
     }
   };
 
@@ -267,7 +270,7 @@ export default function ProfileEditor() {
     }
   };
 
-  const handleAddDislike = async (type: SearchType, item: any) => {
+  const handleAddDislike = async (type: SearchType, item: SearchItem) => {
     try {
       await addDislike(type, item.slug || "", item.id);
       setDislikes(prev => [{ slug: item.slug, content_type: type }, ...prev]);
@@ -289,7 +292,7 @@ export default function ProfileEditor() {
     }
   };
 
-  const handleAddFavorite = async (type: SearchType, item: any) => {
+  const handleAddFavorite = async (type: SearchType, item: SearchItem) => {
     try {
       await addFavorite(type, item.id);
       setFavorites(prev => [{ id: crypto.randomUUID(), item_type: type, item_id: item.id, name: item.name, slug: item.slug }, ...prev]);
@@ -629,4 +632,3 @@ export default function ProfileEditor() {
     </div>
   );
 }
-

@@ -5,11 +5,9 @@ import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences, calculateCalorieTarget, getFiberTargetForCurrentUser } from "@/lib/supabase/diet";
 import { Card, CardContent} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { 
   Search, 
-  Activity, 
   User, 
   Baby, 
   Scale, 
@@ -23,11 +21,10 @@ import {
   RadialBarChart,
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { Gender, AgeGroup, ReproductiveStatus } from "@/types/diet";
+import { RopeSkipping } from "@/components/animations/RopeSkipping";
+import { Skeleton } from "@/components/ui/skeleton";
 
-
-type Gender = "male" | "female" | null;
-type AgeGroup = "teen" | "adult" | "older" | null;
-type PregnancyStatus = "none" | "pregnant" | "lactating" | null;
 
 type VitaminRdaRow = {
   recommended_daily_amount: number;
@@ -76,7 +73,7 @@ function deriveAgeGroup(ageYears: number | null | undefined, fallback: AgeGroup 
   return "adult";
 }
 
-function buildGroupPriority(gender: Gender, ageGroup: AgeGroup, pregnancyStatus: PregnancyStatus): string[] {
+function buildGroupPriority(gender: Gender, ageGroup: AgeGroup, pregnancyStatus: ReproductiveStatus | null): string[] {
   const list: string[] = [];
   if (gender === "female") {
     if (pregnancyStatus === "pregnant") list.push("pregnant");
@@ -96,7 +93,14 @@ function buildGroupPriority(gender: Gender, ageGroup: AgeGroup, pregnancyStatus:
 
 // --- Sub-components for UI Cleanliness ---
 
-const StatBadge = ({ icon: Icon, label, value, colorClass }: any) => (
+interface StatBadgeProps {
+  icon: React.ElementType;
+  label: string;
+  value: string | number | null;
+  colorClass: string;
+}
+
+const StatBadge = ({ icon: Icon, label, value, colorClass }: StatBadgeProps) => (
   <div
     className={`flex items-center justify-center gap-2 px-3 py-1.5 border rounded-full ${colorClass}`}
   >
@@ -208,10 +212,10 @@ export default function RdaDashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // User Data State
-  const [gender, setGender] = useState<Gender>(null);
+  const [gender, setGender] = useState<Gender>("male");
   const [ageYears, setAgeYears] = useState<number | null>(null);
-  const [ageGroup, setAgeGroup] = useState<AgeGroup>(null);
-  const [pregnancyStatus, setPregnancyStatus] = useState<PregnancyStatus>(null);
+  const [ageGroup, setAgeGroup] = useState<AgeGroup>("adult");
+  const [pregnancyStatus, setPregnancyStatus] = useState<ReproductiveStatus | null>(null);
   const [weightKg, setWeightKg] = useState<number | null>(null);
   const [targetCalories, setTargetCalories] = useState<number | null>(null);
   const [fiberTarget, setFiberTarget] = useState<number | null>(null);
@@ -233,9 +237,9 @@ export default function RdaDashboardPage() {
         
         const ag: AgeGroup = ay !== null ? deriveAgeGroup(ay, "adult") : (prefs?.age_group as AgeGroup) ?? "adult";
 
-        const ps: PregnancyStatus = (prefs?.pregnancy_status as PregnancyStatus) ?? null;
-        const w: number | null = (prefs as any)?.weight_kg ?? (prefs as any)?.weightKg ?? null;
-        const h: number | null = (prefs as any)?.height_cm ?? null;
+        const ps: ReproductiveStatus | null = (prefs?.pregnancy_status as ReproductiveStatus) ?? null;
+        const w: number | null = prefs?.weight_kg ?? null;
+        const h: number | null = prefs?.height_cm ?? null;
 
         const priority = buildGroupPriority(g, ag, ps);
 
@@ -306,7 +310,7 @@ export default function RdaDashboardPage() {
           const ft = await getFiberTargetForCurrentUser();
           setFiberTarget(ft);
           // Merge maps with base catalogs, defaulting missing amounts/units to 0/""
-          const vitaminMerged = (vBase || []).map((vb: any) => {
+          const vitaminMerged = (vBase || []).map((vb: { id: string; name: string }) => {
             const match = vMap.get(vb.id);
             return {
               name: vb.name,
@@ -314,7 +318,7 @@ export default function RdaDashboardPage() {
               unit: match ? match.unit : ""
             };
           });
-          const mineralMerged = (mBase || []).map((mb: any) => {
+          const mineralMerged = (mBase || []).map((mb: { id: string; name: string }) => {
             const match = mMap.get(mb.id);
             return {
               name: mb.name,
@@ -326,15 +330,18 @@ export default function RdaDashboardPage() {
           setVitaminRda(vitaminMerged.sort((a, b) => a.name.localeCompare(b.name)));
           setMineralRda(mineralMerged.sort((a, b) => a.name.localeCompare(b.name)));
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         console.error("Failed to load RDA dashboard", e);
-        if (!cancelled) setError(e?.message || "Failed to load RDA dashboard");
+        if (!cancelled) {
+          const message = e instanceof Error ? e.message : "Failed to load RDA dashboard";
+          setError(message);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [supabase]);
 
   // --- Derived Metrics ---
   const proteinTarget = useMemo(() => (weightKg && Number.isFinite(weightKg) ? Math.round(weightKg * 1.2) : 0), [weightKg]);
@@ -416,11 +423,20 @@ export default function RdaDashboardPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <>
+        <div>
+          <div className="hidden dark:grid grid-cols-1 md:grid-cols-5 gap-6">
             <Skeleton className="h-48 w-full rounded-xl" />
             <Skeleton className="h-48 w-full rounded-xl" />
             <Skeleton className="h-48 w-full rounded-xl" />
+            <Skeleton className="h-48 w-full rounded-xl" />
+            <Skeleton className="h-48 w-full rounded-xl" />
+          </div>
         </div>
+        <div className="dark:hidden">
+          <RopeSkipping />
+        </div>
+      </>
       ) : error ? (
         <div className="p-6 border-2 border-dashed border-red-200 bg-red-50 text-red-600 rounded-xl">
           Error: {error}
@@ -542,7 +558,7 @@ export default function RdaDashboardPage() {
 
           {filteredVitamins.length === 0 && filteredMinerals.length === 0 && (
               <div className="text-center py-12 border-2 border-dashed border-neutral-200 rounded-xl">
-                  <p className="text-neutral-400">No nutrients found matching "{searchQuery}"</p>
+                  <p className="text-neutral-400">No nutrients found matching for {searchQuery}</p>
               </div>
           )}
         </>

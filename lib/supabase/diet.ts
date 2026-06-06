@@ -1,44 +1,41 @@
 import { createClient } from './client';
+import {
+  DietType,
+  IndianRegion,
+  MealSlot,
+  Gender,
+  AgeGroup,
+  ReproductiveStatus,
+  TargetGroup,
+  ActivityLevel,
+  UserPreferences,
+  DietPlan,
+  DietPlanItem,
+  DailyTotals,
+  UserFavorite,
+  NutritionalInfo
+} from '@/types/diet';
+import { Food } from './foods';
+import { Recipe } from './recipes';
 
-// --- Types ---
 
-export type DietType = 'vegetarian' | 'eggetarian' | 'non_vegetarian' | 'pescatarian' | 'vegan';
-export type IndianRegion = 'north' | 'south' | 'east' | 'west';
-export type MealSlot = string;
+export type {
+  DietType,
+  IndianRegion,
+  MealSlot,
+  Gender,
+  AgeGroup,
+  ReproductiveStatus,
+  TargetGroup,
+  ActivityLevel,
+  UserPreferences,
+  DietPlan,
+  DietPlanItem,
+  DailyTotals,
+  UserFavorite
+};
 
-export type Gender = 'male' | 'female';
-export type AgeGroup = 'teen' | 'adult' | 'older';
-export type ReproductiveStatus = 'none' | 'pregnant' | 'lactating';
-export type TargetGroup =
-  | 'lactating'
-  | 'adult_female'
-  | 'teen_male'
-  | 'teen_female'
-  | 'adult_male'
-  | 'older_female'
-  | 'pregnant'
-  | 'older_male';
-
-export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
-
-export interface UserPreferences {
-  user_id: string;
-  diet_type: DietType;
-  current_state?: string | null;
-  home_state?: string | null;
-  gender?: Gender | null;
-  age_group?: AgeGroup | null;
-  age_years?: number | null;
-  pregnancy_status?: ReproductiveStatus | null;
-  height_cm?: number | null;
-  weight_kg?: number | null;
-  meals_per_day?: number | null;
-  meal_slot_labels?: string[] | null;
-  allergies?: string[] | null;
-  created_at?: string;
-  updated_at?: string;
-  region?: IndianRegion | null;
-}
+// --- Functions ---
 
 export function getTargetGroup(params: {
   gender?: Gender | null;
@@ -93,47 +90,76 @@ export async function getTargetGroupAuto(): Promise<TargetGroup> {
   return getTargetGroupFromPreferences(prefs);
 }
 
-export interface DietPlan {
-  id: string;
-  user_id: string | null;
-  name: string;
-  goal: string | null;
-  target_calories: number | null;
-  is_public: boolean;
-  is_template: boolean;
-  meal_slots: string[] | null;
-  created_at: string;
-  updated_at: string;
+/**
+ * Resolves IndianRegion based on state/UT name.
+ * Maps states/UTs to one of: 'north' | 'south' | 'east' | 'west' | 'central' | 'northeast'
+ */
+export function resolveIndianRegion(stateName: string): IndianRegion | null {
+  if (!stateName) return null;
+  const s = stateName.trim().toLowerCase();
+
+  // Central
+  if (['chhattisgarh', 'madhya pradesh', 'uttar pradesh', 'uttarakhand', 'uttaranchal'].includes(s)) return 'central';
+
+  // East
+  if (['bihar', 'jharkhand', 'odisha', 'orissa', 'west bengal', 'west-bengal'].includes(s)) return 'east';
+
+  // North
+  if (['chandigarh', 'delhi', 'haryana', 'himachal pradesh', 'jammu & kashmir', 'jammu and kashmir', 'punjab', 'rajasthan', 'ladakh'].includes(s)) return 'north';
+
+  // Northeast
+  if (['arunachal pradesh', 'assam', 'manipur', 'mizoram', 'meghalaya', 'nagaland', 'sikkim', 'tripura'].includes(s)) return 'northeast';
+
+  // South
+  if (['andaman and nicobar islands', 'andaman & nicobar islands', 'andhra pradesh', 'karnataka', 'kerala', 'lakshadweep', 'puducherry', 'pondicherry', 'telangana', 'telangana state', 'tamil nadu'].includes(s)) return 'south';
+
+  // West
+  if (['dadra & nagar haveli and daman & diu', 'dadra & nagar haveli', 'daman & diu', 'goa', 'gujarat', 'maharashtra'].includes(s)) return 'west';
+
+  return null;
 }
 
-// Updated to match your SQL schema (meal_slot_order) and include joined food data
-export interface DietPlanItem {
-  id: string;
-  plan_id: string;
-  day_index: number;
-  meal_slot: MealSlot;
-  meal_slot_order?: number; // Matches SQL 'meal_slot_order'
-  content_type: 'food' | 'recipe' | 'product' | 'remedy' | 'supplement';
-  source_id?: string | null;
-  slug?: string | null;
-  portion_size_grams?: number | null;
-  notes?: string | null;
-  created_at?: string;
+// export interface DietPlan {
+//   id: string;
+//   user_id: string | null;
+//   name: string;
+//   goal: string | null;
+//   target_calories: number | null;
+//   is_public: boolean;
+//   is_template: boolean;
+//   meal_slots: string[] | null;
+//   created_at: string;
+//   updated_at: string;
+// }
+
+// // Updated to match your SQL schema (meal_slot_order) and include joined food data
+// export interface DietPlanItem {
+//   id: string;
+//   plan_id: string;
+//   day_index: number;
+//   meal_slot: MealSlot;
+//   meal_slot_order?: number; // Matches SQL 'meal_slot_order'
+//   content_type: 'food' | 'recipe' | 'product' | 'remedy' | 'supplement';
+//   source_id?: string | null;
+//   slug?: string | null;
+//   portion_size_grams?: number | null;
+//   notes?: string | null;
+//   created_at?: string;
   
-  // Joined Data (Optimistic UI needs this)
-  foods?: {
-    id: string;
-    name: string;
-    nutritional_info: any;
-    main_image_url?: string;
-  };
-  recipes?: {
-    id: string;
-    name: string;
-    nutritional_info: any;
-    main_image_url?: string;
-  };
-}
+//   // Joined Data (Optimistic UI needs this)
+//   foods?: {
+//     id: string;
+//     name: string;
+//     nutritional_info: any;
+//     main_image_url?: string;
+//   };
+//   recipes?: {
+//     id: string;
+//     name: string;
+//     nutritional_info: any;
+//     main_image_url?: string;
+//   };
+// }
 
 // --- Functions ---
 
@@ -152,7 +178,17 @@ export async function upsertUserPreferences(prefs: Omit<UserPreferences, 'user_i
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
-  const payload = { ...prefs, user_id: user.id };
+
+  // Auto-resolve region if current_state is provided 
+  let region = prefs.region;
+  if (prefs.current_state) {
+    const resolvedRegion = resolveIndianRegion(prefs.current_state);
+    if (resolvedRegion) {
+      region = resolvedRegion;
+    }
+  }
+
+  const payload = { ...prefs, region, user_id: user.id };
   const { data, error } = await supabase.from('user_preferences').upsert(payload).select().maybeSingle();
   if (error) throw error;
   return data as UserPreferences;
@@ -230,8 +266,8 @@ export async function getDietPlan(planId: string): Promise<{ plan: DietPlan; ite
   const foodIds = Array.from(new Set(rawItems.filter(i => i.content_type === 'food' && i.source_id).map(i => i.source_id!)));
   const recipeIds = Array.from(new Set(rawItems.filter(i => i.content_type === 'recipe' && i.source_id).map(i => i.source_id!)));
 
-  const foodsMap: Record<string, any> = {};
-  const recipesMap: Record<string, any> = {};
+  const foodsMap: Record<string, Pick<Food, 'id' | 'name' | 'slug' | 'nutritional_info' | 'main_image_url'>> = {};
+  const recipesMap: Record<string, Pick<Recipe, 'id' | 'name' | 'slug' | 'nutritional_info' | 'main_image_url'>> = {};
 
   if (foodIds.length > 0) {
     const { data: foodsData, error: foodsErr } = await supabase
@@ -239,7 +275,7 @@ export async function getDietPlan(planId: string): Promise<{ plan: DietPlan; ite
       .select('id, name, slug, nutritional_info, main_image_url')
       .in('id', foodIds);
     if (foodsErr) console.warn('[getDietPlan] foods hydrate error:', foodsErr);
-    (foodsData || []).forEach((f: any) => { foodsMap[f.id] = f; });
+    (foodsData || []).forEach((f) => { foodsMap[f.id] = f; });
   }
 
   if (recipeIds.length > 0) {
@@ -248,7 +284,7 @@ export async function getDietPlan(planId: string): Promise<{ plan: DietPlan; ite
       .select('id, name, slug, nutritional_info, main_image_url')
       .in('id', recipeIds);
     if (recipesErr) console.warn('[getDietPlan] recipes hydrate error:', recipesErr);
-    (recipesData || []).forEach((r: any) => { recipesMap[r.id] = r; });
+    (recipesData || []).forEach((r) => { recipesMap[r.id] = r; });
   }
 
   const hydrated = rawItems.map((i) => ({
@@ -271,7 +307,10 @@ export async function addDietPlanItem(payload: Omit<DietPlanItem, 'id' | 'create
 export async function updateDietPlanItem(itemId: string, updates: Partial<DietPlanItem>) {
     const supabase = createClient();
     // Strip out fields that shouldn't be sent to DB (like the joined 'foods' object or 'created_at')
-    const { id, created_at, foods, ...cleanPayload } = updates;
+    const cleanPayload = { ...updates };
+    delete cleanPayload.id;
+    delete cleanPayload.created_at;
+    delete cleanPayload.foods;
 
     const { data, error } = await supabase
       .from('diet_plan_items')
@@ -290,30 +329,26 @@ export async function removeDietPlanItem(itemId: string) {
   if (error) throw error;
 }
 
-export interface DailyTotals {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-  fiber: number;
-  rdaCoverage: { [nutrientName: string]: number };
-}
-
 // Helpers: normalize macros from nutritional_info across old and new schemas
-const toNum = (v: any) => {
+const toNum = (v: unknown) => {
   const n = Number(v);
   return Number.isFinite(n) ? n : 0;
 };
 
-const readMainMacros = (ni: any) => {
-  const m = (ni || {})?.main_nutrients || (ni || {});
-  const energy = toNum(m?.energy_kcal ?? m?.calories);
-  const proteinN = toNum(m?.protein_g ?? m?.protein);
-  const carbsN = toNum(m?.total_carbohydrates_g ?? m?.carbs);
-  const fatN = toNum(m?.total_fat_g ?? m?.fat);
-  const fiberSol = toNum(m?.total_soluble_fiber_g);
-  const fiberInsol = toNum(m?.total_insoluble_fiber_g);
-  const fiberN = toNum(m?.total_fiber_g ?? m?.fiber ?? (fiberSol + fiberInsol));
+const readMainMacros = (input: unknown) => {
+  const ni = input as NutritionalInfo;
+  const main = ni?.main_nutrients;
+  
+  // Try structured main_nutrients first, then fallback to root properties (legacy)
+  const energy = toNum(main?.energy_kcal ?? ni?.['energy_kcal'] ?? ni?.['calories']);
+  const proteinN = toNum(main?.protein_g ?? ni?.['protein_g'] ?? ni?.['protein']);
+  const carbsN = toNum(main?.total_carbohydrates_g ?? ni?.['total_carbohydrates_g'] ?? ni?.['carbs']);
+  const fatN = toNum(main?.total_fat_g ?? ni?.['total_fat_g'] ?? ni?.['fat']);
+  
+  const fiberSol = toNum(main?.total_soluble_fiber_g ?? ni?.['total_soluble_fiber_g']);
+  const fiberInsol = toNum(main?.total_insoluble_fiber_g ?? ni?.['total_insoluble_fiber_g']);
+  const fiberN = toNum(main?.total_fiber_g ?? ni?.['total_fiber_g'] ?? ni?.['fiber'] ?? (fiberSol + fiberInsol));
+  
   return { calories: energy, protein: proteinN, carbs: carbsN, fat: fatN, fiber: fiberN };
 };
 
@@ -355,18 +390,20 @@ export async function computeDailyTotals(planItems: DietPlanItem[], dayIndex: nu
   // Batch fetch foods
   if (foodItems.length) {
     const foodIds = foodItems.map(i => i.source_id);
-    const { data: foods } = await supabase
+    const { data: foodsData } = await supabase
       .from('foods')
       .select('id, nutritional_info')
       .in('id', foodIds as string[]);
+    
+    const foods = foodsData as unknown as Array<{ id: string; nutritional_info: NutritionalInfo }>;
 
     // Batch fetch food vitamins and minerals
-    const { data: foodVitamins } = await supabase
+    const { data: foodVitaminsData } = await supabase
       .from('food_vitamins')
       .select('food_id, amount_per_100g, unit, vitamin:vitamins(name, id)')
       .in('food_id', foodIds as string[]);
 
-    const { data: foodMinerals } = await supabase
+    const { data: foodMineralsData } = await supabase
       .from('food_minerals')
       .select('food_id, amount_per_100g, unit, mineral:minerals(name, id)')
       .in('food_id', foodIds as string[]);
@@ -381,6 +418,27 @@ export async function computeDailyTotals(planItems: DietPlanItem[], dayIndex: nu
       .from('mineral_rda')
       .select('mineral_id, recommended_daily_amount, unit, target_group')
       .in('target_group', fallbackGroups);
+      
+    // Type definitions for joined data
+    interface VitaminJoin { name: string; id: string; }
+    interface MineralJoin { name: string; id: string; }
+    
+    interface FoodVitaminRow {
+      food_id: string;
+      amount_per_100g: number | null;
+      unit: string | null;
+      vitamin: VitaminJoin | VitaminJoin[] | null;
+    }
+
+    interface FoodMineralRow {
+      food_id: string;
+      amount_per_100g: number | null;
+      unit: string | null;
+      mineral: MineralJoin | MineralJoin[] | null;
+    }
+
+    const foodVitamins = (foodVitaminsData || []) as unknown as FoodVitaminRow[];
+    const foodMinerals = (foodMineralsData || []) as unknown as FoodMineralRow[];
 
     // Build maps preferring the exact targetGroup, falling back to other groups in order
     const groupPriority = new Map<string, number>(fallbackGroups.map((g, idx) => [g, idx]));
@@ -422,7 +480,7 @@ export async function computeDailyTotals(planItems: DietPlanItem[], dayIndex: nu
 
       // Macros/calories (per 100g scaling)
       if (f?.nutritional_info) {
-        const m = readMainMacros(f.nutritional_info as any);
+        const m = readMainMacros(f.nutritional_info);
         calories += m.calories * (grams / 100);
         protein  += m.protein  * (grams / 100);
         carbs    += m.carbs    * (grams / 100);
@@ -433,8 +491,8 @@ export async function computeDailyTotals(planItems: DietPlanItem[], dayIndex: nu
       // Vitamins
       const itemVits = (foodVitamins || []).filter(v => v.food_id === item.source_id);
       for (const v of itemVits) {
-        const name = Array.isArray(v.vitamin) ? (v.vitamin as any)[0]?.name : (v.vitamin as any)?.name;
-        const vitId = Array.isArray(v.vitamin) ? (v.vitamin as any)[0]?.id : (v.vitamin as any)?.id;
+        const name = Array.isArray(v.vitamin) ? v.vitamin[0]?.name : v.vitamin?.name;
+        const vitId = Array.isArray(v.vitamin) ? v.vitamin[0]?.id : v.vitamin?.id;
         if (!name || !vitId) continue;
         const rda = vitRdaMap.get(vitId);
         if (!rda || !v.amount_per_100g) continue;
@@ -452,8 +510,8 @@ export async function computeDailyTotals(planItems: DietPlanItem[], dayIndex: nu
       // Minerals
       const itemMins = (foodMinerals || []).filter(m => m.food_id === item.source_id);
       for (const m of itemMins) {
-        const name = Array.isArray(m.mineral) ? (m.mineral as any)[0]?.name : (m.mineral as any)?.name;
-        const minId = Array.isArray(m.mineral) ? (m.mineral as any)[0]?.id : (m.mineral as any)?.id;
+        const name = Array.isArray(m.mineral) ? m.mineral[0]?.name : m.mineral?.name;
+        const minId = Array.isArray(m.mineral) ? m.mineral[0]?.id : m.mineral?.id;
         if (!name || !minId) continue;
         const rda = minRdaMap.get(minId);
         if (!rda || !m.amount_per_100g) continue;
@@ -469,15 +527,18 @@ export async function computeDailyTotals(planItems: DietPlanItem[], dayIndex: nu
   // Batch fetch recipes (per-serving)
   if (recipeItems.length) {
     const recipeIds = recipeItems.map(i => i.source_id);
-    const { data: recipes } = await supabase
+    const { data: recipesData } = await supabase
       .from('recipes')
       .select('id, nutritional_info')
       .in('id', recipeIds as string[]);
+      
+    const recipes = recipesData as unknown as Array<{ id: string; nutritional_info: NutritionalInfo }>;
+    
     const recipesById = new Map((recipes || []).map(r => [r.id, r]));
     for (const item of recipeItems) {
       const r = recipesById.get(item.source_id as string);
       if (r?.nutritional_info) {
-        const m = readMainMacros(r.nutritional_info as any);
+        const m = readMainMacros(r.nutritional_info);
         // Assume per serving; portion_size_grams ignored (optional: scale by serving weight if available)
         calories += m.calories;
         protein  += m.protein;
@@ -748,14 +809,6 @@ export async function listDiets(limit = 60): Promise<DietPlan[]> {
 // -----------------------------
 // Favorites (Likes)
 // -----------------------------
-
-export interface UserFavorite {
-  id: string;
-  user_id: string;
-  item_type: string; // e.g., 'food', 'recipe', 'product', 'remedy'
-  item_id: string;   // UUID of the item in its table
-  created_at?: string;
-}
 
 export async function getUserFavorites(): Promise<UserFavorite[]> {
   const supabase = createClient();

@@ -46,16 +46,16 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import {
   createDietPlan,
   getDietPlan,
-  addDietPlanItem,
-  removeDietPlanItem,
+  // addDietPlanItem,
+  // removeDietPlanItem,
   addDislike,
-  updateDietPlanItem, 
+  // updateDietPlanItem, 
   updatePlanVisibility,
-  DietPlanItem,
   computeDailyTotals,
   getCalorieTargetForCurrentUser
 } from "../../lib/supabase/diet";
 import { getUserPreferences } from "../../lib/supabase/diet";
+import { DietPlanItem, NutritionalInfo } from "@/types/diet";
 import RdaCard from "./RdaCard";
 import DietPlanPdf from "./DietPlanPdf";
 import { exportElementToPdf } from "@/lib/pdf";
@@ -66,26 +66,42 @@ interface FoodSource {
   name: string;
   slug: string;
   main_image_url: string;
-  nutritional_info: any;
+  nutritional_info: NutritionalInfo;
 }
 
 // --- Helpers: Normalize nutritional_info to main nutrient macros ---
-function toNum(v: any): number {
+function toNum(v: unknown): number {
   const n = Number(v);
   return Number.isFinite(n) ? n : 0;
 }
 
-function readMainMacros(nutritional_info: any): { calories: number; protein: number; carbs: number; fat: number; fiber: number } {
-  const ni = nutritional_info || {};
-  const m = ni?.main_nutrients || ni;
-  const energy = toNum(m?.energy_kcal ?? m?.calories);
-  const protein = toNum(m?.protein_g ?? m?.protein);
-  const carbs = toNum(m?.total_carbohydrates_g ?? m?.carbs);
-  const fat = toNum(m?.total_fat_g ?? m?.fat);
-  const fiberSol = toNum(m?.total_soluble_fiber_g);
-  const fiberInsol = toNum(m?.total_insoluble_fiber_g);
-  const fiber = toNum(m?.total_fiber_g ?? m?.fiber ?? (fiberSol + fiberInsol));
-  return { calories: energy, protein, carbs, fat, fiber };
+function readMainMacros(nutritional_info: NutritionalInfo | null | undefined): { calories: number; protein: number; carbs: number; fat: number; fiber: number } {
+  const ni = nutritional_info;
+  if (!ni) return { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
+
+  // Check for structured main_nutrients
+  const m = ni.main_nutrients;
+  if (m) {
+    const fiberSol = toNum(m.total_soluble_fiber_g);
+    const fiberInsol = toNum(m.total_insoluble_fiber_g);
+    return {
+      calories: toNum(m.energy_kcal),
+      protein: toNum(m.protein_g),
+      carbs: toNum(m.total_carbohydrates_g),
+      fat: toNum(m.total_fat_g),
+      fiber: toNum(m.total_fiber_g ?? (fiberSol + fiberInsol)),
+    };
+  }
+
+  // Fallback for legacy flat structure
+  const legacy = ni as Record<string, unknown>;
+  return {
+    calories: toNum(legacy.energy_kcal ?? legacy.calories),
+    protein: toNum(legacy.protein_g ?? legacy.protein),
+    carbs: toNum(legacy.total_carbohydrates_g ?? legacy.carbs),
+    fat: toNum(legacy.total_fat_g ?? legacy.fat),
+    fiber: toNum(legacy.total_fiber_g ?? legacy.fiber),
+  };
 }
 
 // --- SUB-COMPONENT: Draggable Food Card ---
@@ -118,7 +134,7 @@ const SortableFoodItem = ({
   };
 
   // Safe access to nutritional info and images from joined 'foods' or 'recipes'
-  const macros = readMainMacros(item.foods?.nutritional_info ?? item.recipes?.nutritional_info);
+  const macros = readMainMacros(item.foods?.nutritional_info as NutritionalInfo ?? item.recipes?.nutritional_info as NutritionalInfo);
   const name = item.foods?.name || item.recipes?.name || item.slug || "Unknown Item";
   const imageUrl = item.foods?.main_image_url || item.recipes?.main_image_url || "";
   const portion = (item.portion_size_grams ?? 100) / 100;
@@ -185,7 +201,7 @@ const SortableFoodItem = ({
                         <Ban size={13} />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>I don't like this</TooltipContent>
+                    <TooltipContent>I don&apos;t like this</TooltipContent>
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -408,7 +424,7 @@ export default function DietPlanBuilder() {
     (async () => {
       try {
         const prefs = await getUserPreferences();
-        const w = (prefs as any)?.weight_kg ?? (prefs as any)?.weightKg;
+        const w = prefs?.weight_kg;
         if (typeof w === "number" && Number.isFinite(w)) {
           setUserWeightKg(w);
         }
@@ -423,7 +439,7 @@ export default function DietPlanBuilder() {
      return items
       .filter(i => i.day_index === dayIndex)
       .reduce((acc, item) => {
-         const macros = readMainMacros(item.foods?.nutritional_info ?? item.recipes?.nutritional_info);
+        const macros = readMainMacros(item.foods?.nutritional_info as NutritionalInfo ?? item.recipes?.nutritional_info as NutritionalInfo);
         const portion = (item.portion_size_grams ?? 100) / 100;
          return {
             calories: acc.calories + (macros.calories * portion),
@@ -1185,7 +1201,7 @@ export default function DietPlanBuilder() {
              
              // Calculate Slot Macros on the fly
              const slotMacros = slotItems.reduce((acc, i) => {
-               const macros = readMainMacros(i.foods?.nutritional_info ?? i.recipes?.nutritional_info);
+               const macros = readMainMacros(i.foods?.nutritional_info as NutritionalInfo ?? i.recipes?.nutritional_info as NutritionalInfo);
         const portion = (i.portion_size_grams ?? 100) / 100;
                return {
                   cal: acc.cal + (macros.calories * portion),
@@ -1302,8 +1318,8 @@ export default function DietPlanBuilder() {
                           <div>
                             <p className="font-medium text-sm truncate">{food.name}</p>
                             <div className="flex gap-2 text-[10px] text-muted-foreground mt-1">
-                               <span className="px-1.5 py-0.5 rounded-full bg-muted text-foreground/70">{food.nutritional_info.calories} kcal</span>
-                               <span className="px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600">P {food.nutritional_info.protein}</span>
+                               <span className="px-1.5 py-0.5 rounded-full bg-muted text-foreground/70">{food.nutritional_info.main_nutrients?.energy_kcal} kcal</span>
+                               <span className="px-1.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600">P {food.nutritional_info.main_nutrients?.protein_g}</span>
                             </div>
                           </div>
                         </div>

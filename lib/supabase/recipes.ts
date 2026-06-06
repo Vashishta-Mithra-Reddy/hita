@@ -1,6 +1,7 @@
 import { createClient } from './server';
 import { Food } from './foods';
 import { Product } from './products';
+import { NutritionalInfo } from '@/types/diet';
 
 // Types based on updated recipe database schema
 export interface RecipeCategory {
@@ -43,15 +44,7 @@ export interface Recipe {
   difficulty_level: 'very_easy' | 'easy' | 'medium' | 'hard' | 'expert' | null;
   
   // Nutritional Information (JSONB)
-  nutritional_info: {
-    calories?: number;
-    protein?: number;
-    carbs?: number;
-    fat?: number;
-    fiber?: number;
-    sugar?: number;
-    [key: string]: number | undefined; // Replace [key: string]: any at line 51
-  } | null;
+  nutritional_info: NutritionalInfo | null;
   
   // Classification
   cuisine_type: string | null;

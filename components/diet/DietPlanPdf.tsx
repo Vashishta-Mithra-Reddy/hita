@@ -5,7 +5,8 @@ import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Progress } from "../ui/progress";
 import { Separator } from "../ui/separator";
-import { computeDailyTotals, getFiberTargetForCurrentUser, type DietPlan, type DietPlanItem } from "@/lib/supabase/diet";
+import { computeDailyTotals, getFiberTargetForCurrentUser } from "@/lib/supabase/diet";
+import type { DietPlan, DietPlanItem, NutritionalInfo } from "@/types/diet";
 
 type DailyTotals = {
   calories: number;
@@ -25,22 +26,38 @@ interface DietPlanPdfProps {
 }
 
 // Helpers: normalize nutritional_info to main nutrients
-function toNum(v: any): number {
+function toNum(v: unknown): number {
   const n = Number(v);
   return Number.isFinite(n) ? n : 0;
 }
 
-function readMainMacros(nutritional_info: any): { calories: number; protein: number; carbs: number; fat: number; fiber: number } {
-  const ni = nutritional_info || {};
-  const m = ni?.main_nutrients || ni;
-  const energy = toNum(m?.energy_kcal ?? m?.calories);
-  const protein = toNum(m?.protein_g ?? m?.protein);
-  const carbs = toNum(m?.total_carbohydrates_g ?? m?.carbs);
-  const fat = toNum(m?.total_fat_g ?? m?.fat);
-  const fiberSol = toNum(m?.total_soluble_fiber_g);
-  const fiberInsol = toNum(m?.total_insoluble_fiber_g);
-  const fiber = toNum(m?.total_fiber_g ?? m?.fiber ?? (fiberSol + fiberInsol));
-  return { calories: energy, protein, carbs, fat, fiber };
+function readMainMacros(nutritional_info: NutritionalInfo | null | undefined): { calories: number; protein: number; carbs: number; fat: number; fiber: number } {
+  const ni = nutritional_info;
+  if (!ni) return { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
+
+  // Check for structured main_nutrients
+  const m = ni.main_nutrients;
+  if (m) {
+    const fiberSol = toNum(m.total_soluble_fiber_g);
+    const fiberInsol = toNum(m.total_insoluble_fiber_g);
+    return {
+      calories: toNum(m.energy_kcal),
+      protein: toNum(m.protein_g),
+      carbs: toNum(m.total_carbohydrates_g),
+      fat: toNum(m.total_fat_g),
+      fiber: toNum(m.total_fiber_g ?? (fiberSol + fiberInsol)),
+    };
+  }
+
+  // Fallback for legacy flat structure
+  const legacy = ni as Record<string, unknown>;
+  return {
+    calories: toNum(legacy.energy_kcal ?? legacy.calories),
+    protein: toNum(legacy.protein_g ?? legacy.protein),
+    carbs: toNum(legacy.total_carbohydrates_g ?? legacy.carbs),
+    fat: toNum(legacy.total_fat_g ?? legacy.fat),
+    fiber: toNum(legacy.total_fiber_g ?? legacy.fiber),
+  };
 }
 
 // Utility: group items by day index (1..7)
@@ -64,15 +81,15 @@ function sumMacros(items: DietPlanItem[]): DailyTotals {
     fiber = 0;
   for (const it of items) {
     if (it.content_type === "food") {
-      const m = readMainMacros((it.foods?.nutritional_info as any) || {});
-  const grams = Number(it.portion_size_grams ?? 100);
+      const m = readMainMacros(it.foods?.nutritional_info as NutritionalInfo);
+      const grams = Number(it.portion_size_grams ?? 100);
       calories += m.calories * (grams / 100);
       protein  += m.protein  * (grams / 100);
       carbs    += m.carbs    * (grams / 100);
       fat      += m.fat      * (grams / 100);
       fiber    += m.fiber    * (grams / 100);
     } else if (it.content_type === "recipe") {
-      const m = readMainMacros((it.recipes?.nutritional_info as any) || {});
+      const m = readMainMacros(it.recipes?.nutritional_info as NutritionalInfo);
       calories += m.calories;
       protein  += m.protein;
       carbs    += m.carbs;
@@ -126,7 +143,7 @@ export default function DietPlanPdf({ plan, items, watermarkName = "Hita", logoU
               fiber: dt.fiber,
               rdaCoverage: dt.rdaCoverage,
             };
-          } catch (err) {
+          } catch {
             totals[day] = sumMacros(itemsByDay[day] || []);
           }
         }
@@ -134,7 +151,7 @@ export default function DietPlanPdf({ plan, items, watermarkName = "Hita", logoU
           const ft = await getFiberTargetForCurrentUser();
           if (!cancelled) setFiberTarget(ft);
         } catch {}
-      } catch (e) {
+      } catch {
         for (const [dayStr, list] of Object.entries(itemsByDay)) {
           totals[Number(dayStr)] = sumMacros(list);
         }
@@ -176,8 +193,8 @@ export default function DietPlanPdf({ plan, items, watermarkName = "Hita", logoU
 
   function getItemMacros(it: DietPlanItem) {
     if (it.content_type === "food") {
-      const m = readMainMacros((it.foods?.nutritional_info as any) || {});
-  const grams = Number(it.portion_size_grams ?? 100);
+      const m = readMainMacros(it.foods?.nutritional_info as NutritionalInfo);
+      const grams = Number(it.portion_size_grams ?? 100);
       return {
         calories: m.calories * (grams / 100),
         protein: m.protein * (grams / 100),
@@ -186,7 +203,7 @@ export default function DietPlanPdf({ plan, items, watermarkName = "Hita", logoU
         fiber: m.fiber * (grams / 100),
       };
     } else {
-      const m = readMainMacros((it.recipes?.nutritional_info as any) || {});
+      const m = readMainMacros(it.recipes?.nutritional_info as NutritionalInfo);
       return {
         calories: m.calories,
         protein: m.protein,

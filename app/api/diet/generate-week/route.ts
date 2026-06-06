@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient as createServerSupabase } from '@/lib/supabase/server';
-import type { DietType, IndianRegion, MealSlot, UserPreferences } from '@/lib/supabase/diet';
+import type { DietType, IndianRegion, MealSlot, UserPreferences } from '@/types/diet';
 
 type GeneratedItemSpec = {
   name: string;
@@ -95,6 +95,7 @@ export async function POST(req: NextRequest) {
       targetCalories,
       dietType,
       region,
+      currentState,
       dislikesCount: dislikes.length,
     });
 
@@ -257,7 +258,7 @@ Non-negotiable constraints:
 - Per-meal total grams target: breakfast 250–450g; lunch/dinner 400–800g; snack 80–250g. Keep sums within range.
 - Never propose raw coconut, chutney, pickle, spices, or condiments as standalone meals. They can appear only as small sides.
 - Diversify across the week: don’t repeat the same main more than two times total, and not on consecutive days.
-- Keep daily calories within ±10% of target_calories.
+- Keep daily calories within ±100 kcal of target_calories.
 - When specifying an item slug, ONLY use slugs from FOOD_SLUGS. Do not invent slugs.
  - Prefer in-season produce and dishes for the current season; avoid off-season items when possible.
 
@@ -265,7 +266,7 @@ Output MUST strictly follow the provided JSON schema.`;
 
     const user = `User preferences:
 diet_type: ${dietType || 'unknown'}
-region: ${region || 'unknown'}
+region: ${region || 'unknown'} india
 current_state: ${currentState || 'unknown'}
 home_state: ${homeState || 'unknown'}
  current_month: ${monthName}

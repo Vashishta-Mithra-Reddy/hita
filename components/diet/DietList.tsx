@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { listDiets, DietPlan } from "@/lib/supabase/diet";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+// import { format } from "date-fns";
+import { listDiets } from "@/lib/supabase/diet";
+import { DietPlan } from "@/types/diet";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 

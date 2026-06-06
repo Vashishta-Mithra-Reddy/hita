@@ -5,13 +5,15 @@ import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { createClient } from '@/lib/supabase/client';
-import { getUserPreferences, Gender, AgeGroup, ReproductiveStatus } from '@/lib/supabase/diet';
+import { getUserPreferences } from '@/lib/supabase/diet';
+import { Gender, AgeGroup, ReproductiveStatus, NutritionalInfo } from '@/types/diet';
 import { Food } from '@/lib/supabase/foods';
 // import { FoodDetailSkeleton } from '@/components/skeletons/FoodDetailSkeleton';
 import BottomGradient from '@/components/BottomGradient';
 import { Sun, CloudRain, Snowflake, Leaf, Globe2 } from 'lucide-react';
 import {motion} from "framer-motion";
 import Spinner from '@/components/animations/Spinner';
+import { DetailedNutritionCard } from '@/components/diet/DetailedNutritionCard';
 
 // Type definitions for Supabase query results
 type VitaminQueryResult = {
@@ -42,12 +44,14 @@ type VitaminRdaQueryResult = {
   vitamin_id: string;
   recommended_daily_amount: number;
   unit: string;
+  target_group: string;
 };
 
 type MineralRdaQueryResult = {
   mineral_id: string;
   recommended_daily_amount: number;
   unit: string;
+  target_group: string;
 };
 
 export default function FoodDetailPage() {
@@ -93,6 +97,16 @@ export default function FoodDetailPage() {
     if (s.includes('winter')) return 'bg-cyan-100/30 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300';
     return 'bg-emerald-100/30 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300';
   };
+
+  const formatNutrientAmount = (amount: number | null) => {
+    if (amount == null) return '-';
+    if (amount === 0) return '0';
+    // Show up to 2 decimal places for small numbers, stripping trailing zeros
+    if (amount < 1) return parseFloat(amount.toFixed(2)).toString();
+    if (amount < 10) return parseFloat(amount.toFixed(1)).toString();
+    return Math.round(amount).toString();
+  };
+
   useEffect(() => {
     const fetchFood = async () => {
       try {
@@ -208,21 +222,21 @@ export default function FoodDetailPage() {
                 .select('vitamin_id, recommended_daily_amount, unit, target_group')
                 .in('vitamin_id', vitaminIds)
                 .in('target_group', fallbackGroups)
-            : Promise.resolve({ data: [] as any[] }),
+            : Promise.resolve({ data: [] as VitaminRdaQueryResult[] }),
           mineralIds.length
             ? supabase
                 .from('mineral_rda')
                 .select('mineral_id, recommended_daily_amount, unit, target_group')
                 .in('mineral_id', mineralIds)
                 .in('target_group', fallbackGroups)
-            : Promise.resolve({ data: [] as any[] }),
+            : Promise.resolve({ data: [] as MineralRdaQueryResult[] }),
         ]);
 
         // Prefer exact target_group, then fallbacks by order
         const groupPriority = new Map<string, number>(fallbackGroups.map((g, idx) => [g, idx]));
         const vitaminRdaMap = new Map<string, { amount: number; unit: string }>();
         const vitPrMap = new Map<string, number>();
-        for (const r of (vitRdaRes.data as any[] ?? [])) {
+        for (const r of (vitRdaRes.data as VitaminRdaQueryResult[] ?? [])) {
           const pr = groupPriority.has(r.target_group) ? (groupPriority.get(r.target_group) as number) : Number.MAX_SAFE_INTEGER;
           const existingPr = vitPrMap.get(r.vitamin_id);
           if (existingPr === undefined || pr < existingPr) {
@@ -233,7 +247,7 @@ export default function FoodDetailPage() {
 
         const mineralRdaMap = new Map<string, { amount: number; unit: string }>();
         const minPrMap = new Map<string, number>();
-        for (const r of (minRdaRes.data as any[] ?? [])) {
+        for (const r of (minRdaRes.data as MineralRdaQueryResult[] ?? [])) {
           const pr = groupPriority.has(r.target_group) ? (groupPriority.get(r.target_group) as number) : Number.MAX_SAFE_INTEGER;
           const existingPr = minPrMap.get(r.mineral_id);
           if (existingPr === undefined || pr < existingPr) {
@@ -364,7 +378,9 @@ export default function FoodDetailPage() {
 
             {/* Quick Nutritional Snapshot (main_nutrients) */}
             {food.nutritional_info && (() => {
-              const m = (food.nutritional_info as any)?.main_nutrients || (food.nutritional_info as any) || {};
+              const ni = food.nutritional_info;
+              // Safely handle potential flat structure or nested main_nutrients
+              const m = (ni.main_nutrients ?? (ni as unknown as NonNullable<NutritionalInfo['main_nutrients']>)) || {};
               const energy = Number(m?.energy_kcal ?? 0);
               const protein = Number(m?.protein_g ?? 0);
               const carbs = Number(m?.total_carbohydrates_g ?? 0);
@@ -451,7 +467,8 @@ export default function FoodDetailPage() {
 
           {/* Nutritional Info Section */}
           {food.nutritional_info && (() => {
-            const m = (food.nutritional_info as any)?.main_nutrients || (food.nutritional_info as any) || {};
+            const ni = food.nutritional_info;
+            const m = (ni.main_nutrients ?? (ni as unknown as NonNullable<NutritionalInfo['main_nutrients']>)) || {};
             const energy = Number(m?.energy_kcal ?? 0);
             const protein = Number(m?.protein_g ?? 0);
             const carbs = Number(m?.total_carbohydrates_g ?? 0);
@@ -542,7 +559,7 @@ export default function FoodDetailPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-foreground/80 line-clamp-1">{v.name}</span>
                         <span className="font-medium text-sm">
-                          {typeof v.amount_per_100g === 'number' ? Math.round(v.amount_per_100g) : '-'}
+                          {formatNutrientAmount(v.amount_per_100g)}
                           {v.unit ?? ''}
                           {typeof v.rda_percent === 'number' && (
                             <>
@@ -609,7 +626,7 @@ export default function FoodDetailPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-foreground/80">{m.name}</span>
                         <span className="font-medium text-sm">
-                          {typeof m.amount_per_100g === 'number' ? Math.round(m.amount_per_100g) : '-'}
+                          {formatNutrientAmount(m.amount_per_100g)}
                           {m.unit ?? ''}
                           {typeof m.rda_percent === 'number' && (
                             <>
@@ -743,6 +760,11 @@ export default function FoodDetailPage() {
             </div>
           )}
         </div>
+        {/* Detailed Nutrition Card */}
+        <div className="mt-8">
+          <DetailedNutritionCard nutritionalInfo={food.nutritional_info} foodName={food.name} />
+        </div>
+
       </motion.div>
       <BottomGradient/>
     </div>
