@@ -143,7 +143,7 @@ export default function Footer() {
           <p className="flex items-center justify-center md:justify-start text-sm text-muted-foreground">
             Built by&nbsp;
             <Link
-              href="https://www.v19.tech/"
+              href="https://v19.tech/?utm_source=hita&utm_medium=referral&utm_campaign=built_by_v19"
               target="_blank"
               className="underline text-foreground inline-flex items-center gap-1 group transition-all duration-500 pl-1 hover:text-primary"
             >
